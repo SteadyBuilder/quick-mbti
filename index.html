@@ -207,6 +207,14 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+
+    /* Balanced Typography for Questions & Options */
+    .balanced-text {
+      text-wrap: balance;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      line-height: 1.55;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased relative selection:bg-indigo-100">
@@ -315,8 +323,8 @@
       <!-- Question Card -->
       <div class="glass-card rounded-3xl p-6 md:p-7 shadow-lg mb-4 text-center relative overflow-hidden">
         <span id="question-badge" class="inline-block text-xs font-bold text-slate-400 tracking-wider uppercase mb-2">Q. 01</span>
-        <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 leading-relaxed break-keep">
-          오랜만에 맞이한 완전한 자유 주말!<br>당신이 진정으로 에너지를 채우는 방법은?
+        <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 leading-relaxed balanced-text">
+          오랜만에 맞이한 온전한 자유 주말,<br>진정으로 에너지를 충전하는 방식은?
         </h2>
       </div>
 
@@ -327,7 +335,7 @@
           <div class="flex items-center gap-3">
             <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-xs group-hover:bg-indigo-600 group-hover:text-white transition-colors">A+</span>
             <div>
-              <p class="text-sm font-semibold text-slate-800" id="opt-a-text">집에서 혼자만의 여유 만끽 (방콕)</p>
+              <p class="text-sm font-semibold text-slate-800 break-keep" id="opt-a-text">집에서 혼자만의 여유 만끽 (방콕)</p>
               <span class="text-[11px] text-indigo-500 font-medium">완전 내 이야기예요</span>
             </div>
           </div>
@@ -339,7 +347,7 @@
           <div class="flex items-center gap-3">
             <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-xs group-hover:bg-indigo-500 group-hover:text-white transition-colors">A</span>
             <div>
-              <p class="text-xs md:text-sm font-medium text-slate-700" id="opt-a-slight">그래도 혼자 쉬는 쪽에 더 가까워요</p>
+              <p class="text-xs md:text-sm font-medium text-slate-700 break-keep" id="opt-a-slight">그래도 혼자 쉬는 쪽에 더 가까워요</p>
             </div>
           </div>
           <span class="text-[11px] text-slate-400">약간 공감</span>
@@ -350,7 +358,7 @@
           <div class="flex items-center gap-3">
             <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition-colors">B</span>
             <div>
-              <p class="text-xs md:text-sm font-medium text-slate-700" id="opt-b-slight">그래도 사람 만나는 쪽에 더 가까워요</p>
+              <p class="text-xs md:text-sm font-medium text-slate-700 break-keep" id="opt-b-slight">그래도 사람 만나는 쪽에 더 가까워요</p>
             </div>
           </div>
           <span class="text-[11px] text-slate-400">약간 공감</span>
@@ -361,7 +369,7 @@
           <div class="flex items-center gap-3">
             <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 font-bold flex items-center justify-center text-xs group-hover:bg-purple-600 group-hover:text-white transition-colors">B+</span>
             <div>
-              <p class="text-sm font-semibold text-slate-800" id="opt-b-text">친구들 불러서 밖에서 신나게 놀기</p>
+              <p class="text-sm font-semibold text-slate-800 break-keep" id="opt-b-text">친구들 불러서 밖에서 신나게 놀기</p>
               <span class="text-[11px] text-purple-500 font-medium">완전 내 이야기예요</span>
             </div>
           </div>
@@ -535,7 +543,7 @@
         axis: 'EI',
         category: '에너지의 방향',
         badge: 'Q. 01',
-        text: '오랜만에 맞이한 완전한 자유 주말!\n당신이 진정으로 에너지를 충전하는 방식은?',
+        text: '오랜만에 맞이한 온전한 자유 주말,\n진정으로 에너지를 충전하는 방식은?',
         optA: '침대 밖은 위험해! 오롯이 혼자만의 방콕 휴식',
         optASlight: '조용한 곳에서 혼자 쉬는 쪽에 더 가까워요',
         optBSlight: '친구 한두 명 가볍게 만나는 쪽에 더 가까워요',
@@ -547,7 +555,7 @@
         axis: 'SN',
         category: '인식과 생각의 결',
         badge: 'Q. 02',
-        text: '혼자 멍때리거나 버스/지하철 창밖을 볼 때\n당신의 머릿속을 채우는 생각은?',
+        text: '혼자 멍하니 창밖을 바라볼 때,\n당신의 머릿속을 채우는 생각은?',
         optA: '오늘 먹을 메뉴, 할 일, 보이는 풍경 등 현실적인 생각',
         optASlight: '최근 겪었던 일이나 눈앞의 일정 정리에 가까워요',
         optBSlight: '꼬리에 꼬리를 무는 상상에 가까워요',
@@ -559,7 +567,7 @@
         axis: 'TF',
         category: '공감과 반응',
         badge: 'Q. 03',
-        text: '친구가 "나 오늘 너무 우울해서 빵 샀어..."라고 카톡을 보냈다.\n내 머릿속을 스치는 첫 반응은?',
+        text: '친구가 "우울해서 빵 샀어"라고 할 때,\n머릿속을 스치는 당신의 첫 반응은?',
         optA: '"헐 무슨 일 있었어? 왜 우울해 ㅠㅠ 토닥토닥"',
         optASlight: '우울하다는 기분이 먼저 신경 쓰이고 걱정돼요',
         optBSlight: '우울한 이유도 궁금하지만 무슨 빵인지도 궁금해요',
@@ -571,7 +579,7 @@
         axis: 'JP',
         category: '계획과 생활 양식',
         badge: 'Q. 04',
-        text: '친구들과 2박 3일 여행을 떠나기로 했을 때,\n나의 여행 준비 스타일은?',
+        text: '친구들과 며칠간 여행을 떠나기로 했을 때,\n당신의 여행 준비 스타일은?',
         optA: '동선, 맛집 휴무일, 비상 대체 플랜까지 꼼꼼히 정리',
         optASlight: '가고 싶은 핵심 스팟과 동선 정도는 미리 짜두는 편',
         optBSlight: '숙소와 교통만 정하고 현지에서 유동적으로 정하는 편',
@@ -583,7 +591,7 @@
         axis: 'EI',
         category: '사회적 상호작용',
         badge: 'Q. 05',
-        text: '새로운 사람들이 많은 낯선 모임(파티, 동호회)에 갔을 때\n당신의 자연스러운 모습은?',
+        text: '낯선 사람이 많은 모임에 갔을 때,\n당신의 자연스러운 모습은?',
         optA: '구석이나 편한 자리를 찾아 조용히 관찰하며 얌전히 있는다',
         optASlight: '먼저 다가와 주는 사람과 조용히 1:1 대화를 나눈다',
         optBSlight: '눈 마주치면 가볍게 먼저 인사하고 자연스럽게 낀다',
@@ -595,7 +603,7 @@
         axis: 'SN',
         category: '대화와 관심사',
         badge: 'Q. 06',
-        text: '친구와 카페에서 시간 가는 줄 모르고 이야기할 때,\n당신이 훨씬 더 흥미를 느끼는 대화 주제는?',
+        text: '친구와 시간 가는 줄 모르고 이야기할 때,\n더 깊이 빠져들게 되는 대화 주제는?',
         optA: '요즘 산 아이템, 맛집 추천, 실제로 겪었던 일화와 팩트',
         optASlight: '현실적인 재테크나 일상 고민 등 실질적인 이야기',
         optBSlight: '인생관, 가치관, 심리 등 눈에 안 보이는 이야기',
@@ -607,7 +615,7 @@
         axis: 'TF',
         category: '위로와 문제 해결',
         badge: 'Q. 07',
-        text: '친한 친구가 중요한 면접/시험에서 탈락했다고 울먹일 때,\n내가 건네고 싶은 진정한 위로는?',
+        text: '친한 친구가 시험이나 면접에서 탈락했을 때,\n진심으로 건네고 싶은 나의 첫 마디는?',
         optA: '"진짜 고생 많았어, 네 잘못 아니야" 마음을 온전히 안아주기',
         optASlight: '맛있는 걸 사주며 상처받은 감정부터 달래준다',
         optBSlight: '위로해 준 뒤 "다음에 어떻게 준비할까?" 같이 생각해본다',
@@ -619,7 +627,7 @@
         axis: 'JP',
         category: '일과 마감 스타일',
         badge: 'Q. 08',
-        text: '마감 기한이 일주일 남은 중요한 과제나 프로젝트,\n당신의 전형적인 작업 스타일은?',
+        text: '마감이 일주일 남은 중요한 과제나 일,\n당신의 전형적인 작업 스타일은?',
         optA: '받자마자 계획표 짜고 하루하루 쪼개서 미리 여유 있게 끝낸다',
         optASlight: '마감 2~3일 전에는 끝내두어야 마음이 편안해요',
         optBSlight: '시간 날 때 조금씩 보다가 마감이 다가오면 몰입해요',
@@ -765,7 +773,15 @@
       document.getElementById('question-counter').innerText = `${currentIdx + 1} / ${questions.length}`;
       document.getElementById('question-category').innerText = q.category;
       document.getElementById('question-badge').innerText = q.badge;
-      document.getElementById('question-text').innerHTML = q.text.replace(/\n/g, '<br>');
+      const lines = q.text.split('\n');
+      if (lines.length > 1) {
+        document.getElementById('question-text').innerHTML = `
+          <span class="block mb-1 sm:mb-1.5">${lines[0]}</span>
+          <span class="block text-indigo-900/90">${lines.slice(1).join(' ')}</span>
+        `;
+      } else {
+        document.getElementById('question-text').innerHTML = q.text;
+      }
 
       // Update Options
       document.getElementById('opt-a-text').innerText = q.optA;
