@@ -1,0 +1,26 @@
+{
+  "name": "quick-mbti",
+  "version": "1.0.0",
+  "description": "30초 초정밀 감성 MBTI 테스트 웹 애플리케이션",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "mbti",
+    "quick-mbti",
+    "personality-test",
+    "glassmorphism",
+    "tailwindcss"
+  ],
+  "author": "SteadyBuilder",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteadyBuilder/quick-mbti.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SteadyBuilder/quick-mbti/issues"
+  },
+  "homepage": "https://github.com/SteadyBuilder/quick-mbti#readme"
+}

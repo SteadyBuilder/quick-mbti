@@ -1,0 +1,17 @@
+﻿{
+  "name": "마음의 결 - Quick MBTI & 궁합 분석",
+  "short_name": "마음의 결",
+  "description": "30초 초정밀 감성 MBTI 테스트, 둘만의 1:1 케미, N:N 모임 궁합 네트워크 분석",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7ff",
+  "theme_color": "#f5f7ff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64 128x128 256x256 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

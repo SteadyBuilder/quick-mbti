@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const path = require('path');
+const { mbtiData } = require('./mbti_database');
+
+const htmlContent = `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -695,7 +699,7 @@
         optAStrong: '오늘의 핫이슈, 맛집, 생생한 현실 일상 썰',
         optASlight: '최근 경험이나 실질적인 재테크/정보',
         optBSlight: '인생관, 가치관, 사람의 심리 이야기',
-        optBStrong: '우주, 미래, 철학적 상상과 \'만약에\' 토론',
+        optBStrong: '우주, 미래, 철학적 상상과 \\'만약에\\' 토론',
         letterA: 'S',
         letterB: 'N'
       },
@@ -726,520 +730,7 @@
     ];
 
     // 16개 MBTI 심층 롱폼 분석 데이터베이스 (Anti-AI 에디토리얼 스타일)
-    const mbtiData = {
-  "INFJ": {
-    "nickname": "내면의 우주를 짓는 조용한 관찰자",
-    "summary": "겉으로는 다정하고 온화해 보이지만, 마음속에는 거대한 우주와 확고한 도덕적 나침반을 품고 있는 사람입니다.",
-    "characterName": "루나",
-    "characterDesc": "따스한 김이 피어오르는 머그잔을 쥐고 조용히 미소 짓는 라벤더 몽글이",
-    "tags": [
-      "#내면의우주",
-      "#직관적통찰",
-      "#단호한다정함",
-      "#도어슬램"
-    ],
-    "essence": {
-      "mode": "상대방의 작은 눈빛 변화와 말의 뉘앙스만으로도 그 사람의 결핍과 감정을 즉시 감지합니다. 굳이 말하지 않아도 이미 다 알고 있지만, 관계의 평화를 위해 모르는 척 넘어가는 경우가 대부분입니다.",
-      "inner": "세상 사람들에게는 예의 바르고 배려심 넘치는 가면을 쓰고 있지만, 혼자 있는 방 안에 들어서는 순간 모든 스위치를 끄고 깊은 사색과 침묵 속으로 침잠합니다."
-    },
-    "relationship": {
-      "comfort": "과장된 리액션이나 거짓 감정 없이, 침묵 속에서도 어색하지 않은 사람. 가벼운 가십거리 대신 삶의 가치관과 영혼의 고민을 나눌 수 있는 사람에게 깊은 안정감을 느낍니다.",
-      "cutoff": "앞에서는 친한 척하면서 뒤에서 타인을 조롱하거나, 나의 호의와 배려를 당연한 권리로 여기고 경계를 침범할 때 조용히 마음의 문을 영구히 걸어 잠급니다."
-    },
-    "stress": {
-      "signal": "머릿속 생각의 회로가 과열되어 극도로 냉소적으로 변하거나, 모든 인간관계를 일시 정지하고 완전히 잠수타고 싶어집니다.",
-      "cure": "따뜻한 차 한 잔을 곁들인 혼자만의 독서, 아무도 없는 밤 산책, 그리고 완벽한 디지털 디톡스."
-    },
-    "best": {
-      "type": "ENTP, ENFP",
-      "desc": "내 조용한 세상의 빗장을 유쾌하게 열어젖히고 새로운 환희를 불어넣는 빛"
-    },
-    "worst": {
-      "type": "ESTP, ISTP",
-      "desc": "지나치게 직설적이거나 감정의 미묘한 결을 무시할 때 마음의 상처를 입어요"
-    }
-  },
-  "INTJ": {
-    "nickname": "지적 독립성을 품은 미래 설계자",
-    "summary": "비효율과 불합리를 가장 견디지 못하며, 세상의 모든 현상을 구조와 시스템으로 환원하여 최적의 경로를 찾아냅니다.",
-    "characterName": "아이작",
-    "characterDesc": "둥근 은테 안경 너머로 수 읽기에 몰입한 인디고 몽글이",
-    "tags": [
-      "#전략적사고",
-      "#지적독립",
-      "#냉철한통찰",
-      "#효율의극치"
-    ],
-    "essence": {
-      "mode": "현재의 순간보다 5년 뒤, 10년 뒤의 그림을 머릿속에 먼저 그립니다. 감정적인 설득보다 명확한 논리와 데이터 앞에서는 누구보다 빠르게 승복하는 쿨함을 지녔습니다.",
-      "inner": "겉으로는 차갑고 다가가기 어려운 인상을 풍기지만, 자신이 신뢰하는 극소수의 사람에게는 누구보다 든든하고 헌신적인 조력자가 됩니다."
-    },
-    "relationship": {
-      "comfort": "자기 일에 전문성이 있고, 논리적으로 말이 통하며, 불필요한 감정 소모나 징징거림 없이 상호 존중이 가능한 사람.",
-      "cutoff": "비합리적인 관습을 고집하거나, 팩트를 왜곡하며 감정적으로 떼쓰는 태도를 목격할 때 미련 없이 손절합니다."
-    },
-    "stress": {
-      "signal": "주변 통제력을 상실했다고 느낄 때 극심한 불안을 느끼며, 청소나 정리정돈 등 사소한 디테일에 집착하는 과민 반응을 보입니다.",
-      "cure": "누구의 방해도 받지 않는 온전한 고립 공간에서 복잡한 퍼즐이나 장기 프로젝트의 로드맵을 다시 설계하기."
-    },
-    "best": {
-      "type": "ENFP, ENTP",
-      "desc": "나의 견고한 논리 체계에 엉뚱하고 찬란한 영감의 불꽃을 던져주는 존재"
-    },
-    "worst": {
-      "type": "ESFJ, ISFP",
-      "desc": "감정적인 동조만을 강요받거나 비논리적인 상황에 갇힐 때 탈진해요"
-    }
-  },
-  "INFP": {
-    "nickname": "별빛을 품은 낭만적 이상주의자",
-    "summary": "세상이 잃어버린 순수함과 진정성을 끝까지 지켜내며, 타인의 아픔에 가장 깊은 눈물을 흘려줄 수 있는 온기 가득한 사람입니다.",
-    "characterName": "로아",
-    "characterDesc": "별빛을 머금은 눈망울과 연분홍 꽃잎을 간직한 핑크 몽글이",
-    "tags": [
-      "#풍부한감수성",
-      "#진정성",
-      "#내면의시인",
-      "#무해한존재"
-    ],
-    "essence": {
-      "mode": "단순한 대화 속에서도 단어의 결을 곱씹으며, 음악 한 곡이나 노을 하나에도 마음 깊은 곳에서 거대한 파도가 칩니다. 나의 가치관과 충돌하는 타협을 극도로 괴로워합니다.",
-      "inner": "현실의 각박함 앞에서는 한없이 조용하고 유약해 보이지만, 신념이 걸린 문제 앞에서는 누구보다 단단하게 맞서는 외유내강형입니다."
-    },
-    "relationship": {
-      "comfort": "나의 엉뚱한 공상과 여린 감수성을 비웃지 않고, 그 자체로 온전히 귀 기울여 주는 따뜻하고 무해한 사람.",
-      "cutoff": "사람을 이용 가치로만 판단하거나, 나의 진심 어린 고백을 가볍게 취급하고 조롱할 때 흔적도 없이 사라집니다."
-    },
-    "stress": {
-      "signal": "자신에 대한 끝없는 자책과 회의감에 빠지며, 세상 모든 사람과의 연결을 끊고 동굴 깊은 곳으로 숨어버립니다.",
-      "cure": "취향에 맞는 감성 플레이리스트를 들으며 좋아하는 일기장에 솔직한 감정을 털어놓거나 자연 속을 걷기."
-    },
-    "best": {
-      "type": "ENTJ, ENFJ",
-      "desc": "내 여린 감성을 든든하게 보호하고 나아갈 길을 비춰주는 등대 같은 사람"
-    },
-    "worst": {
-      "type": "ESTJ, ISTJ",
-      "desc": "현실적인 잣대만을 들이대며 감정을 무가치하다고 치부할 때 질식감을 느껴요"
-    }
-  },
-  "INTP": {
-    "nickname": "경계를 허무는 고독한 탐구자",
-    "summary": "세상의 고정관념에 질문을 던지고, 본질적인 원리와 논리적 무결성을 증명하는 데서 순수한 희열을 느끼는 지적 모험가입니다.",
-    "characterName": "테오",
-    "characterDesc": "빛나는 미니 북을 들고 호기심 어린 눈으로 세상을 관찰하는 민트 몽글이",
-    "tags": [
-      "#지적호기심",
-      "#논리왕",
-      "#반골기질",
-      "#자유로운영혼"
-    ],
-    "essence": {
-      "mode": "대화의 맥락에서 논리적 오류를 기가 막히게 잡아내며, \"왜?\"라는 질문이 꼬리를 물고 이어집니다. 사회적 관습이나 의례적인 격식에는 별다른 관심이 없습니다.",
-      "inner": "남들에게는 멍때리는 것처럼 보이지만 머릿속 슈퍼컴퓨터는 수만 가지 이론과 시뮬레이션을 초고속으로 돌리고 있습니다."
-    },
-    "relationship": {
-      "comfort": "지적 자극을 주고받을 수 있으며, 서로의 개인 공간과 침묵을 온전히 존중해 주는 독립적인 사람.",
-      "cutoff": "근거 없는 권위를 내세우거나, 감정적 논리로 억지를 부리며 나를 설득하려 들 때 대화를 완전히 단절합니다."
-    },
-    "stress": {
-      "signal": "논리 회로가 엉키면서 갑작스러운 감정 폭발을 겪거나, 사소한 건강 염려증이나 무기력증에 빠집니다.",
-      "cure": "흥미로운 새로운 분야의 논문이나 기술 아티클에 몰입하기, 또는 아무 생각 없이 조용한 공간에서 게임/퍼즐 즐기기."
-    },
-    "best": {
-      "type": "ENTJ, ENFJ",
-      "desc": "나의 번뜩이는 아이디어를 현실의 성과로 함께 직조해 주는 최고의 러닝메이트"
-    },
-    "worst": {
-      "type": "ESFJ, ISFJ",
-      "desc": "의무적인 사교 모임이나 영혼 없는 예의치레를 강요받을 때 에너지가 고갈돼요"
-    }
-  },
-  "ENFP": {
-    "nickname": "가능성을 쏘아 올리는 영감의 탐험가",
-    "summary": "지루한 일상에 무지개색 영감을 불어넣고, 사람과 아이디어의 반짝이는 잠재력을 누구보다 먼저 발견해 응원하는 활력소입니다.",
-    "characterName": "피치",
-    "characterDesc": "무지개 풍선을 꼭 쥐고 반짝이는 눈으로 세상을 뛰노는 피치 몽글이",
-    "tags": [
-      "#인간비타민",
-      "#아이디어화수분",
-      "#자유로운영혼",
-      "#낭만주의자"
-    ],
-    "essence": {
-      "mode": "새로운 사람, 새로운 프로젝트에 금방 가슴이 뛰며 에너지가 폭발합니다. 정형화된 틀이나 반복 작업 앞에서는 급격하게 흥미를 잃습니다.",
-      "inner": "매사 밝고 긍정적으로 보이지만, 밤이 되면 남모를 외로움과 공허함, 그리고 관계에 대한 불안감을 홀로 곱씹곤 합니다."
-    },
-    "relationship": {
-      "comfort": "나의 엉뚱한 아이디어를 함께 즐겁게 키워주고, 감정의 기복까지 묵묵하고 따뜻하게 품어주는 든든한 사람.",
-      "cutoff": "내 열정을 한심하다는 듯 깎아내리거나, 좁은 틀 속에 가두고 행동 하나하나를 통제하려 들 때 뒤도 안 돌아보고 떠납니다."
-    },
-    "stress": {
-      "signal": "특유의 낙천성이 사라지고 사소한 일에 지나치게 방어적이 되며, 사람들의 시선과 평가에 극도로 예민해집니다.",
-      "cure": "바다나 낯선 여행지로 훌쩍 떠나기, 새로운 예술적 취미에 몰입하거나 혼자만의 일기장에 솔직한 마음 적어보기."
-    },
-    "best": {
-      "type": "INTJ, INFJ",
-      "desc": "나의 날뛰는 열정을 차분하게 가라앉혀 주고 깊은 지적 대화를 나눠주는 닻"
-    },
-    "worst": {
-      "type": "ISTJ, ESTJ",
-      "desc": "사소한 규칙과 엄격한 틀만 앞세우며 자유를 억압할 때 숨이 턱 막혀요"
-    }
-  },
-  "ENTP": {
-    "nickname": "유쾌한 전복을 꿈꾸는 지적 모험가",
-    "summary": "당연한 상식에 유쾌한 물음표를 던지며, 기발한 두뇌 회전과 순발력으로 어떤 난관도 재치 있게 돌파해내는 혁신가입니다.",
-    "characterName": "로키",
-    "characterDesc": "한쪽 눈을 찡긋하며 번뜩이는 아이디어 스파크를 뿜어내는 오렌지 몽글이",
-    "tags": [
-      "#브레인스토머",
-      "#유쾌한변론",
-      "#순발력천재",
-      "#틀을깨는자"
-    ],
-    "essence": {
-      "mode": "토론과 논쟁은 공격이 아니라 놀이이자 사고를 확장하는 스포츠입니다. 머릿속에 번뜩이는 아이디어가 너무 많아 하나를 끝내기도 전에 다음 실험으로 달려갑니다.",
-      "inner": "늘 당당하고 뻔뻔해 보이지만, 스스로 정한 기준에 자신의 역량이 미치지 못할 때 남몰래 깊은 자괴감과 결핍을 마주합니다."
-    },
-    "relationship": {
-      "comfort": "지적 티키타카가 매끄럽게 통하고, 나의 짓궂은 장난을 웃어넘기며 한 단계 더 날카로운 질문으로 받아쳐 주는 사람.",
-      "cutoff": "고지식한 꼰대 마인드로 찍어 누르려 하거나, 사실과 논리를 무시하고 감정적인 죄책감을 씌우려 할 때 칼같이 등을 돌립니다."
-    },
-    "stress": {
-      "signal": "자신감을 잃고 무기력증에 빠지거나, 주변 사람들의 모든 말을 꼬투리 잡아 사소한 공격성을 드러냅니다.",
-      "cure": "완전히 새로운 주제에 대해 밤새 리서치하기, 자극적인 지적 팟캐스트 청취, 혹은 익명의 공간에서 자유롭게 토론하기."
-    },
-    "best": {
-      "type": "INFJ, INTJ",
-      "desc": "나의 엉뚱한 상상을 깊이 있게 이해하고 그 속에 숨은 보석을 찾아내 주는 파트너"
-    },
-    "worst": {
-      "type": "ISFJ, ESFJ",
-      "desc": "사회적 눈치와 형식적인 예절을 지나치게 강요받을 때 도망치고 싶어져요"
-    }
-  },
-  "ENFJ": {
-    "nickname": "마음을 울리는 따스한 횃불",
-    "summary": "타인의 숨은 잠재력을 꽃피우는 데 온 마음을 쏟으며, 특유의 카리스마와 진정성으로 공동체를 더 나은 방향으로 이끄는 리더입니다.",
-    "characterName": "솔",
-    "characterDesc": "가슴에 따스한 횃불을 품고 환한 미소로 손을 내미는 로즈 몽글이",
-    "tags": [
-      "#진심어린리더십",
-      "#공감의달인",
-      "#선한영향력",
-      "#잠재력메이커"
-    ],
-    "essence": {
-      "mode": "모임 내 소외된 사람의 표정을 본능적으로 살피며, 모두가 존중받고 있다는 느낌을 받도록 부단히 에너지를 씁니다.",
-      "inner": "남들에게는 한없이 관대하고 칭찬을 아끼지 않지만, 스스로에게는 가혹할 정도로 높은 잣대를 들이대며 쉽게 번아웃에 노출됩니다."
-    },
-    "relationship": {
-      "comfort": "내가 베푸는 정성과 배려를 고마워할 줄 알고, 나 역시 한 명의 연약한 인간으로서 기댈 수 있게 해주는 사람.",
-      "cutoff": "나의 배려를 만만하게 보고 뒤통수를 치거나, 타인에게 고의로 상처를 주는 잔인한 태도를 목격할 때 단호하게 정리합니다."
-    },
-    "stress": {
-      "signal": "타인의 감정 쓰레기통이 된 것 같은 피해의식에 시달리며, 모든 문제의 원인을 자신의 탓으로 돌리며 눈물짓습니다.",
-      "cure": "모든 사람의 연락을 차단하고 오직 나만을 위한 스파, 맛있는 요리, 그리고 내 감정만을 돌보는 일기 쓰기."
-    },
-    "best": {
-      "type": "INFP, ISFP",
-      "desc": "나의 순수한 마음에 진심으로 화답하고 맑은 쉼터를 내어주는 영혼의 짝"
-    },
-    "worst": {
-      "type": "ISTP, ESTP",
-      "desc": "정성을 쏟아도 냉담하고 무신경하게 굴 때 깊은 상처와 허탈감을 느껴요"
-    }
-  },
-  "ENTJ": {
-    "nickname": "승리를 설계하는 당당한 총사령관",
-    "summary": "명확한 목표와 냉철한 실행력으로 비전을 현실로 구현하며, 어떤 혼란 속에서도 질서와 성취를 이끌어내는 당당한 지휘자입니다.",
-    "characterName": "빅터",
-    "characterDesc": "황금 왕관을 쓰고 단단한 눈빛으로 지평선을 바라보는 사파이어 몽글이",
-    "tags": [
-      "#압도적추진력",
-      "#전략적비전",
-      "#결단력",
-      "#승부사"
-    ],
-    "essence": {
-      "mode": "문제가 발생하면 감정에 휘둘리지 않고 \"그래서 해결책이 뭔데?\"로 즉시 전환합니다. 시간 낭비와 무능을 가장 혐오합니다.",
-      "inner": "강철 같은 멘탈 뒤에는 미래에 대한 깊은 책임감과 홀로 모든 짐을 짊어져야 한다는 고독감이 자리 잡고 있습니다."
-    },
-    "relationship": {
-      "comfort": "자신의 몫을 120% 완수하는 유능함, 직설적인 피드백을 건강하게 주고받을 수 있는 단단한 자존감을 지닌 사람.",
-      "cutoff": "핑계와 변명만 늘어놓으며 게으름을 피우거나, 뒤에서 정치를 하며 전체의 효율을 갉아먹을 때 가차 없이 배제합니다."
-    },
-    "stress": {
-      "signal": "상황이 뜻대로 통제되지 않을 때 극도의 조급증과 분노를 터뜨리며, 주변 사람들을 지나치게 몰아세웁니다.",
-      "cure": "격렬한 운동(웨이트, 러닝)으로 잡념을 털어내거나, 완전히 다른 영역의 성공 스토리를 리서치하며 시야 넓히기."
-    },
-    "best": {
-      "type": "INTP, INFP",
-      "desc": "나의 거침없는 질주에 깊은 통찰과 인간적인 쉼표를 건네주는 멘토"
-    },
-    "worst": {
-      "type": "ISFP, ESFP",
-      "desc": "계획 없는 즉흥과 미적지근한 태도로 일관할 때 속이 터져요"
-    }
-  },
-  "ISTJ": {
-    "nickname": "묵묵히 세상을 떠받치는 신뢰의 기둥",
-    "summary": "약속과 원칙을 목숨처럼 여기며, 눈앞에 놓인 책임을 조용하고 완벽하게 완수하여 공동체의 기반을 지탱하는 사람입니다.",
-    "characterName": "마일즈",
-    "characterDesc": "정갈한 클립보드를 들고 흐트러짐 없는 자세로 자리하는 슬레이트 몽글이",
-    "tags": [
-      "#신뢰도100%",
-      "#원칙주의",
-      "#책임감",
-      "#정리정돈의달인"
-    ],
-    "essence": {
-      "mode": "검증되지 않은 모험보다 확인된 데이터와 절차를 신뢰합니다. 맡은 바 일은 말이 아니라 완벽한 결과물로 증명합니다.",
-      "inner": "겉으로는 감정 변화가 없고 무뚝뚝해 보이지만, 소중한 사람들의 사소한 필요를 기억해 두었다가 뒤에서 묵묵히 챙겨줍니다."
-    },
-    "relationship": {
-      "comfort": "시간 약속을 철저히 지키고, 말이 앞서기보다 행동이 일관되며, 일상에 잔잔한 예측 가능성을 선물해 주는 사람.",
-      "cutoff": "약속을 손바닥 뒤집듯 바꾸거나, 무책임하게 일을 벌여놓고 뒷감당을 남에게 떠넘길 때 마음속에서 완전히 지웁니다."
-    },
-    "stress": {
-      "signal": "갑작스러운 일정 변경이나 규칙이 무너지는 상황에서 극도의 피로를 느끼며, 과거의 실패 경험을 비관적으로 곱씹습니다.",
-      "cure": "깨끗하게 정돈된 내 방에서 좋아하는 정적인 취미를 즐기며 루틴의 평온함을 되찾기."
-    },
-    "best": {
-      "type": "ESFP, ESTP",
-      "desc": "다소 단조로울 수 있는 내 일상에 생각지도 못한 활력과 건강한 웃음을 불어넣는 단짝"
-    },
-    "worst": {
-      "type": "ENFP, INFP",
-      "desc": "감정에 따라 규칙을 어기거나 뜬구름만 잡을 때 심한 스트레스를 받아요"
-    }
-  },
-  "ISFJ": {
-    "nickname": "따스한 온기를 건네는 헌신적 수호자",
-    "summary": "소중한 사람들의 평온을 위해 기꺼이 궂은일을 도맡으며, 보이지 않는 곳에서 세심한 배려로 세상을 따뜻하게 밝히는 사람입니다.",
-    "characterName": "클로이",
-    "characterDesc": "포근한 민트 머플러를 두르고 온화한 미소를 머금은 틸 몽글이",
-    "tags": [
-      "#세심한배려",
-      "#성실함",
-      "#온화한쉼터",
-      "#기억력천재"
-    ],
-    "essence": {
-      "mode": "상대방이 무심코 던진 한마디, 좋아하는 간식, 생일 등을 놀라울 정도로 정확히 기억하고 은근한 감동을 선사합니다.",
-      "inner": "남의 부탁을 거절하지 못해 속앓이를 자주 하며, 내 불편함보다 타인의 편안함을 먼저 챙기느라 정작 자신은 방전되곤 합니다."
-    },
-    "relationship": {
-      "comfort": "나의 세심한 정성을 당연하게 여기지 않고 진심으로 고마워하며, 먼저 다정하게 안부를 물어봐 주는 따뜻한 사람.",
-      "cutoff": "나의 헌신을 호구 취급하며 함부로 선을 넘거나, 감사 인사는커녕 더 많은 것을 뻔뻔하게 요구할 때 조용히 연락을 끊습니다."
-    },
-    "stress": {
-      "signal": "억눌렀던 서운함이 한꺼번에 터져 나오며, 몸살이 나거나 심한 무기력증에 빠져 모든 사람과의 만남을 피합니다.",
-      "cure": "포근한 이불 속에서 좋아하는 힐링 드라마 정주행하기, 정성껏 끓인 따뜻한 집밥 챙겨 먹기."
-    },
-    "best": {
-      "type": "ESTP, ESFP",
-      "desc": "수줍은 나를 세상 밖으로 밝게 이끌어주고 잊지 못할 추억을 선물해 주는 비타민"
-    },
-    "worst": {
-      "type": "ENTP, INTP",
-      "desc": "말꼬리를 잡고 날카롭게 비판하거나 정서적 공감을 결여했을 때 큰 상처를 입어요"
-    }
-  },
-  "ESTJ": {
-    "nickname": "현실의 질서를 세우는 단단한 지휘관",
-    "summary": "명확한 기준과 탁월한 조직력으로 혼돈을 바로잡고, 강한 책임감과 행동력으로 목표를 완벽하게 실현해내는 실행의 화신입니다.",
-    "characterName": "오스틴",
-    "characterDesc": "황금빛 나침반을 쥐고 당당한 카리스마를 내뿜는 스카이블루 몽글이",
-    "tags": [
-      "#프로계획러",
-      "#현실감각",
-      "#일당백실행력",
-      "#질서의수호자"
-    ],
-    "essence": {
-      "mode": "효율적인 시간표와 체계적인 프로세스를 설계할 때 마음이 편안합니다. 결과물이 없는 공허한 토론은 시간 낭비로 여깁니다.",
-      "inner": "엄격하고 깐깐해 보이는 인상과 달리, 내 사람이라고 판단한 바운더리 안에서는 한없이 든든한 바람막이가 되어줍니다."
-    },
-    "relationship": {
-      "comfort": "자기 밥값을 확실히 하고, 예의와 상식을 지키며, 피드백을 솔직하고 담백하게 수용할 줄 아는 단정한 사람.",
-      "cutoff": "약속을 어기고 거짓말을 하거나, 비효율적인 방식으로 고집을 부려 주변 사람들에게 민폐를 끼칠 때 단호히 쳐냅니다."
-    },
-    "stress": {
-      "signal": "계획이 틀어지면 극도로 예민해지며, 주변 사람들의 작은 실수에도 날카로운 잔소리가 쏟아져 나옵니다.",
-      "cure": "눈앞의 어질러진 공간을 완벽하게 청소하고 정리정돈하기, 새로운 업무 체크리스트를 체계화해 통제권 회복하기."
-    },
-    "best": {
-      "type": "ISFP, INFP",
-      "desc": "나의 강인함 뒤에 숨은 피로를 따스하게 보듬어주는 온기 가득한 안식처"
-    },
-    "worst": {
-      "type": "INFP, ENFP",
-      "desc": "할 일은 미뤄두고 감정적인 핑계와 뜬구름만 늘어놓을 때 인내심의 한계를 느껴요"
-    }
-  },
-  "ESFJ": {
-    "nickname": "온기를 나누는 조화의 중심",
-    "summary": "풍부한 공감과 배려로 사람들의 마음을 잇고, 특유의 밝고 친절한 에너지로 모임의 분위기를 화기애애하게 만드는 분위기 메이커입니다.",
-    "characterName": "벨라",
-    "characterDesc": "노란 리본을 달고 두 팔 벌려 모두를 따스하게 맞이하는 메리골드 몽글이",
-    "tags": [
-      "#친절마스터",
-      "#분위기메이커",
-      "#공감대마왕",
-      "#모임의중심"
-    ],
-    "essence": {
-      "mode": "주변 사람들의 기분과 컨디션을 즉각 알아차리고 필요한 도움을 건넵니다. 모두가 화합하고 즐거운 분위기 속에서 살아있음을 느낍니다.",
-      "inner": "언제나 씩씩해 보이지만, 타인의 부정적인 평가나 무관심에 쉽게 상처받으며 \"내가 뭘 잘못했나?\" 자책하곤 합니다."
-    },
-    "relationship": {
-      "comfort": "나의 친절에 밝은 미소로 화답하고, 작은 일에도 \"고마워\"라는 말을 아끼지 않는 따뜻하고 다정한 사람.",
-      "cutoff": "모임의 분위기를 고의로 망치거나, 나의 정성을 비웃고 무례하게 선을 넘는 사람과는 조용히 거리를 둡니다."
-    },
-    "stress": {
-      "signal": "사람들에게 거절당했다는 불안감에 휩싸이며, 타인의 눈치를 과도하게 보거나 서운함에 눈물을 터뜨립니다.",
-      "cure": "가장 신뢰하는 친한 친구와 맛있는 음식을 먹으며 속마음을 시원하게 털어놓고 듬뿍 인정받기."
-    },
-    "best": {
-      "type": "ISFP, ISTP",
-      "desc": "나의 정성을 있는 그대로 편안하게 누려주고 잔잔한 안정감을 주는 단짝"
-    },
-    "worst": {
-      "type": "INTJ, INTP",
-      "desc": "차가운 논리만 앞세우며 감정적인 교류를 단절할 때 큰 서운함을 느껴요"
-    }
-  },
-  "ISTP": {
-    "nickname": "본질을 꿰뚫는 쿨한 해결사",
-    "summary": "군더더기 없는 침착함으로 상황을 관찰하고, 뛰어난 도구 활용과 위기 대처 능력으로 문제를 명쾌하게 해결하는 실전형 장인입니다.",
-    "characterName": "제트",
-    "characterDesc": "스패너를 쥐고 무심한 듯 시크하게 핵심을 짚어내는 청록 몽글이",
-    "tags": [
-      "#마이웨이",
-      "#냉철한침착함",
-      "#효율주의",
-      "#실전해결사"
-    ],
-    "essence": {
-      "mode": "말보다 행동이 앞서며, 복잡한 감정싸움보다는 기계나 도구, 명확한 인과관계가 있는 실전 문제에 강한 흥미를 느낍니다.",
-      "inner": "만사가 귀찮아 보이지만 호기심이 발동하는 순간 놀라운 집중력과 정밀함으로 문제를 완벽히 뜯어고칩니다."
-    },
-    "relationship": {
-      "comfort": "과도한 사생활 침해 없이 각자의 시간을 존중해주고, 감정적인 강요 없이 담백하고 쿨한 관계를 유지하는 사람.",
-      "cutoff": "끊임없이 감정 확인을 요구하며 구속하려 들거나, 비효율적인 절차를 강요하며 잔소리를 늘어놓을 때 바람처럼 도망칩니다."
-    },
-    "stress": {
-      "signal": "감정적인 압박을 받으면 완전히 입을 닫고 고립되며, 충동적인 행동이나 과소비로 스트레스를 분출합니다.",
-      "cure": "혼자서 드라이브를 즐기거나 손으로 무언가를 직접 분해하고 조립하는 메이킹 활동에 몰입하기."
-    },
-    "best": {
-      "type": "ESFJ, ESTJ",
-      "desc": "귀찮은 일상 행정이나 살림을 척척 챙겨주며 나의 자유를 인정해 주는 든든한 짝"
-    },
-    "worst": {
-      "type": "ENFJ, INFJ",
-      "desc": "끊임없이 마음을 털어놓으라 강요하거나 감정의 깊이를 요구할 때 답답해요"
-    }
-  },
-  "ISFP": {
-    "nickname": "순수한 감성을 그리는 서정적 예술가",
-    "summary": "현재의 소박한 순간 속에서 아름다움을 발견하며, 따스하고 무해한 태도로 주변 사람들에게 잔잔한 평온을 선물하는 사람입니다.",
-    "characterName": "밀로",
-    "characterDesc": "다채로운 물감이 묻은 팔레트를 들고 꿈결 같은 미소를 짓는 아쿠아 몽글이",
-    "tags": [
-      "#평화주의자",
-      "#감성장인",
-      "#자연스러운멋",
-      "#따스한온기"
-    ],
-    "essence": {
-      "mode": "경쟁이나 갈등을 극도로 싫어하며, 자신만의 속도와 미적 취향대로 조용히 살아가는 것을 가장 큰 행복으로 여깁니다.",
-      "inner": "순둥순둥해 보이지만 내면에는 확고한 호불호와 가치관이 있으며, 억지로 떠밀리면 끝까지 버티는 고집이 있습니다."
-    },
-    "relationship": {
-      "comfort": "재촉하지 않고 내 호흡을 기다려주며, 함께 있을 때 말없이 가만히 있어도 마음이 편안해지는 무해한 사람.",
-      "cutoff": "강압적인 어조로 내 생활 방식을 뜯어고치려 하거나, 남들과 끊임없이 비교하며 경쟁을 부추길 때 조용히 멀어집니다."
-    },
-    "stress": {
-      "signal": "압박감이 심해지면 극단적인 무기력증에 빠져 침대 밖으로 한 걸음도 나오지 못하고 현실을 도피합니다.",
-      "cure": "좋아하는 향초를 켜고 푹신한 베개에 파묻혀 혼자만의 음악 감상, 혹은 아기자기한 감성 소품 숍 탐방."
-    },
-    "best": {
-      "type": "ESFJ, ESTJ",
-      "desc": "우유부단한 나 대신 든든하게 길을 잡아주고 안전한 울타리를 쳐주는 사람"
-    },
-    "worst": {
-      "type": "ENTJ, INTJ",
-      "desc": "지나치게 몰아세우거나 냉정한 평가만을 들이밀 때 깊은 위축감을 느껴요"
-    }
-  },
-  "ESTP": {
-    "nickname": "짜릿한 현재를 질주하는 승부사",
-    "summary": "넘치는 에너지와 거침없는 순발력으로 어떤 돌발 상황도 기회로 바꾸며, 온몸으로 삶의 스릴을 즐기는 대담한 모험가입니다.",
-    "characterName": "레오",
-    "characterDesc": "선글라스를 이마에 얹고 번개 같은 스피드로 뛰어드는 골든 몽글이",
-    "tags": [
-      "#순발력천재",
-      "#거침없는직진",
-      "#짜릿한모험",
-      "#위기돌파"
-    ],
-    "essence": {
-      "mode": "고민할 시간에 일단 부딪혀 봅니다. 복잡한 이론보다 몸으로 체득한 감각을 신뢰하며, 위기 상황에서 가장 빛을 발합니다.",
-      "inner": "늘 뒤끝 없고 쿨해 보이지만, 소중한 사람에게 거절당하거나 자신의 솔직함이 오해받았을 때 남몰래 씁쓸함을 느낍니다."
-    },
-    "relationship": {
-      "comfort": "유쾌하고 뒤끝이 없으며, 빼지 않고 즉흥적인 재미와 도전을 함께 즐길 수 있는 솔직담백한 사람.",
-      "cutoff": "사소한 일로 삐쳐서 며칠 동안 침묵 시위를 하거나, 솔직한 대화 대신 돌려 말하며 떠보는 태도를 참지 못합니다."
-    },
-    "stress": {
-      "signal": "엄격한 규율에 갇혀 몸을 움직이지 못할 때 극도로 산만해지며, 무모한 내기나 충동적인 행동으로 자멸하기 쉽습니다.",
-      "cure": "땀이 흠뻑 젖는 익스트림 스포츠, 바이크 라이딩, 혹은 탁 트인 야외에서 몸으로 에너지 분출하기."
-    },
-    "best": {
-      "type": "ISFJ, ISTJ",
-      "desc": "나의 폭풍 같은 질주를 묵묵히 지켜봐 주고 뒷수습까지 단단하게 챙겨주는 바위 같은 짝"
-    },
-    "worst": {
-      "type": "INFJ, INFP",
-      "desc": "사소한 단어 하나에 의미를 부여하고 복잡하게 꼬아서 생각할 때 답답해 미쳐요"
-    }
-  },
-  "ESFP": {
-    "nickname": "세상을 축제로 물들이는 열정의 스타",
-    "summary": "특유의 천진난만한 밝음과 흥으로 어디서나 좌중을 사로잡으며, 지금 이 순간을 가장 반짝이는 축제로 만드는 매력 덩어리입니다.",
-    "characterName": "조이",
-    "characterDesc": "별 모양 선글라스를 끼고 다채로운 반짝이를 흩뿌리는 마젠타 몽글이",
-    "tags": [
-      "#인싸오브인싸",
-      "#흥부자",
-      "#분위기스타",
-      "#순간의행복"
-    ],
-    "essence": {
-      "mode": "사람들과 어울려 웃고 떠들 때 아드레날린이 솟구칩니다. 맛있는 음식, 멋진 음악, 예쁜 옷 등 오감의 즐거움을 사랑합니다.",
-      "inner": "모두를 웃게 만드는 광대처럼 굴지만, 정작 자신이 힘들 때 기댈 곳이 없다고 느끼면 극심한 외로움에 빠집니다."
-    },
-    "relationship": {
-      "comfort": "내 흥과 장난을 온전히 받아주고, 겉모습의 화려함 뒤에 숨은 여린 마음까지 알아봐 주는 다정한 사람.",
-      "cutoff": "매사에 비관적이고 매사 트집만 잡으며, 사람들의 면전에서 무안을 주는 쌀쌀맞은 태도를 목격할 때 정이 떨어집니다."
-    },
-    "stress": {
-      "signal": "혼자 남겨지는 것에 대한 극심한 공포를 느끼며, 우울함을 달래기 위해 충동적인 파티나 소비에 매달립니다.",
-      "cure": "나를 무조건 지지해 주는 찐친들과 시끌벅적한 수다 떨기, 좋아하는 옷을 입고 예쁜 카페에서 사진 찍기."
-    },
-    "best": {
-      "type": "ISTJ, ISFJ",
-      "desc": "나의 변덕과 기복을 차분하고 단단하게 받아주는 든든한 닻 같은 존재"
-    },
-    "worst": {
-      "type": "INTJ, ENTJ",
-      "desc": "딱딱한 논리로 훈계하려 들거나 엄격한 잣대로 재단할 때 에너지가 방전돼요"
-    }
-  }
-};
+    const mbtiData = ${JSON.stringify(mbtiData, null, 2)};
 
     // State Variables
     let currentIdx = 0;
@@ -1260,10 +751,10 @@
 
     function renderQuestion() {
       const q = questions[currentIdx];
-      document.getElementById('question-counter').innerText = `${currentIdx + 1} / ${questions.length}`;
+      document.getElementById('question-counter').innerText = \`\${currentIdx + 1} / \${questions.length}\`;
       document.getElementById('question-category').innerText = q.category;
       document.getElementById('question-badge').innerText = q.badge;
-      document.getElementById('question-text').innerHTML = q.text.replace(/\n/g, '<br>');
+      document.getElementById('question-text').innerHTML = q.text.replace(/\\n/g, '<br>');
 
       // Update Options Text
       document.getElementById('opt-a-strong').innerText = q.optAStrong;
@@ -1273,7 +764,7 @@
 
       // Progress bar
       const pct = ((currentIdx + 1) / questions.length) * 100;
-      document.getElementById('progress-bar').style.width = `${pct}%`;
+      document.getElementById('progress-bar').style.width = \`\${pct}%\`;
 
       // Prev Button state
       document.getElementById('btn-prev').disabled = currentIdx === 0;
@@ -1349,7 +840,7 @@
       const sn = scores.SN >= 0 ? 'S' : 'N';
       const tf = scores.TF >= 0 ? 'T' : 'F';
       const jp = scores.JP >= 0 ? 'J' : 'P';
-      const finalMbti = `${ei}${sn}${tf}${jp}`;
+      const finalMbti = \`\${ei}\${sn}\${tf}\${jp}\`;
       currentResultMbti = finalMbti;
 
       function getPercent(score) {
@@ -1368,25 +859,25 @@
       document.getElementById('res-mbti').innerText = finalMbti;
       document.getElementById('res-nickname').innerText = profile.nickname;
       document.getElementById('res-summary').innerText = profile.summary;
-      document.getElementById('res-character-img').src = `assets/characters/${finalMbti}.svg`;
-      document.getElementById('res-character-name').innerText = `${profile.characterName} (${profile.characterDesc})`;
+      document.getElementById('res-character-img').src = \`assets/characters/\${finalMbti}.svg\`;
+      document.getElementById('res-character-name').innerText = \`\${profile.characterName} (\${profile.characterDesc})\`;
 
       // Bind Spectrum Bars
-      document.getElementById('label-e').innerText = `외향 (E) ${pctE}%`;
-      document.getElementById('label-i').innerText = `내향 (I) ${100 - pctE}%`;
-      document.getElementById('bar-e').style.width = `${pctE}%`;
+      document.getElementById('label-e').innerText = \`외향 (E) \${pctE}%\`;
+      document.getElementById('label-i').innerText = \`내향 (I) \${100 - pctE}%\`;
+      document.getElementById('bar-e').style.width = \`\${pctE}%\`;
 
-      document.getElementById('label-s').innerText = `감각 (S) ${pctS}%`;
-      document.getElementById('label-n').innerText = `직관 (N) ${100 - pctS}%`;
-      document.getElementById('bar-s').style.width = `${pctS}%`;
+      document.getElementById('label-s').innerText = \`감각 (S) \${pctS}%\`;
+      document.getElementById('label-n').innerText = \`직관 (N) \${100 - pctS}%\`;
+      document.getElementById('bar-s').style.width = \`\${pctS}%\`;
 
-      document.getElementById('label-t').innerText = `사고 (T) ${pctT}%`;
-      document.getElementById('label-f').innerText = `감정 (F) ${100 - pctT}%`;
-      document.getElementById('bar-t').style.width = `${pctT}%`;
+      document.getElementById('label-t').innerText = \`사고 (T) \${pctT}%\`;
+      document.getElementById('label-f').innerText = \`감정 (F) \${100 - pctT}%\`;
+      document.getElementById('bar-t').style.width = \`\${pctT}%\`;
 
-      document.getElementById('label-j').innerText = `판단 (J) ${pctJ}%`;
-      document.getElementById('label-p').innerText = `인식 (P) ${100 - pctJ}%`;
-      document.getElementById('bar-j').style.width = `${pctJ}%`;
+      document.getElementById('label-j').innerText = \`판단 (J) \${pctJ}%\`;
+      document.getElementById('label-p').innerText = \`인식 (P) \${100 - pctJ}%\`;
+      document.getElementById('bar-j').style.width = \`\${pctJ}%\`;
 
       // Bind Tags
       const tagsContainer = document.getElementById('res-tags');
@@ -1549,7 +1040,7 @@
         await new Promise((resolve) => {
           charImg.onload = resolve;
           charImg.onerror = resolve;
-          charImg.src = `assets/characters/${mbti}.svg`;
+          charImg.src = \`assets/characters/\${mbti}.svg\`;
         });
 
         // Draw character in circle
@@ -1582,10 +1073,10 @@
         const barX = 140;
 
         const axes = [
-          { labelA: `외향 (E) ${pctE}%`, labelB: `내향 (I) ${100 - pctE}%`, val: pctE, col: '#6366f1' },
-          { labelA: `감각 (S) ${pctS}%`, labelB: `직관 (N) ${100 - pctS}%`, val: pctS, col: '#a855f7' },
-          { labelA: `사고 (T) ${pctT}%`, labelB: `감정 (F) ${100 - pctT}%`, val: pctT, col: '#ec4899' },
-          { labelA: `판단 (J) ${pctJ}%`, labelB: `인식 (P) ${100 - pctJ}%`, val: pctJ, col: '#10b981' },
+          { labelA: \`외향 (E) \${pctE}%\`, labelB: \`내향 (I) \${100 - pctE}%\`, val: pctE, col: '#6366f1' },
+          { labelA: \`감각 (S) \${pctS}%\`, labelB: \`직관 (N) \${100 - pctS}%\`, val: pctS, col: '#a855f7' },
+          { labelA: \`사고 (T) \${pctT}%\`, labelB: \`감정 (F) \${100 - pctT}%\`, val: pctT, col: '#ec4899' },
+          { labelA: \`판단 (J) \${pctJ}%\`, labelB: \`인식 (P) \${100 - pctJ}%\`, val: pctJ, col: '#10b981' },
         ];
 
         axes.forEach((axis, idx) => {
@@ -1635,7 +1126,7 @@
 
         ctx.font = 'bold 22px Pretendard, sans-serif';
         ctx.fillStyle = '#6366f1';
-        ctx.fillText(`❤️ 찰떡 케미: ${profile.best.type} (${profile.best.desc})`, 180, 1420);
+        ctx.fillText(\`❤️ 찰떡 케미: \${profile.best.type} (\${profile.best.desc})\`, 180, 1420);
         ctx.restore();
 
         // 9. Tags
@@ -1661,15 +1152,15 @@
         // 11. Trigger Download & Share
         canvas.toBlob((blob) => {
           if (!blob) return;
-          const fileName = `Quick-MBTI-${mbti}.png`;
+          const fileName = \`Quick-MBTI-\${mbti}.png\`;
           const file = new File([blob], fileName, { type: 'image/png' });
 
           // Web Share API if supported
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             navigator.share({
               files: [file],
-              title: `Quick MBTI 나의 결과: ${mbti}`,
-              text: `내 MBTI는 ${mbti} (${profile.nickname})! 30초 초정밀 마음의 결 진단 결과:`,
+              title: \`Quick MBTI 나의 결과: \${mbti}\`,
+              text: \`내 MBTI는 \${mbti} (\${profile.nickname})! 30초 초정밀 마음의 결 진단 결과:\`,
               url: window.location.href
             }).catch(() => {});
           }
@@ -1692,3 +1183,7 @@
   </script>
 </body>
 </html>
+`;
+
+fs.writeFileSync(path.join(__dirname, '..', 'index.html'), htmlContent, 'utf-8');
+console.log('Successfully generated complete index.html!');

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGlow_ESFP" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f5d0fe" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#f5d0fe" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#f5d0fe" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="clayGrad_ESFP" cx="36%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="25%" stop-color="#e879f9"/>
+      <stop offset="85%" stop-color="#a21caf"/>
+      <stop offset="100%" stop-color="#a21caf"/>
+    </radialGradient>
+
+    <linearGradient id="hiGrad_ESFP" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="shGrad_ESFP" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0f172a" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#0f172a" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="clayShadow_ESFP" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#1e1b4b" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <circle cx="200" cy="200" r="180" fill="url(#bgGlow_ESFP)"/>
+  <ellipse cx="200" cy="335" rx="100" ry="24" fill="url(#shGrad_ESFP)"/>
+
+  <g filter="url(#clayShadow_ESFP)">
+    <path d="M200 95 
+             C275 95 310 155 305 235 
+             C300 305 260 320 200 320 
+             C140 320 100 305 95 235 
+             C90 155 125 95 200 95 Z" 
+          fill="url(#clayGrad_ESFP)"/>
+    
+    <ellipse cx="168" cy="145" rx="55" ry="30" transform="rotate(-20 168 145)" fill="url(#hiGrad_ESFP)"/>
+
+    <circle cx="120" cy="110" r="24" fill="#e879f9" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
+    <circle cx="120" cy="110" r="12" fill="#ffffff" opacity="0.45"/>
+    <circle cx="280" cy="110" r="24" fill="#e879f9" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
+    <circle cx="280" cy="110" r="12" fill="#ffffff" opacity="0.45"/>
+  </g>
+
+  <ellipse cx="140" cy="214" rx="16" ry="9" fill="#f43f5e" opacity="0.65" filter="blur(3px)"/>
+  <ellipse cx="260" cy="214" rx="16" ry="9" fill="#f43f5e" opacity="0.65" filter="blur(3px)"/>
+
+  <g id="face">
+    
+      <polygon points="165,178 171,192 185,192 174,200 178,214 165,205 152,214 156,200 145,192 159,192" fill="#fbbf24" stroke="#d97706" stroke-width="2" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))"/>
+      <polygon points="235,178 241,192 255,192 244,200 248,214 235,205 222,214 226,200 215,192 229,192" fill="#fbbf24" stroke="#d97706" stroke-width="2" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))"/>
+      <line x1="185" y1="196" x2="215" y2="196" stroke="#fbbf24" stroke-width="3"/>
+      <path d="M188 226 Q200 240 212 226 Z" fill="#701a75"/>
+      <path d="M193 232 Q200 238 207 232" fill="#f43f5e"/>
+    
+  </g>
+
+  <g id="prop">
+    
+      <g transform="translate(240, 225) scale(0.65)" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))">
+        <path d="M25 35 C15 20 0 28 10 45 L25 60 L40 45 C50 28 35 20 25 35 Z" fill="#f43f5e"/>
+      </g>
+    
+  </g>
+
+  <g transform="translate(200, 365)">
+    <rect x="-42" y="-14" width="84" height="28" rx="14" fill="#ffffff" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.08))"/>
+    <text x="0" y="5" font-family="'Plus Jakarta Sans', Pretendard, sans-serif" font-size="14" font-weight="800" fill="#a21caf" text-anchor="middle">ESFP</text>
+  </g>
+</svg>
