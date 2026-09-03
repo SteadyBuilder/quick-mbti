@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>마음의 결 - 30초 초정밀 감성 MBTI 테스트</title>
+  <meta name="description" content="단 8개의 질문으로 만나는 나의 진짜 성향. ieum 감성으로 풀어내는 초정밀 성격 분석." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Pretendard & Plus Jakarta Sans Web Fonts -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'serif'],
+          },
+          colors: {
+            slateLav: '#f5f7ff',
+            brandPurple: '#6366f1',
+            brandViolet: '#8b5cf6',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: #f5f7ff;
+      color: #1e293b;
+      overflow-x: hidden;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    /* Floating Orbs (ieum.one 벤치마크 감성 조명) */
+    .floating-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floating-orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(80px);
+      opacity: 0.55;
+      animation: floatMotion 18s ease-in-out infinite alternate;
+    }
+
+    .floating-orb-1 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(165, 180, 252, 0.7) 0%, rgba(199, 210, 254, 0.2) 70%);
+      top: -80px;
+      left: -80px;
+      animation-duration: 20s;
+    }
+
+    .floating-orb-2 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(221, 214, 254, 0.75) 0%, rgba(243, 232, 255, 0.2) 70%);
+      top: 40%;
+      right: -120px;
+      animation-duration: 24s;
+      animation-delay: -5s;
+    }
+
+    .floating-orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(254, 205, 211, 0.6) 0%, rgba(255, 228, 230, 0.15) 70%);
+      bottom: -60px;
+      left: 15%;
+      animation-duration: 22s;
+      animation-delay: -10s;
+    }
+
+    .floating-orb-4 {
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(191, 219, 254, 0.65) 0%, rgba(224, 242, 254, 0.2) 70%);
+      top: 15%;
+      left: 55%;
+      animation-duration: 19s;
+      animation-delay: -3s;
+    }
+
+    @keyframes floatMotion {
+      0% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+      }
+      50% {
+        transform: translate(45px, 60px) scale(1.1) rotate(60deg);
+      }
+      100% {
+        transform: translate(-35px, 30px) scale(0.95) rotate(-40deg);
+      }
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.07), 0 0 1px 1px rgba(255, 255, 255, 0.6) inset;
+    }
+
+    .glass-button {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-button:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(165, 180, 252, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.12);
+    }
+
+    .glass-button:active {
+      transform: scale(0.98);
+      background: rgba(241, 245, 249, 0.8);
+    }
+
+    /* Primary Gradient Button */
+    .btn-gradient {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.38);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-gradient:hover {
+      box-shadow: 0 16px 32px -4px rgba(99, 102, 241, 0.5);
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .btn-gradient:active {
+      transform: scale(0.98);
+    }
+
+    /* Pulse Glow Animation */
+    @keyframes subtlePulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.04); opacity: 1; }
+    }
+    .pulse-slow {
+      animation: subtlePulse 4s ease-in-out infinite;
+    }
+
+    /* Logo Shimmer */
+    .shimmer-text {
+      background: linear-gradient(120deg, #1e293b 0%, #6366f1 40%, #1e293b 80%);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: shimmer 6s linear infinite;
+    }
+
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+
+    /* Screen Slide Animations */
+    .fade-slide-enter {
+      animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Pulse Loader Orb */
+    .loading-core {
+      animation: coreRotate 8s linear infinite;
+    }
+    @keyframes coreRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased relative selection:bg-indigo-100">
+
+  <!-- Ambient Floating Orbs (ieum.one 감성) -->
+  <div class="floating-orbs">
+    <div class="floating-orb floating-orb-1"></div>
+    <div class="floating-orb floating-orb-2"></div>
+    <div class="floating-orb floating-orb-3"></div>
+    <div class="floating-orb floating-orb-4"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="relative z-10 w-full max-w-lg mx-auto px-5 pt-7 pb-3 flex items-center justify-between">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="restartTest()">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-400 flex items-center justify-center text-white text-sm shadow-sm font-bold">
+        결
+      </div>
+      <span class="font-bold text-slate-800 text-lg tracking-tight">마음의 결</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/60 border border-slate-200/60 backdrop-blur-md text-xs font-semibold text-slate-600 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>30초 초정밀 MBTI</span>
+    </div>
+  </header>
+
+  <!-- Main Dynamic View Container -->
+  <main class="relative z-10 flex-1 w-full max-w-lg mx-auto px-5 py-4 flex flex-col justify-center">
+
+    <!-- SCREEN 1: INTRO (시작 화면) -->
+    <section id="screen-intro" class="fade-slide-enter flex flex-col items-center text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50/80 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-6 shadow-sm">
+        <span>✨ 100만 명 이상의 직관을 담다</span>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-800 mb-3 leading-tight">
+        나를 찾아가는<br>
+        <span class="shimmer-text">8개의 질문</span>
+      </h1>
+
+      <p class="text-slate-500 text-sm md:text-base mb-8 max-w-xs leading-relaxed font-normal">
+        질문이 너무 많아 지치셨나요?<br>
+        핵심을 찌르는 8가지 질문으로<br>
+        정규 검사 못지않은 진짜 내 모습을 밝혀냅니다.
+      </p>
+
+      <!-- Glass Graphic Card -->
+      <div class="glass-card w-full rounded-3xl p-6 mb-8 text-left relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-200/40 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🧭</span>
+            <span class="text-xs font-bold text-slate-500 tracking-wider uppercase">Precision Matrix</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-100/80 text-indigo-700 font-bold">4-Point Scale</span>
+        </div>
+        <div class="space-y-2.5 text-xs text-slate-600">
+          <div class="flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+            <span><strong>8문항 4점 척도</strong>로 1:1 동점 오류 원천 차단</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+            <span>각 지표별(E-I, S-N, T-F, J-P) <strong>세부 백분율(%)</strong> 산출</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+            <span>소요 시간: <strong>약 30초 내외</strong> 초고속 완료</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Start Button -->
+      <button onclick="startTest()" class="btn-gradient w-full py-4 rounded-2xl text-white font-bold text-base flex items-center justify-center gap-2 group cursor-pointer">
+        <span>지금 시작하기</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+
+      <p class="mt-4 text-[11px] text-slate-400">
+        별도의 회원가입 없이 즉시 무료로 진단됩니다.
+      </p>
+    </section>
+
+    <!-- SCREEN 2: QUESTION (질문 화면) -->
+    <section id="screen-question" class="hidden flex-col">
+      <!-- Progress Indicator -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 mb-2">
+          <div class="flex items-center gap-2">
+            <button onclick="prevQuestion()" id="btn-prev" class="p-1 -ml-1 text-slate-400 hover:text-slate-700 transition-colors disabled:opacity-30 disabled:pointer-events-none" title="이전 질문">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span id="question-category" class="text-indigo-600 bg-indigo-50/80 px-2.5 py-0.5 rounded-full text-[11px] font-bold">에너지의 방향</span>
+          </div>
+          <span class="tabular-nums font-bold text-indigo-600" id="question-counter">1 / 8</span>
+        </div>
+        <div class="w-full h-2 bg-slate-200/60 rounded-full overflow-hidden p-0.5 backdrop-blur-sm">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-300 ease-out" style="width: 12.5%;"></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="glass-card rounded-3xl p-6 md:p-7 shadow-lg mb-4 text-center relative overflow-hidden">
+        <span id="question-badge" class="inline-block text-xs font-bold text-slate-400 tracking-wider uppercase mb-2">Q. 01</span>
+        <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 leading-relaxed break-keep">
+          오랜만에 맞이한 완전한 자유 주말!<br>당신이 진정으로 에너지를 채우는 방법은?
+        </h2>
+      </div>
+
+      <!-- 4-Level Scaled Answer Options (원클릭 정밀 선택) -->
+      <div class="space-y-2.5" id="options-container">
+        <!-- Option A (Strong) -->
+        <button onclick="selectOption(2)" class="glass-button w-full p-4 rounded-2xl text-left flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-xs group-hover:bg-indigo-600 group-hover:text-white transition-colors">A+</span>
+            <div>
+              <p class="text-sm font-semibold text-slate-800" id="opt-a-text">집에서 혼자만의 여유 만끽 (방콕)</p>
+              <span class="text-[11px] text-indigo-500 font-medium">완전 내 이야기예요</span>
+            </div>
+          </div>
+          <span class="text-xs text-slate-400 group-hover:translate-x-1 transition-transform">👉</span>
+        </button>
+
+        <!-- Option A (Slight) -->
+        <button onclick="selectOption(1)" class="glass-button w-full p-3.5 rounded-2xl text-left flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-xs group-hover:bg-indigo-500 group-hover:text-white transition-colors">A</span>
+            <div>
+              <p class="text-xs md:text-sm font-medium text-slate-700" id="opt-a-slight">그래도 혼자 쉬는 쪽에 더 가까워요</p>
+            </div>
+          </div>
+          <span class="text-[11px] text-slate-400">약간 공감</span>
+        </button>
+
+        <!-- Option B (Slight) -->
+        <button onclick="selectOption(-1)" class="glass-button w-full p-3.5 rounded-2xl text-left flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition-colors">B</span>
+            <div>
+              <p class="text-xs md:text-sm font-medium text-slate-700" id="opt-b-slight">그래도 사람 만나는 쪽에 더 가까워요</p>
+            </div>
+          </div>
+          <span class="text-[11px] text-slate-400">약간 공감</span>
+        </button>
+
+        <!-- Option B (Strong) -->
+        <button onclick="selectOption(-2)" class="glass-button w-full p-4 rounded-2xl text-left flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 font-bold flex items-center justify-center text-xs group-hover:bg-purple-600 group-hover:text-white transition-colors">B+</span>
+            <div>
+              <p class="text-sm font-semibold text-slate-800" id="opt-b-text">친구들 불러서 밖에서 신나게 놀기</p>
+              <span class="text-[11px] text-purple-500 font-medium">완전 내 이야기예요</span>
+            </div>
+          </div>
+          <span class="text-xs text-slate-400 group-hover:translate-x-1 transition-transform">👉</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: INTERSTITIAL LOADING (감성 분석 대기 화면) -->
+    <section id="screen-loading" class="hidden flex-col items-center justify-center text-center py-12">
+      <!-- Pulsing Crystal Orb Animation -->
+      <div class="relative w-40 h-40 flex items-center justify-center mb-8">
+        <div class="absolute inset-0 rounded-full bg-indigo-300/30 blur-2xl animate-ping opacity-40"></div>
+        <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-400 to-pink-300 p-0.5 pulse-slow shadow-xl">
+          <div class="w-full h-full rounded-full bg-white/70 backdrop-blur-md flex items-center justify-center relative overflow-hidden">
+            <div class="absolute w-24 h-24 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full blur-lg loading-core"></div>
+            <span class="text-3xl relative z-10">✨</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-bold text-slate-800 mb-2" id="loading-title">
+        답변의 결을 읽어내는 중...
+      </h3>
+      <p class="text-xs text-slate-500" id="loading-subtitle">
+        내면의 4가지 축 좌표를 정밀 대조하고 있습니다.
+      </p>
+
+      <!-- Step Indicator Dots -->
+      <div class="flex items-center gap-2 mt-6">
+        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce"></span>
+        <span class="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 0.15s"></span>
+        <span class="w-2 h-2 rounded-full bg-indigo-300 animate-bounce" style="animation-delay: 0.3s"></span>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: RESULT (결과 화면) -->
+    <section id="screen-result" class="hidden flex-col fade-slide-enter">
+      <!-- Result Card -->
+      <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl text-center mb-5 relative overflow-hidden">
+        <div class="absolute -top-12 -left-12 w-32 h-32 bg-purple-200/50 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-indigo-200/50 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold mb-3 shadow-xs">
+          <span>나의 본모습 성향</span>
+        </div>
+
+        <div class="flex items-center justify-center gap-2 mb-2">
+          <h2 id="res-mbti" class="text-4xl md:text-5xl font-black tracking-tight text-slate-800">ENFP</h2>
+        </div>
+
+        <p id="res-nickname" class="text-lg md:text-xl font-bold text-indigo-600 mb-2">
+          반짝이는 영감을 품은 자유로운 탐험가
+        </p>
+
+        <p id="res-summary" class="text-xs md:text-sm text-slate-600 font-normal leading-relaxed mb-6 break-keep">
+          새로운 가능성에 언제나 가슴이 뛰며, 사람의 따뜻한 온기와 교감을 사랑하는 낭만주의자입니다.
+        </p>
+
+        <!-- 4 Axes Detailed Precision Breakdown -->
+        <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-4 border border-slate-200/50 mb-6 text-left space-y-3.5">
+          <h4 class="text-xs font-bold text-slate-500 flex items-center justify-between uppercase tracking-wider mb-1">
+            <span>정밀 성향 스펙트럼</span>
+            <span class="text-[10px] text-indigo-500 font-semibold">정규 MBTI 알고리즘 일치</span>
+          </h4>
+
+          <!-- Axis 1: E vs I -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span id="label-e" class="text-slate-700">외향 (E) 75%</span>
+              <span id="label-i" class="text-slate-400">내향 (I) 25%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+              <div id="bar-e" class="bg-indigo-500 h-full rounded-full transition-all duration-1000" style="width: 75%;"></div>
+            </div>
+          </div>
+
+          <!-- Axis 2: S vs N -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span id="label-s" class="text-slate-400">감각 (S) 20%</span>
+              <span id="label-n" class="text-purple-700">직관 (N) 80%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+              <div id="bar-s" class="bg-purple-500 h-full rounded-full transition-all duration-1000" style="width: 80%;"></div>
+            </div>
+          </div>
+
+          <!-- Axis 3: T vs F -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span id="label-t" class="text-slate-400">사고 (T) 30%</span>
+              <span id="label-f" class="text-pink-600">감정 (F) 70%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+              <div id="bar-t" class="bg-pink-500 h-full rounded-full transition-all duration-1000" style="width: 70%;"></div>
+            </div>
+          </div>
+
+          <!-- Axis 4: J vs P -->
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span id="label-j" class="text-slate-400">판단 (J) 15%</span>
+              <span id="label-p" class="text-emerald-600">인식 (P) 85%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+              <div id="bar-j" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 85%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personality Traits Tags -->
+        <div class="flex flex-wrap items-center justify-center gap-1.5 mb-6" id="res-tags">
+          <span class="px-2.5 py-1 rounded-full bg-slate-100/80 text-slate-700 text-xs font-medium">#아이디어뱅크</span>
+          <span class="px-2.5 py-1 rounded-full bg-slate-100/80 text-slate-700 text-xs font-medium">#인간비타민</span>
+          <span class="px-2.5 py-1 rounded-full bg-slate-100/80 text-slate-700 text-xs font-medium">#즉흥의달인</span>
+          <span class="px-2.5 py-1 rounded-full bg-slate-100/80 text-slate-700 text-xs font-medium">#공감왕</span>
+        </div>
+
+        <!-- Chemistry Cards (찰떡궁합 & 환장궁합) -->
+        <div class="grid grid-cols-2 gap-3 text-left mb-2">
+          <div class="bg-indigo-50/60 border border-indigo-100/80 rounded-2xl p-3">
+            <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block mb-1">❤️ 찰떡 케미</span>
+            <p id="res-best-mbti" class="text-sm font-bold text-slate-800">INFJ, INTJ</p>
+            <p id="res-best-desc" class="text-[11px] text-slate-500 mt-0.5">내 깊은 생각까지 알아봐 주는 소울메이트</p>
+          </div>
+          <div class="bg-slate-50/60 border border-slate-200/80 rounded-2xl p-3">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">⚡ 거리두기 케미</span>
+            <p id="res-worst-mbti" class="text-sm font-bold text-slate-800">ISTJ, ESTJ</p>
+            <p id="res-worst-desc" class="text-[11px] text-slate-500 mt-0.5">엄격한 규칙 앞에서 숨이 막힐 수도 있어요</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2.5 mb-8">
+        <button onclick="shareResult()" class="btn-gradient w-full py-3.5 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          <span>내 결과 링크 복사하기</span>
+        </button>
+
+        <button onclick="restartTest()" class="glass-button w-full py-3.5 rounded-2xl text-slate-700 font-semibold text-sm flex items-center justify-center gap-1.5 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>다시 테스트하기</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-slate-900/90 text-white text-xs font-semibold backdrop-blur-md shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none flex items-center gap-2">
+    <span>✨ 링크가 클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 w-full max-w-lg mx-auto px-5 py-6 text-center text-xs text-slate-400 border-t border-slate-200/40">
+    <p>© 2026 마음의 결 · 8-Question Precision MBTI Lab</p>
+    <p class="mt-1 text-[11px] text-slate-400/80">공감과 몰입을 위한 간이 심리 분석 서비스입니다.</p>
+  </footer>
+
+  <!-- Script: Questions, Precision Engine & 16 Types DB -->
+  <script>
+    // 8개 엄선 문항 데이터 (각 지표별 2문항 × 4축 = 8문항)
+    const questions = [
+      {
+        axis: 'EI',
+        category: '에너지의 방향',
+        badge: 'Q. 01',
+        text: '오랜만에 맞이한 완전한 자유 주말!\n당신이 진정으로 에너지를 충전하는 방식은?',
+        optA: '침대 밖은 위험해! 오롯이 혼자만의 방콕 휴식',
+        optASlight: '조용한 곳에서 혼자 쉬는 쪽에 더 가까워요',
+        optBSlight: '친구 한두 명 가볍게 만나는 쪽에 더 가까워요',
+        optB: '주말엔 밖으로 나가야지! 사람들과 만나서 놀기',
+        letterA: 'I',
+        letterB: 'E'
+      },
+      {
+        axis: 'SN',
+        category: '인식과 생각의 결',
+        badge: 'Q. 02',
+        text: '혼자 멍때리거나 버스/지하철 창밖을 볼 때\n당신의 머릿속을 채우는 생각은?',
+        optA: '오늘 먹을 메뉴, 할 일, 보이는 풍경 등 현실적인 생각',
+        optASlight: '최근 겪었던 일이나 눈앞의 일정 정리에 가까워요',
+        optBSlight: '꼬리에 꼬리를 무는 상상에 가까워요',
+        optB: '"갑자기 좀비 사태 터지면 어디로 탈출하지?" 같은 가상 시나리오',
+        letterA: 'S',
+        letterB: 'N'
+      },
+      {
+        axis: 'TF',
+        category: '공감과 반응',
+        badge: 'Q. 03',
+        text: '친구가 "나 오늘 너무 우울해서 빵 샀어..."라고 카톡을 보냈다.\n내 머릿속을 스치는 첫 반응은?',
+        optA: '"헐 무슨 일 있었어? 왜 우울해 ㅠㅠ 토닥토닥"',
+        optASlight: '우울하다는 기분이 먼저 신경 쓰이고 걱정돼요',
+        optBSlight: '우울한 이유도 궁금하지만 무슨 빵인지도 궁금해요',
+        optB: '"무슨 빵 샀는데?" or "우울한 거랑 빵 사는 게 무슨 상관이지?"',
+        letterA: 'F',
+        letterB: 'T'
+      },
+      {
+        axis: 'JP',
+        category: '계획과 생활 양식',
+        badge: 'Q. 04',
+        text: '친구들과 2박 3일 여행을 떠나기로 했을 때,\n나의 여행 준비 스타일은?',
+        optA: '동선, 맛집 휴무일, 비상 대체 플랜까지 꼼꼼히 정리',
+        optASlight: '가고 싶은 핵심 스팟과 동선 정도는 미리 짜두는 편',
+        optBSlight: '숙소와 교통만 정하고 현지에서 유동적으로 정하는 편',
+        optB: '무계획이 곧 계획! 그날 날씨와 기분 내키는 대로 즉흥 여행',
+        letterA: 'J',
+        letterB: 'P'
+      },
+      {
+        axis: 'EI',
+        category: '사회적 상호작용',
+        badge: 'Q. 05',
+        text: '새로운 사람들이 많은 낯선 모임(파티, 동호회)에 갔을 때\n당신의 자연스러운 모습은?',
+        optA: '구석이나 편한 자리를 찾아 조용히 관찰하며 얌전히 있는다',
+        optASlight: '먼저 다가와 주는 사람과 조용히 1:1 대화를 나눈다',
+        optBSlight: '눈 마주치면 가볍게 먼저 인사하고 자연스럽게 낀다',
+        optB: '분위기를 살피며 먼저 말 걸고 새로운 인연 만드는 게 즐겁다',
+        letterA: 'I',
+        letterB: 'E'
+      },
+      {
+        axis: 'SN',
+        category: '대화와 관심사',
+        badge: 'Q. 06',
+        text: '친구와 카페에서 시간 가는 줄 모르고 이야기할 때,\n당신이 훨씬 더 흥미를 느끼는 대화 주제는?',
+        optA: '요즘 산 아이템, 맛집 추천, 실제로 겪었던 일화와 팩트',
+        optASlight: '현실적인 재테크나 일상 고민 등 실질적인 이야기',
+        optBSlight: '인생관, 가치관, 심리 등 눈에 안 보이는 이야기',
+        optB: '\'만약에...\' 시리즈, 우주/미래 가설, 철학적이고 엉뚱한 상상 토론',
+        letterA: 'S',
+        letterB: 'N'
+      },
+      {
+        axis: 'TF',
+        category: '위로와 문제 해결',
+        badge: 'Q. 07',
+        text: '친한 친구가 중요한 면접/시험에서 탈락했다고 울먹일 때,\n내가 건네고 싶은 진정한 위로는?',
+        optA: '"진짜 고생 많았어, 네 잘못 아니야" 마음을 온전히 안아주기',
+        optASlight: '맛있는 걸 사주며 상처받은 감정부터 달래준다',
+        optBSlight: '위로해 준 뒤 "다음에 어떻게 준비할까?" 같이 생각해본다',
+        optB: '"다음 일정 언제야? 어디서 감점된 것 같아?" 분석과 대안 제시',
+        letterA: 'F',
+        letterB: 'T'
+      },
+      {
+        axis: 'JP',
+        category: '일과 마감 스타일',
+        badge: 'Q. 08',
+        text: '마감 기한이 일주일 남은 중요한 과제나 프로젝트,\n당신의 전형적인 작업 스타일은?',
+        optA: '받자마자 계획표 짜고 하루하루 쪼개서 미리 여유 있게 끝낸다',
+        optASlight: '마감 2~3일 전에는 끝내두어야 마음이 편안해요',
+        optBSlight: '시간 날 때 조금씩 보다가 마감이 다가오면 몰입해요',
+        optB: '마감 전날 벼락치기 할 때 초인적인 아드레날린과 집중력이 폭발한다',
+        letterA: 'J',
+        letterB: 'P'
+      }
+    ];
+
+    // 16개 MBTI 상세 데이터베이스
+    const mbtiData = {
+      'INTJ': {
+        nickname: '용의주도한 미래 전략가',
+        summary: '전체적인 흐름을 꿰뚫어 보며, 목표를 향해 냉철하고 체계적으로 전진하는 지적 설계자입니다.',
+        tags: ['#전략가', '#지적독립', '#완벽주의', '#효율추구'],
+        best: { type: 'ENFP, ENTP', desc: '나의 닫힌 세계에 새로운 영감의 창문을 열어주는 존재' },
+        worst: { type: 'ESFJ, ISFP', desc: '감정적인 배려 요구와 비논리적 상황에 쉽게 피로해져요' }
+      },
+      'INTP': {
+        nickname: '지적 호기심의 논리 분석가',
+        summary: '복잡한 세상의 이치와 원리를 탐구하며, 틀에 얽매이지 않는 독창적인 통찰을 지닌 사색가입니다.',
+        tags: ['#아이디어뱅크', '#논리왕', '#팩트중심', '#자유영혼'],
+        best: { type: 'ENTJ, ENFJ', desc: '나의 번뜩이는 생각을 현실의 실행력으로 이끌어주는 리더' },
+        worst: { type: 'ESFJ, ISFJ', desc: '사회적 관습이나 의무적인 감정 표현을 강요받을 때 지쳐요' }
+      },
+      'ENTJ': {
+        nickname: '대담한 비전의 총사령관',
+        summary: '명확한 비전과 추진력으로 사람들을 이끌며, 어떤 난관도 돌파해내는 당당한 타고난 리더입니다.',
+        tags: ['#추진력갑', '#승부사', '#결단력', '#카리스마'],
+        best: { type: 'INTP, INFP', desc: '나의 거침없는 질주에 깊이 있는 통찰과 따스한 쉼표를 주는 사람' },
+        worst: { type: 'ISFP, ESFP', desc: '계획 없는 즉흥과 미적지근한 태도를 보면 답답함을 느껴요' }
+      },
+      'ENTP': {
+        nickname: '재치 넘치는 혁신적 변론가',
+        summary: '지루한 일상에 유쾌한 균열을 내며, 끊임없이 새로운 가능성과 논쟁을 즐기는 아이디어 탐험가입니다.',
+        tags: ['#반골기질', '#유쾌한변론', '#두뇌회전', '#임기응변'],
+        best: { type: 'INFJ, INTJ', desc: '나의 엉뚱한 상상을 깊이 이해하고 진지하게 받아쳐 주는 소울메이트' },
+        worst: { type: 'ISFJ, ESFJ', desc: '엄격한 규칙과 잔소리 많은 보수적 환경에서 도망치고 싶어져요' }
+      },
+      'INFJ': {
+        nickname: '깊은 통찰의 신비로운 조언자',
+        summary: '타인의 마음 깊은 곳을 조용히 헤아리며, 세상에 따뜻하고 선한 영향력을 꿈꾸는 온화한 몽상가입니다.',
+        tags: ['#통찰력', '#내면의평화', '#진정성', '#공감치유'],
+        best: { type: 'ENTP, ENFP', desc: '조용한 내 세상에 유쾌한 활력과 웃음을 선물해 주는 빛' },
+        worst: { type: 'ESTP, ISTP', desc: '지나치게 직설적이거나 감정선이 메마른 사람 앞에서는 입을 닫아요' }
+      },
+      'INFP': {
+        nickname: '낭만을 노래하는 따스한 중재자',
+        summary: '나만의 순수한 신념과 예술적 감성을 품고, 상처받은 이들을 조용히 보듬어주는 내면의 시인입니다.',
+        tags: ['#풍부한감수성', '#낭만주의', '#이해심', '#소확행'],
+        best: { type: 'ENTJ, ENFJ', desc: '내 여린 감성을 지켜주고 나아갈 방향을 든든하게 잡아주는 사람' },
+        worst: { type: 'ESTJ, ISTJ', desc: '현실적인 잣대로 비판하거나 몰아세우면 깊은 동굴로 숨어버려요' }
+      },
+      'ENFJ': {
+        nickname: '마음을 움직이는 다정한 선구자',
+        summary: '빛나는 카리스마와 진심 어린 배려로 주변 사람들의 잠재력을 이끌어내는 긍정 에너지의 화신입니다.',
+        tags: ['#빛나는리더십', '#배려의아이콘', '#인싸력', '#동기부여'],
+        best: { type: 'INFP, ISFP', desc: '나의 진심을 알아주고 따스하게 스며드는 무해하고 맑은 사람' },
+        worst: { type: 'ISTP, ESTP', desc: '아무리 마음을 줘도 무덤덤하고 차갑게 반응하면 상처받아요' }
+      },
+      'ENFP': {
+        nickname: '반짝이는 영감의 자유로운 탐험가',
+        summary: '새로운 가능성에 언제나 가슴이 뛰며, 사람의 따뜻한 온기와 교감을 사랑하는 매력적인 낭만파입니다.',
+        tags: ['#인간비타민', '#아이디어뱅크', '#열정만수르', '#자유영혼'],
+        best: { type: 'INTJ, INFJ', desc: '나의 들뜬 열정을 차분하게 받아주고 깊은 대화를 나눠주는 닻' },
+        worst: { type: 'ISTJ, ESTJ', desc: '틀에 박힌 루틴과 융통성 없는 규율 속에 갇히면 에너지가 방전돼요' }
+      },
+      'ISTJ': {
+        nickname: '묵묵히 신뢰를 지키는 현실주의자',
+        summary: '책임감과 원칙을 목숨처럼 여기며, 한 번 맡은 일은 끝까지 완벽하게 완수하는 든든한 사회의 기둥입니다.',
+        tags: ['#신뢰도100%', '#원칙주의', '#책임감', '#정리정돈'],
+        best: { type: 'ESFP, ESTP', desc: '다소 단조로운 내 일상에 생각지도 못한 활력과 웃음을 불어넣는 짝' },
+        worst: { type: 'ENFP, INFP', desc: '약속을 자주 바꾸거나 감정에 치우쳐 일관성이 없으면 스트레스받아요' }
+      },
+      'ISFJ': {
+        nickname: '다정하고 성실한 헌신적 수호자',
+        summary: '소중한 사람들을 조용히 챙겨주는 세심함과, 변함없는 성실함으로 주변을 평온하게 만드는 따뜻한 쉼터입니다.',
+        tags: ['#세심한배려', '#성실함', '#온화함', '#숨은조력자'],
+        best: { type: 'ESTP, ESFP', desc: '수줍은 나를 세상 밖으로 이끌어주며 잊지 못할 추억을 만들어주는 짝' },
+        worst: { type: 'ENTP, INTP', desc: '말 한마디마다 논쟁을 걸고 날카롭게 비판하면 큰 상처를 입어요' }
+      },
+      'ESTJ': {
+        nickname: '질서를 세우는 현실적 총괄자',
+        summary: '명확한 규칙과 효율적인 시스템을 구축하고, 실천력으로 결과를 반드시 만들어내는 듬직한 지휘관입니다.',
+        tags: ['#효율극대화', '#프로계획러', '#현실감각', '#리더십'],
+        best: { type: 'ISFP, INFP', desc: '나의 강인함 뒤에 숨은 피로를 따스하게 보듬어주는 힐링 파트너' },
+        worst: { type: 'INFP, ENFP', desc: '해야 할 일은 안 하고 뜬구름 잡는 이야기만 늘어놓으면 참기 힘들어요' }
+      },
+      'ESFJ': {
+        nickname: '분위기를 밝히는 친절한 협력가',
+        summary: '모두가 화합할 수 있도록 분위기를 조화롭게 이끌며, 주변 사람들의 행복을 진심으로 돕는 사교계의 별입니다.',
+        tags: ['#친절마스터', '#분위기메이커', '#공감대마왕', '#의리파'],
+        best: { type: 'ISFP, ISTP', desc: '나의 정성과 애정을 고스란히 느끼고 편안하게 머물러주는 친구' },
+        worst: { type: 'INTJ, INTP', desc: '차가운 태도로 거리를 두거나 모임의 노력을 무시하면 속상해요' }
+      },
+      'ISTP': {
+        nickname: '상황을 꿰뚫는 만능 재주꾼',
+        summary: '위기 앞에서도 평정심을 잃지 않는 쿨함, 직접 부딪히며 해답을 찾아내는 실전형 백과사전입니다.',
+        tags: ['#마이웨이', '#냉철한침착', '#손재주', '#효율주의'],
+        best: { type: 'ESFJ, ESTJ', desc: '귀찮은 현실 일처리를 척척 챙겨주며 나를 존중해 주는 든든한 지원군' },
+        worst: { type: 'ENFJ, INFJ', desc: '감정적인 강요나 끊임없는 애정 확인 질문을 받으면 도망치고 싶어요' }
+      },
+      'ISFP': {
+        nickname: '자연스러운 멋을 지닌 순수 예술가',
+        summary: '여유롭고 온화한 태도로 현재의 소박한 아름다움을 즐기며, 따뜻한 감성으로 타인을 위로하는 사람입니다.',
+        tags: ['#평화주의자', '#감성장인', '#집순이집돌이', '#자유로움'],
+        best: { type: 'ESFJ, ESTJ', desc: '나의 우유부단함을 든든하게 결정해 주고 안전한 울타리를 쳐주는 사람' },
+        worst: { type: 'ENTJ, INTJ', desc: '통제하려 들거나 몰아붙이는 강한 어조에 큰 위축감을 느껴요' }
+      },
+      'ESTP': {
+        nickname: '짜릿한 스릴을 즐기는 승부사',
+        summary: '생각보다 행동이 먼저 앞서는 거침없는 매력, 어떤 돌발 상황도 순발력으로 해결하는 에너자이저입니다.',
+        tags: ['#핵인싸', '#순발력천재', '#모험가', '#직진본능'],
+        best: { type: 'ISFJ, ISTJ', desc: '나의 폭풍 같은 질주를 묵묵히 지켜봐 주고 뒷받침해 주는 단단한 짝' },
+        worst: { type: 'INFJ, INFP', desc: '사소한 일에 의미를 부여하고 복잡하게 생각하면 속이 터져요' }
+      },
+      'ESFP': {
+        nickname: '세상을 무대로 만드는 열정 연예인',
+        summary: '특유의 긍정적인 밝음과 흥으로 어디서나 주변을 환하게 밝히며, 오늘 하루를 최고의 축제로 만드는 스타입니다.',
+        tags: ['#인싸오브인싸', '#흥부자', '#낙천주의', '#순간을즐겨라'],
+        best: { type: 'ISTJ, ISFJ', desc: '나의 기복을 묵묵하고 차분하게 받아주는 든든한 바위 같은 사람' },
+        worst: { type: 'INTJ, ENTJ', desc: '계획대로만 살라고 강요하거나 엄격한 잣대로 훈계하면 지쳐요' }
+      }
+    };
+
+    // State Variables
+    let currentIdx = 0;
+    let scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
+    let answersHistory = [];
+
+    function startTest() {
+      document.getElementById('screen-intro').classList.add('hidden');
+      document.getElementById('screen-question').classList.remove('hidden');
+      document.getElementById('screen-question').classList.add('fade-slide-enter');
+      currentIdx = 0;
+      scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
+      answersHistory = [];
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIdx];
+      document.getElementById('question-counter').innerText = `${currentIdx + 1} / ${questions.length}`;
+      document.getElementById('question-category').innerText = q.category;
+      document.getElementById('question-badge').innerText = q.badge;
+      document.getElementById('question-text').innerHTML = q.text.replace(/\n/g, '<br>');
+
+      // Update Options
+      document.getElementById('opt-a-text').innerText = q.optA;
+      document.getElementById('opt-a-slight').innerText = q.optASlight;
+      document.getElementById('opt-b-slight').innerText = q.optBSlight;
+      document.getElementById('opt-b-text').innerText = q.optB;
+
+      // Progress bar
+      const pct = ((currentIdx + 1) / questions.length) * 100;
+      document.getElementById('progress-bar').style.width = `${pct}%`;
+
+      // Prev Button state
+      document.getElementById('btn-prev').disabled = currentIdx === 0;
+
+      // Card animation refresh
+      const qCard = document.querySelector('#screen-question .glass-card');
+      qCard.classList.remove('fade-slide-enter');
+      void qCard.offsetWidth; // Trigger reflow
+      qCard.classList.add('fade-slide-enter');
+    }
+
+    // value: +2 (A Strong), +1 (A Slight), -1 (B Slight), -2 (B Strong)
+    function selectOption(value) {
+      const q = questions[currentIdx];
+      
+      let contribution = 0;
+      if (q.axis === 'EI') {
+        contribution = (q.letterA === 'I') ? -value : value;
+      } else if (q.axis === 'SN') {
+        contribution = (q.letterA === 'S') ? value : -value;
+      } else if (q.axis === 'TF') {
+        contribution = (q.letterA === 'F') ? -value : value;
+      } else if (q.axis === 'JP') {
+        contribution = (q.letterA === 'J') ? value : -value;
+      }
+
+      answersHistory[currentIdx] = {
+        axis: q.axis,
+        contribution: contribution
+      };
+
+      setTimeout(() => {
+        if (currentIdx < questions.length - 1) {
+          currentIdx++;
+          renderQuestion();
+        } else {
+          finishTest();
+        }
+      }, 180);
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        renderQuestion();
+      }
+    }
+
+    function finishTest() {
+      scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
+      answersHistory.forEach(item => {
+        if (item) {
+          scores[item.axis] += item.contribution;
+        }
+      });
+
+      // Show Interstitial Loading
+      document.getElementById('screen-question').classList.add('hidden');
+      document.getElementById('screen-loading').classList.remove('hidden');
+      document.getElementById('screen-loading').classList.add('fade-slide-enter');
+
+      const loadingTexts = [
+        { title: '8개의 답변 조각을 모으는 중...', sub: '당신이 머문 시선과 직관의 흔적을 분석합니다.' },
+        { title: '내면의 4가지 축 좌표를 계산 중...', sub: '에너지, 인식, 판단, 생활 양식의 균형을 대조합니다.' },
+        { title: '정밀 성향 스펙트럼 완성!', sub: '당신만의 고유한 마음의 결이 곧 드러납니다.' }
+      ];
+
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        if (step < loadingTexts.length) {
+          document.getElementById('loading-title').innerText = loadingTexts[step].title;
+          document.getElementById('loading-subtitle').innerText = loadingTexts[step].sub;
+        } else {
+          clearInterval(interval);
+          showResult();
+        }
+      }, 700);
+    }
+
+    function showResult() {
+      document.getElementById('screen-loading').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const ei = scores.EI >= 0 ? 'E' : 'I';
+      const sn = scores.SN >= 0 ? 'S' : 'N';
+      const tf = scores.TF >= 0 ? 'T' : 'F';
+      const jp = scores.JP >= 0 ? 'J' : 'P';
+      const finalMbti = `${ei}${sn}${tf}${jp}`;
+
+      function getPercent(score) {
+        const abs = Math.abs(score);
+        return Math.min(95, Math.round(52 + (abs / 4) * 43));
+      }
+
+      const pctE = scores.EI >= 0 ? getPercent(scores.EI) : 100 - getPercent(scores.EI);
+      const pctS = scores.SN >= 0 ? getPercent(scores.SN) : 100 - getPercent(scores.SN);
+      const pctT = scores.TF >= 0 ? getPercent(scores.TF) : 100 - getPercent(scores.TF);
+      const pctJ = scores.JP >= 0 ? getPercent(scores.JP) : 100 - getPercent(scores.JP);
+
+      const profile = mbtiData[finalMbti] || mbtiData['ENFP'];
+
+      document.getElementById('res-mbti').innerText = finalMbti;
+      document.getElementById('res-nickname').innerText = profile.nickname;
+      document.getElementById('res-summary').innerText = profile.summary;
+
+      document.getElementById('label-e').innerText = `외향 (E) ${pctE}%`;
+      document.getElementById('label-i').innerText = `내향 (I) ${100 - pctE}%`;
+      document.getElementById('bar-e').style.width = `${pctE}%`;
+
+      document.getElementById('label-s').innerText = `감각 (S) ${pctS}%`;
+      document.getElementById('label-n').innerText = `직관 (N) ${100 - pctS}%`;
+      document.getElementById('bar-s').style.width = `${pctS}%`;
+
+      document.getElementById('label-t').innerText = `사고 (T) ${pctT}%`;
+      document.getElementById('label-f').innerText = `감정 (F) ${100 - pctT}%`;
+      document.getElementById('bar-t').style.width = `${pctT}%`;
+
+      document.getElementById('label-j').innerText = `판단 (J) ${pctJ}%`;
+      document.getElementById('label-p').innerText = `인식 (P) ${100 - pctJ}%`;
+      document.getElementById('bar-j').style.width = `${pctJ}%`;
+
+      const tagsContainer = document.getElementById('res-tags');
+      tagsContainer.innerHTML = '';
+      profile.tags.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'px-3 py-1 rounded-full bg-white/70 border border-slate-200/60 text-slate-700 text-xs font-semibold shadow-xs';
+        span.innerText = t;
+        tagsContainer.appendChild(span);
+      });
+
+      document.getElementById('res-best-mbti').innerText = profile.best.type;
+      document.getElementById('res-best-desc').innerText = profile.best.desc;
+      document.getElementById('res-worst-mbti').innerText = profile.worst.type;
+      document.getElementById('res-worst-desc').innerText = profile.worst.desc;
+
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#6366f1', '#8b5cf6', '#ec4899', '#38bdf8']
+        });
+      }
+    }
+
+    function restartTest() {
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-loading').classList.add('hidden');
+      document.getElementById('screen-question').classList.add('hidden');
+      document.getElementById('screen-intro').classList.remove('hidden');
+      document.getElementById('screen-intro').classList.add('fade-slide-enter');
+    }
+
+    function shareResult() {
+      const url = window.location.href;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast();
+        }).catch(() => {
+          showToast();
+        });
+      } else {
+        showToast();
+      }
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+      }, 2400);
+    }
+  </script>
+</body>
+</html>
