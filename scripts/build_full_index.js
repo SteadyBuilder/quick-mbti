@@ -437,10 +437,10 @@ const htmlContent = `<!DOCTYPE html>
           <span>✨ 나의 본모습 성향</span>
         </div>
 
-        <!-- 3D Clay Mascot Illustration -->
-        <div class="my-2 flex justify-center">
-          <div class="relative w-44 h-44 flex items-center justify-center character-float">
-            <img id="res-character-img" src="assets/characters/ENFP.svg" alt="MBTI Character" class="w-full h-full object-contain filter drop-shadow-lg" />
+        <!-- 3D Clay Mascot Illustration (AI 3D & Vector Fallback) -->
+        <div class="my-3 flex justify-center">
+          <div class="relative w-48 h-48 rounded-3xl overflow-hidden bg-white/80 p-2 border border-white/90 shadow-xl character-float flex items-center justify-center">
+            <img id="res-character-img" src="assets/characters/ENFP.png" alt="MBTI Character" class="w-full h-full object-cover rounded-2xl filter drop-shadow-sm" onerror="this.onerror=null; this.src='assets/characters/ENFP.svg';" />
           </div>
         </div>
 
@@ -859,7 +859,12 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('res-mbti').innerText = finalMbti;
       document.getElementById('res-nickname').innerText = profile.nickname;
       document.getElementById('res-summary').innerText = profile.summary;
-      document.getElementById('res-character-img').src = \`assets/characters/\${finalMbti}.svg\`;
+      const charImgEl = document.getElementById('res-character-img');
+      charImgEl.onerror = function() {
+        this.onerror = null;
+        this.src = \`assets/characters/\${finalMbti}.svg\`;
+      };
+      charImgEl.src = \`assets/characters/\${finalMbti}.png\`;
       document.getElementById('res-character-name').innerText = \`\${profile.characterName} (\${profile.characterDesc})\`;
 
       // Bind Spectrum Bars
@@ -1034,18 +1039,28 @@ const htmlContent = `<!DOCTYPE html>
         ctx.fillText('✨ QUICK MBTI · 마음의 결', 540, 198);
         ctx.restore();
 
-        // 5. Load & Draw Character SVG
+        // 5. Load & Draw Character (AI 3D Mascot with SVG Fallback)
         const charImg = new Image();
         charImg.crossOrigin = 'anonymous';
         await new Promise((resolve) => {
           charImg.onload = resolve;
-          charImg.onerror = resolve;
-          charImg.src = \`assets/characters/\${mbti}.svg\`;
+          charImg.onerror = () => {
+            charImg.onerror = resolve;
+            charImg.src = \`assets/characters/\${mbti}.svg\`;
+          };
+          charImg.src = \`assets/characters/\${mbti}.png\`;
         });
 
-        // Draw character in circle
+        // Draw character inside a stylish rounded card container
         ctx.save();
-        ctx.drawImage(charImg, 540 - 200, 240, 400, 400);
+        roundRect(ctx, 540 - 180, 240, 360, 360, 48);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'rgba(99, 102, 241, 0.18)';
+        ctx.shadowBlur = 32;
+        ctx.shadowOffsetY = 16;
+        ctx.fill();
+        ctx.clip();
+        ctx.drawImage(charImg, 540 - 180, 240, 360, 360);
         ctx.restore();
 
         // 6. MBTI Type & Title
