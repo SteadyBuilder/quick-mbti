@@ -1161,7 +1161,7 @@ const htmlContent = `<!DOCTYPE html>
 
         ctx.font = 'normal 22px Pretendard, sans-serif';
         ctx.fillStyle = '#6366f1';
-        ctx.fillText('temporary-snappy-gust-prajegz.vercel.app', 540, 1675);
+        ctx.fillText('quick-mbti.vercel.app', 540, 1675);
         ctx.restore();
 
         // 11. Trigger Download & Share
