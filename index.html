@@ -1040,8 +1040,8 @@
             <g id="network-primary-edges-group"></g>
           </svg>
 
-          <!-- 2. 연결선 위의 케미 점수 뱃지 레이어 -->
-          <div id="network-badges-layer" class="absolute inset-0 w-full h-full pointer-events-none z-15"></div>
+          <!-- 2. 연결선 위의 케미 점수 뱃지 레이어 (최우선 시인성 z-35) -->
+          <div id="network-badges-layer" class="absolute inset-0 w-full h-full pointer-events-none z-35"></div>
 
           <!-- 3. 등록된 인물 캐릭터 노드 레이어 (모두 독립적으로 똑바로 정립) -->
           <div id="orbit-dynamic-characters" class="absolute inset-0 w-full h-full pointer-events-auto z-20"></div>
@@ -3571,11 +3571,19 @@
         const dx = node.x - cx;
         const dy = node.y - cy;
         const dist = Math.hypot(dx, dy) || 1;
-        const targetDist = node.targetDist || 120;
+        const targetDist = node.targetDist || 124;
         const springForce = (dist - targetDist) * 0.055;
 
         node.vx -= (dx / dist) * springForce;
         node.vy -= (dy / dist) * springForce;
+
+        // 중심 캐릭터(반경 38px + MBTI 뱃지) 영역 침범 방지 최소 안전 거리 (104px)
+        const minCenterSafeDist = 104;
+        if (dist < minCenterSafeDist) {
+          const pushForce = (minCenterSafeDist - dist) * 0.14;
+          node.vx += (dx / dist) * pushForce;
+          node.vy += (dy / dist) * pushForce;
+        }
 
         // 지인 간 궁합이 85점 이상일 때 서로 자연스럽게 살짝 끌어당겨 클러스터링(유기적 군집) 형성
         allNodes.forEach(other => {
@@ -3757,9 +3765,11 @@
         }
         primaryEdgesGroup.appendChild(line);
 
-        // 선 중앙 위치에 나와의 시너지 뱃지 표시
-        const midX = (cx + node.x) / 2;
-        const midY = (cy + node.y) / 2;
+        // 선 상에 나와의 시너지 뱃지 표시 (내 캐릭터 동그라미/MBTI 뱃지에 가려지지 않도록 안전 거리 64px 이상 확보)
+        const dist = Math.hypot(node.x - cx, node.y - cy) || 1;
+        const badgeDist = Math.max(64, Math.min(dist - 26, dist * 0.58));
+        const midX = cx + (node.x - cx) * (badgeDist / dist);
+        const midY = cy + (node.y - cy) * (badgeDist / dist);
         const badge = document.createElement('div');
         badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded-full text-[9px] font-black pointer-events-none transition-all duration-150 border ' +
           (isHovered
