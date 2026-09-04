@@ -391,13 +391,23 @@
       background-size: 20px 14px;
     }
 
-    /* 푸른색 계열 보라색 포션 (궁합 안 좋을 때) */
+    /* 푸른색 계열 보라색 포션 (궁합 보통 / 먹구름 60~79%) */
     .potion-theme-cool-purple .potion-liquid-body {
       background: linear-gradient(180deg, #6366f1 0%, #4338ca 50%, #312e81 100%);
       box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
     }
     .potion-theme-cool-purple .potion-wave {
       background: radial-gradient(circle at 10px 4px, transparent 6px, #6366f1 7px) repeat-x;
+      background-size: 20px 14px;
+    }
+
+    /* 푸른 비구름 포션 (궁합 조율 필요 / 비구름 59% 이하) */
+    .potion-theme-rain .potion-liquid-body {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #1e40af 100%);
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.45);
+    }
+    .potion-theme-rain .potion-wave {
+      background: radial-gradient(circle at 10px 4px, transparent 6px, #38bdf8 7px) repeat-x;
       background-size: 20px 14px;
     }
 
@@ -1344,10 +1354,10 @@
                 <span id="cross-detail-mbti-a" class="text-[10px] font-bold text-indigo-600">ISTJ</span>
               </div>
 
-              <!-- 중앙 하트 & 시너지 스코어 -->
+              <!-- 중앙 3D 아이콘 & 시너지 스코어 -->
               <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-lg animate-bounce">
-                  💖
+                <div id="cross-detail-center-icon-wrap" class="w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 animate-bounce">
+                  <img id="cross-detail-icon-img" src="assets/icons/heart_3d.png" alt="케미 아이콘" class="w-full h-full object-contain drop-shadow-xs" />
                 </div>
                 <span id="cross-detail-score" class="text-lg font-black text-pink-600 mt-1">92%</span>
                 <span id="cross-detail-badge" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 whitespace-nowrap">
@@ -3138,74 +3148,160 @@
       showToast(`⭐ 내 중심 MBTI가 [${mbti}] (${mbtiData[mbti]?.characterName || ''}) (으)로 변경되었습니다!`);
     }
 
-    // MBTI 궁합 점수 및 설명 계산 함수
+    // MBTI 궁합 점수 및 세분화된 설명/3D 아이콘 계산 함수
     function calcMbtiSynergy(myMbti, targetMbti) {
       const myProf = mbtiData[myMbti] || mbtiData['ENFP'];
       const targetProf = mbtiData[targetMbti] || mbtiData['INFJ'];
 
-      // 1. 찰떡궁합 (Best) 검사
-      const bestTypes = (myProf.best && myProf.best.type) ? myProf.best.type.split(',').map(s => s.trim()) : [];
-      if (bestTypes.includes(targetMbti)) {
-        return {
-          score: 95,
-          level: 'best',
-          badgeText: '찰떡 소울메이트 💖',
-          title: myProf.best.title || '내 세상에 온기를 불어넣는 소울메이트',
-          desc: myProf.best.desc || '서로에게 가장 안전하고 따뜻한 마음의 쉼터가 되어주는 특별한 인연이에요.',
-          synergy: myProf.best.synergy || '서로의 다른 점이 결핍을 메워주고 깊은 안정감을 선물합니다.',
-          advice: myProf.best.advice || '마음의 문을 활짝 열고 진솔한 대화를 나눠보세요.',
-          theme: 'pink'
-        };
-      }
-
-      // 2. 거리두기 / 상극 (Worst) 검사
-      const worstTypes = (myProf.worst && myProf.worst.type) ? myProf.worst.type.split(',').map(s => s.trim()) : [];
-      if (worstTypes.includes(targetMbti)) {
-        return {
-          score: 42,
-          level: 'worst',
-          badgeText: '조율이 필요한 사이 💜',
-          title: myProf.worst.title || '서로 다른 표현 방식으로 섬세한 배려가 필요한 사이',
-          desc: myProf.worst.desc || '표현의 속도와 온도가 달라 오해가 생길 수 있으니 차분한 대화가 필요해요.',
-          synergy: myProf.worst.synergy || '서로의 세상을 바라보는 렌즈가 달라 신선한 자극을 줄 수 있어요.',
-          advice: myProf.worst.advice || '상대의 직설적이거나 조용한 태도를 나를 향한 악의로 단정 짓지 마세요.',
-          theme: 'cool-purple'
-        };
-      }
-
-      // 3. 동일 유형
-      if (myMbti === targetMbti) {
-        return {
-          score: 88,
-          level: 'same',
-          badgeText: '거울 같은 도플갱어 💫',
-          title: '말하지 않아도 눈빛만으로 통하는 또 하나의 나',
-          desc: '같은 파동으로 세상을 느끼기에 상대방의 생각과 고민이 내 일처럼 투명하게 공감돼요.',
-          synergy: '함께 있을 때 가장 나다워지고 어떤 고민도 막힘없이 털어놓을 수 있어요.',
-          advice: '생각의 결이 너무 닮아 같은 부분에서 함께 지칠 수 있으니 서로를 꼭 안아주세요.',
-          theme: 'pink'
-        };
-      }
-
-      // 4. 일반 궁합 (지표별 유사도 & 보완성 분석)
       let score = 65;
-      if (myMbti[1] === targetMbti[1]) score += 12; // N-N 또는 S-S (소통의 결 일치)
-      if (myMbti[2] === targetMbti[2]) score += 8;  // F-F 또는 T-T (판단 기준 일치)
-      if (myMbti[0] !== targetMbti[0]) score += 5;  // E-I (에너지 균형 보완)
-      if (myMbti[3] !== targetMbti[3]) score += 4;  // J-P (행동 패턴 보완)
+      let level = 'neutral';
+      let badgeText = '';
+      let title = '';
+      let desc = '';
+      let synergy = '';
+      let advice = '';
 
-      score = Math.min(score, 85);
-      const isGood = score >= 70;
+      // 1. 찰떡궁합 (Best) 검사 (95%)
+      const bestTypes = (myProf.best && myProf.best.type) ? myProf.best.type.split(',').map(s => s.trim()) : [];
+      const isBest = bestTypes.includes(targetMbti);
+
+      // 2. 거리두기 / 상극 (Worst) 검사 (42%)
+      const worstTypes = (myProf.worst && myProf.worst.type) ? myProf.worst.type.split(',').map(s => s.trim()) : [];
+      const isWorst = worstTypes.includes(targetMbti);
+
+      if (isBest) {
+        score = 95;
+        level = 'best';
+        badgeText = '찰떡 소울메이트';
+        title = myProf.best.title || '내 세상에 온기를 불어넣는 소울메이트';
+        desc = myProf.best.desc || '서로에게 가장 안전하고 따뜻한 마음의 쉼터가 되어주는 특별한 인연이에요.';
+        synergy = myProf.best.synergy || '서로의 다른 점이 결핍을 메워주고 깊은 안정감을 선물합니다.';
+        advice = myProf.best.advice || '마음의 문을 활짝 열고 진솔한 대화를 나눠보세요.';
+      } else if (isWorst) {
+        score = 42;
+        level = 'worst';
+        badgeText = '조율이 필요한 사이';
+        title = myProf.worst.title || '서로 다른 표현 방식으로 섬세한 배려가 필요한 사이';
+        desc = myProf.worst.desc || '표현의 속도와 온도가 달라 오해가 생길 수 있으니 차분한 대화가 필요해요.';
+        synergy = myProf.worst.synergy || '서로의 세상을 바라보는 렌즈가 달라 신선한 자극을 줄 수 있어요.';
+        advice = myProf.worst.advice || '상대의 직설적이거나 조용한 태도를 나를 향한 악의로 단정 짓지 마세요.';
+      } else if (myMbti === targetMbti) {
+        score = 88;
+        level = 'same';
+        badgeText = '거울 같은 도플갱어';
+        title = '말하지 않아도 눈빛만으로 통하는 또 하나의 나';
+        desc = '같은 파동으로 세상을 느끼기에 상대방의 생각과 고민이 내 일처럼 투명하게 공감돼요.';
+        synergy = '함께 있을 때 가장 나다워지고 어떤 고민도 막힘없이 털어놓을 수 있어요.';
+        advice = '생각의 결이 너무 닮아 같은 부분에서 함께 지칠 수 있으니 서로를 꼭 안아주세요.';
+      } else {
+        // 일반 궁합 계산 (지표별 유사도 & 보완성 분석)
+        score = 65;
+        if (myMbti[1] === targetMbti[1]) score += 12; // N-N 또는 S-S (소통의 결 일치)
+        if (myMbti[2] === targetMbti[2]) score += 8;  // F-F 또는 T-T (판단 기준 일치)
+        if (myMbti[0] !== targetMbti[0]) score += 5;  // E-I (에너지 균형 보완)
+        if (myMbti[3] !== targetMbti[3]) score += 4;  // J-P (행동 패턴 보완)
+
+        score = Math.min(score, 85);
+
+        // 점수별 세분화된 문구 부여 (85%, 82~84%, 80~81%, 75~79%, 70~74%, 60~69%, 59% 이하)
+        if (score >= 85) {
+          level = 'golden';
+          badgeText = '환상의 황금 시너지';
+          title = '서로에게 무한한 긍정과 시너지를 북돋는 황금 케미';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})가 만나 서로의 강점을 배로 증폭시키는 최상의 조합이에요.`;
+          synergy = '함께 머리를 맞대면 막힘없이 아이디어가 샘솟고 실행력이 배가 됩니다.';
+          advice = '지금처럼 서로의 새로운 시도와 창의적인 도전을 아낌없이 응원해주세요.';
+        } else if (score >= 82) {
+          level = 'great';
+          badgeText = '쿵짝이 잘 맞는 사이';
+          title = '마음의 주파수가 맞아 웃음이 번지는 든든한 짝꿍';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})는 긴 설명 없이도 찰떡같이 뜻이 통하는 편안한 사이예요.`;
+          synergy = '소통의 핑퐁이 매끄러워 함께하는 시간 내내 피로감 없이 유쾌합니다.';
+          advice = '사소한 일상도 적극적으로 나누며 이 따뜻한 온도를 오래 이어가보세요.';
+        } else if (score >= 80) {
+          level = 'good';
+          badgeText = '유쾌한 티키타카';
+          title = '함께할수록 편안한 대화와 긍정 에너지가 샘솟는 사이';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})의 각기 다른 매력이 기분 좋은 긴장과 활력으로 이어집니다.`;
+          synergy = '서로의 개성이 호기심을 자극해 지루할 틈이 없는 관계입니다.';
+          advice = '서로에게 고마운 점을 말로 자주 표현해주면 신뢰가 더욱 단단해집니다.';
+        } else if (score >= 75) {
+          level = 'warm';
+          badgeText = '포근한 휴식 케미';
+          title = '서로에게 편안한 쉼표와 든든한 지지를 보내는 사이';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})가 부담 없이 곁에 머물며 서로를 묵묵히 지지해주는 관계예요.`;
+          synergy = '혼자만의 속도를 존중해주면서도 필요할 땐 언제든 든든한 지원군이 되어줍니다.';
+          advice = '상대방이 지쳐 보일 때 조용히 곁을 지켜주는 것만으로 큰 위로가 돼요.';
+        } else if (score >= 70) {
+          level = 'healing';
+          badgeText = '잔잔한 힐링 케미';
+          title = '은은한 온도로 일상의 활력과 여유를 더해주는 사이';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})가 적당한 거리감 속에서 담백하고 편안한 신뢰를 쌓아갑니다.`;
+          synergy = '서로 다른 시선으로 일상을 바라보며 조화롭고 건강한 균형점을 찾습니다.';
+          advice = '조금 더 솔직한 감정을 한 스푼 얹어 대화하면 깊이가 한층 더해집니다.';
+        } else if (score >= 60) {
+          level = 'growth';
+          badgeText = '성장하는 자극 케미';
+          title = '서로의 다름을 알아가며 새로운 시야를 넓혀주는 인연';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})의 성향 차이가 신선한 자극과 건강한 성장의 기회가 됩니다.`;
+          synergy = '틀린 것이 아닌 다른 관점을 배우며 내면의 생각 그릇을 넓힐 수 있습니다.';
+          advice = '상대의 방식을 내 기준에 맞추려 하기보다 열린 마음으로 경청해주세요.';
+        } else {
+          level = 'caution';
+          badgeText = '조율이 필요한 사이';
+          title = '서로 다른 생활 템포와 표현 방식으로 섬세한 배려가 필요한 사이';
+          desc = `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})의 생각 표현 속도와 온도가 달라 차분한 소통이 필요해요.`;
+          synergy = '세상을 바라보는 렌즈가 완전히 달라 예측하지 못한 신선한 배움을 줍니다.';
+          advice = '상대방의 직설적이거나 조용한 태도를 악의로 넘겨짚지 말고 직접 대화로 확인해보세요.';
+        }
+      }
+
+      // 3D 감성 아이콘 및 테마 스타일 메타데이터 결정
+      // 80% 이상: 핑크 하트 3D, 60~79%: 먹구름 3D, 59% 이하: 비구름 3D
+      let icon = 'assets/icons/heart_3d.png';
+      let iconAlt = '3D 핑크 하트';
+      let theme = 'pink';
+      let badgeClass = 'bg-pink-50 text-pink-600 border border-pink-200/80';
+      let textColor = 'text-pink-600';
+      let potionClass = 'potion-theme-pink';
+
+      if (score >= 80) {
+        icon = 'assets/icons/heart_3d.png';
+        iconAlt = '3D 핑크 하트';
+        theme = 'pink';
+        badgeClass = 'bg-pink-50 text-pink-600 border border-pink-200/80';
+        textColor = 'text-pink-600';
+        potionClass = 'potion-theme-pink';
+      } else if (score >= 60) {
+        icon = 'assets/icons/cloud_3d.png';
+        iconAlt = '3D 먹구름';
+        theme = 'cloud';
+        badgeClass = 'bg-slate-50 text-slate-700 border border-slate-200/80';
+        textColor = 'text-slate-700';
+        potionClass = 'potion-theme-cool-purple';
+      } else {
+        icon = 'assets/icons/rain_3d.png';
+        iconAlt = '3D 비구름';
+        theme = 'rain';
+        badgeClass = 'bg-blue-50 text-blue-700 border border-blue-200/80';
+        textColor = 'text-blue-700';
+        potionClass = 'potion-theme-rain';
+      }
 
       return {
-        score: score,
-        level: isGood ? 'good' : 'neutral',
-        badgeText: isGood ? '포근한 시너지 케미 ✨' : '서로를 알아가는 케미 🌿',
-        title: isGood ? '서로에게 편안한 영감과 휴식을 주는 사이' : '서로의 다름을 알아가며 성장하는 인연',
-        desc: `${myProf.characterName}(${myMbti})와 ${targetProf.characterName}(${targetMbti})가 만나 조화로운 관계를 만들어갑니다.`,
-        synergy: '서로 다른 시선으로 일상을 바라보며 혼자서는 보지 못했던 넓은 시야를 배웁니다.',
-        advice: '상대방의 소통 방식에 조금만 귀 기울여주면 훨씬 더 다정한 관계가 될 수 있어요.',
-        theme: isGood ? 'pink' : 'cool-purple'
+        score,
+        level,
+        badgeText,
+        title,
+        desc,
+        synergy,
+        advice,
+        icon,
+        iconAlt,
+        theme,
+        badgeClass,
+        textColor,
+        potionClass
       };
     }
 
@@ -3223,8 +3319,8 @@
         flask.className = 'potion-flask potion-theme-pink';
         liquid.style.height = '35%';
         percentEl.innerText = '--%';
-        badgeEl.innerText = '관계 준비 💖';
-        badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-pink-100 text-pink-600';
+        badgeEl.innerHTML = `<img src="assets/icons/heart_3d.png" class="w-3.5 h-3.5 object-contain inline-block" /> <span>관계 준비 💖</span>`;
+        badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-pink-100 text-pink-600 border border-pink-200/60';
         titleEl.innerText = '함께할 사람의 MBTI를 궤도에 올려보세요';
         descEl.innerText = '점선(+) 버튼을 눌러 친구나 연인을 등록하면 하트 포션이 실시간으로 차오릅니다!';
         return;
@@ -3233,20 +3329,23 @@
       // 액체 높이 설정 (최소 15% ~ 최대 98%)
       liquid.style.height = Math.max(16, Math.min(comp.score, 96)) + '%';
       percentEl.innerText = comp.score + '%';
-      badgeEl.innerText = comp.badgeText;
+      badgeEl.innerHTML = `<img src="${comp.icon}" alt="${comp.iconAlt}" class="w-3.5 h-3.5 object-contain inline-block drop-shadow-2xs" /> <span>${comp.badgeText}</span>`;
       titleEl.innerText = comp.title;
       descEl.innerText = comp.desc;
 
-      // 💖 궁합 점수 및 테마에 따른 포션 컬러 제어
-      // 궁합이 좋을 때는 핑크, 안 좋을 때는 푸른색 계열의 보라색(Cool Purple)으로 떨어짐!
+      // 💖 궁합 점수 및 테마에 따른 포션 컬러 및 뱃지 제어 (핑크 / 먹구름 / 비구름 3D)
       if (comp.theme === 'pink') {
         flask.className = 'potion-flask potion-theme-pink';
-        badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-pink-100 text-pink-600';
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-pink-100 text-pink-600 border border-pink-200/60 shadow-2xs';
         percentEl.className = 'text-3xl sm:text-4xl font-black tracking-tight text-pink-600';
-      } else {
+      } else if (comp.theme === 'cloud') {
         flask.className = 'potion-flask potion-theme-cool-purple';
-        badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-indigo-100 text-indigo-700';
-        percentEl.className = 'text-3xl sm:text-4xl font-black tracking-tight text-indigo-700';
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-slate-100 text-slate-700 border border-slate-200/60 shadow-2xs';
+        percentEl.className = 'text-3xl sm:text-4xl font-black tracking-tight text-slate-700';
+      } else {
+        flask.className = 'potion-flask potion-theme-rain';
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-blue-100 text-blue-700 border border-blue-200/60 shadow-2xs';
+        percentEl.className = 'text-3xl sm:text-4xl font-black tracking-tight text-blue-700';
       }
     }
 
@@ -3767,7 +3866,7 @@
               badge.style.left = `${midX.toFixed(1)}px`;
               badge.style.top = `${midY.toFixed(1)}px`;
               badge.style.opacity = opacity >= 0.4 ? '1' : '0.2';
-              badge.innerHTML = `<span>${crossComp.score >= 88 ? '💖' : '⚡'} ${crossComp.score}%</span>`;
+              badge.innerHTML = `<span class="inline-flex items-center gap-0.5"><img src="${crossComp.icon}" alt="${crossComp.iconAlt}" class="w-2.5 h-2.5 object-contain inline-block" /> <span>${crossComp.score}%</span></span>`;
               badgesLayer.appendChild(badge);
             }
           }
@@ -3808,11 +3907,11 @@
         badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded-full text-[9px] font-black pointer-events-none transition-all duration-150 border ' +
           (isHovered
             ? 'bg-indigo-600 text-white border-white shadow-md scale-110 z-20'
-            : 'bg-white/95 text-indigo-700 border-indigo-200/90 shadow-xs z-15');
+            : 'bg-white/95 text-slate-700 border-slate-200/90 shadow-xs z-15');
         badge.style.left = `${midX.toFixed(1)}px`;
         badge.style.top = `${midY.toFixed(1)}px`;
         badge.style.opacity = opacity >= 0.4 ? '1' : '0.2';
-        badge.innerHTML = `<span>${comp.theme === 'pink' ? '💖' : '✨'} ${comp.score}%</span>`;
+        badge.innerHTML = `<span class="inline-flex items-center gap-1"><img src="${comp.icon}" alt="${comp.iconAlt}" class="w-3 h-3 object-contain inline-block" /> <span>${comp.score}%</span></span>`;
         badgesLayer.appendChild(badge);
       });
     }
@@ -3866,10 +3965,11 @@
               <p class="text-[10px] text-slate-500 truncate mt-0.5">${comp.title}</p>
             </div>
           </div>
-          <!-- 점수 뱃지 -->
-          <div class="flex items-center gap-1 shrink-0 ml-2">
-            <span class="text-[11px] font-black px-2 py-0.5 rounded-lg ${comp.score >= 85 ? 'bg-pink-100 text-pink-600' : 'bg-indigo-100 text-indigo-700'}">
-              ${comp.score >= 85 ? '💖' : '⚡'} ${comp.score}%
+          <!-- 점수 뱃지 (3D 아이콘 적용) -->
+          <div class="flex items-center shrink-0 ml-2">
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-black px-2.5 py-1 rounded-xl ${comp.badgeClass} shadow-2xs">
+              <img src="${comp.icon}" alt="${comp.iconAlt}" class="w-4 h-4 object-contain inline-block drop-shadow-2xs" />
+              <span>${comp.score}%</span>
             </span>
           </div>
         `;
@@ -3898,8 +3998,20 @@
       imgB.onerror = function() { this.onerror = null; this.src = 'assets/characters/' + personB.mbti + '.svg'; };
       imgB.src = 'assets/characters/' + personB.mbti + '.png';
 
-      document.getElementById('cross-detail-score').innerText = comp.score + '%';
-      document.getElementById('cross-detail-badge').innerText = comp.badgeText;
+      const scoreEl = document.getElementById('cross-detail-score');
+      scoreEl.innerText = comp.score + '%';
+      scoreEl.className = 'text-lg font-black mt-1 ' + comp.textColor;
+
+      const badgeEl = document.getElementById('cross-detail-badge');
+      badgeEl.innerText = comp.badgeText;
+      badgeEl.className = 'text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ' + comp.badgeClass;
+
+      const centerIcon = document.getElementById('cross-detail-icon-img');
+      if (centerIcon) {
+        centerIcon.src = comp.icon;
+        centerIcon.alt = comp.iconAlt;
+      }
+
       document.getElementById('cross-detail-title').innerText = comp.title;
       document.getElementById('cross-detail-synergy').innerText = comp.synergy;
       document.getElementById('cross-detail-advice').innerText = comp.advice;
@@ -3932,7 +4044,10 @@
         chip.innerHTML = `
           <img src="assets/characters/${person.mbti}.png" onerror="this.onerror=null; this.src='assets/characters/${person.mbti}.svg';" class="w-5 h-5 rounded-full object-cover" />
           <span class="text-xs font-black text-slate-800">${escapeHtml(person.name)}</span>
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md ${comp.theme === 'pink' ? 'bg-pink-100 text-pink-600' : 'bg-indigo-100 text-indigo-700'}">${person.mbti} ${comp.score}%</span>
+          <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg ${comp.badgeClass}">
+            <img src="${comp.icon}" alt="${comp.iconAlt}" class="w-3 h-3 object-contain inline-block" />
+            <span>${person.mbti} ${comp.score}%</span>
+          </span>
         `;
         chip.onclick = () => {
           updateHeartPotion(comp);
@@ -4062,10 +4177,8 @@
       targetImg.src = 'assets/characters/' + targetMbti + '.png';
 
       const scoreBadge = document.getElementById('detail-score-badge');
-      scoreBadge.innerText = `궁합 ${comp.score}%`;
-      scoreBadge.className = comp.theme === 'pink'
-        ? 'ml-auto text-[10px] font-black px-2 py-0.5 rounded-full bg-pink-100 text-pink-600'
-        : 'ml-auto text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700';
+      scoreBadge.innerHTML = `<img src="${comp.icon}" alt="${comp.iconAlt}" class="w-3.5 h-3.5 object-contain inline-block" /> <span>궁합 ${comp.score}%</span>`;
+      scoreBadge.className = `ml-auto inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-0.5 rounded-full ${comp.badgeClass}`;
 
       document.getElementById('detail-synergy-text').innerText = comp.synergy;
       document.getElementById('detail-advice-text').innerText = comp.advice;
