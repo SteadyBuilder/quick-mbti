@@ -58,7 +58,9 @@ const checks = [
   { name: 'Header Network Entry Button', str: "openOrbitScreen('screen-intro')" },
   { name: 'Change My MBTI Modal', str: 'id="modal-change-my-mbti"' },
   { name: 'Change My MBTI Function', str: 'function selectNewMyMbti' },
-  { name: 'Orbit Dynamic Back Function', str: 'function backFromOrbit()' }
+  { name: 'Orbit Dynamic Back Function', str: 'function backFromOrbit()' },
+  { name: 'Reset Orbit Layout Button', str: 'id="btn-reset-orbit-layout"' },
+  { name: 'Reset Orbit Positions Function', str: 'function resetOrbitPositions()' }
 ];
 
 checks.forEach(c => {
