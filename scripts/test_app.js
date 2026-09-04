@@ -61,7 +61,13 @@ const checks = [
   { name: 'Orbit Dynamic Back Function', str: 'function backFromOrbit()' },
   { name: 'Reset Orbit Layout Button', str: 'id="btn-reset-orbit-layout"' },
   { name: 'Reset Orbit Positions Function', str: 'function resetOrbitPositions()' },
-  { name: 'Friends In Network Section Title', str: '관계망에 함께 머무는 친구들' }
+  { name: 'Friends In Network Section Title', str: '관계망에 함께 머무는 친구들' },
+  { name: 'Firebase Modular SDK (v10)', str: 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js' },
+  { name: 'Firebase App Config (quick-mbti)', str: 'projectId: "quick-mbti"' },
+  { name: 'QuickMbtiCloud Service Object', str: 'window.QuickMbtiCloud = QuickMbtiCloud;' },
+  { name: 'Firestore Result Auto-Sync', str: 'QuickMbtiCloud.saveUserResult(finalMbti, scores)' },
+  { name: 'Firestore Orbit Sync on Storage', str: 'QuickMbtiCloud.syncRelations(orbitRelations)' },
+  { name: 'Friend Invitation Referral Engine', str: 'copyMyInviteLink' }
 ];
 
 checks.forEach(c => {

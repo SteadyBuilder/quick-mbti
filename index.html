@@ -15,6 +15,296 @@
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
+  <!-- 🔥 Firebase SDK v10 (Modular CDN) & QuickMbtiCloud 동기화 레이어 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc, 
+      getDoc, 
+      updateDoc,
+      arrayUnion,
+      onSnapshot, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    // 🔑 마스터의 Firebase 웹 앱 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4JS6GHftDc-u37JIh5eZbIBgbCwoPu-8",
+      authDomain: "quick-mbti.firebaseapp.com",
+      projectId: "quick-mbti",
+      storageBucket: "quick-mbti.firebasestorage.app",
+      messagingSenderId: "92239793192",
+      appId: "1:92239793192:web:c14854375cf0e0d2c9391d",
+      measurementId: "G-KR4TGFFWLL"
+    };
+
+    let app = null;
+    let auth = null;
+    let db = null;
+    let currentUser = null;
+    let unsubscribeUserSnapshot = null;
+
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+    } catch (err) {
+      console.warn('Firebase 초기화 경고:', err);
+    }
+
+    const QuickMbtiCloud = {
+      isReady: false,
+      uid: null,
+      auth: auth,
+      db: db,
+
+      // 1. 익명 로그인 초기화
+      async initAuth() {
+        if (!auth) return;
+        return new Promise((resolve) => {
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              currentUser = user;
+              this.uid = user.uid;
+              this.isReady = true;
+              console.log('☁️ [QuickMBTI Cloud] 익명 세션 활성화 완료:', user.uid);
+              this.updateSyncBadge(true);
+              this.listenToUserDocument();
+              this.checkPendingInvitation();
+              resolve(user);
+            } else {
+              try {
+                const cred = await signInAnonymously(auth);
+                currentUser = cred.user;
+                this.uid = cred.user.uid;
+                this.isReady = true;
+                console.log('☁️ [QuickMBTI Cloud] 신규 익명 세션 발급:', cred.user.uid);
+                this.updateSyncBadge(true);
+                this.listenToUserDocument();
+                this.checkPendingInvitation();
+                resolve(cred.user);
+              } catch (signInErr) {
+                console.warn('☁️ [QuickMBTI Cloud] 익명 로그인 실패:', signInErr);
+                this.updateSyncBadge(false);
+                resolve(null);
+              }
+            }
+          });
+        });
+      },
+
+      // 2. 동기화 상태 UI 배지 업데이트
+      updateSyncBadge(isSynced) {
+        const badge = document.getElementById('orbit-sync-badge');
+        if (!badge) return;
+        if (isSynced && this.uid) {
+          badge.className = 'text-[10px] font-black bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full border border-emerald-200/80 flex items-center gap-1 shadow-2xs cursor-pointer';
+          badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>☁️ Firestore 연동됨</span>';
+          badge.title = '사용자 UID: ' + this.uid + ' (클릭 시 복사)';
+          badge.onclick = () => {
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(this.uid);
+              if (typeof window.showToast === 'function') window.showToast('클라우드 UID가 복사되었습니다.');
+            }
+          };
+        } else {
+          badge.className = 'text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded-full border border-slate-200/60 flex items-center gap-1';
+          badge.innerHTML = '<span>💾 로컬 모드</span>';
+        }
+      },
+
+      // 3. 사용자 검사 결과 Firestore 저장
+      async saveUserResult(mbti, spectrumScores) {
+        if (!this.uid || !db) return;
+        try {
+          const userRef = doc(db, 'users', this.uid);
+          const snap = await getDoc(userRef);
+          const existingData = snap.exists() ? snap.data() : {};
+
+          // 로컬에 이미 저장된 관계망 목록 가져오기
+          let currentRelations = [];
+          try {
+            const saved = localStorage.getItem('quick_mbti_orbit_relations');
+            if (saved) currentRelations = JSON.parse(saved);
+          } catch (e) {}
+
+          const profileData = {
+            uid: this.uid,
+            mbti: mbti,
+            spectrum: spectrumScores || {},
+            nickname: existingData.nickname || ('마음의 결 ' + this.uid.slice(0, 4)),
+            relations: currentRelations.length > 0 ? currentRelations : (existingData.relations || []),
+            updatedAt: serverTimestamp(),
+            createdAt: existingData.createdAt || serverTimestamp()
+          };
+
+          await setDoc(userRef, profileData, { merge: true });
+          console.log('☁️ [QuickMBTI Cloud] 사용자 MBTI 결과 Firestore 동기화 완료:', mbti);
+          this.updateSyncBadge(true);
+
+          // 만약 친구의 초대로 들어온 경우 상호 관계망 맵핑 처리
+          await this.processPendingInvitation(mbti);
+        } catch (err) {
+          console.warn('☁️ [QuickMBTI Cloud] 결과 동기화 오류:', err);
+        }
+      },
+
+      // 4. 우주 관계도(지인 목록) Firestore 전체 동기화
+      async syncRelations(relationsArray) {
+        if (!this.uid || !db) return;
+        try {
+          const userRef = doc(db, 'users', this.uid);
+          await setDoc(userRef, {
+            uid: this.uid,
+            relations: relationsArray || [],
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+          console.log('☁️ [QuickMBTI Cloud] 관계망 목록 Firestore 동기화 완료 (' + (relationsArray ? relationsArray.length : 0) + '명)');
+          this.updateSyncBadge(true);
+        } catch (err) {
+          console.warn('☁️ [QuickMBTI Cloud] 관계망 동기화 오류:', err);
+        }
+      },
+
+      // 5. 실시간 클라우드 리스너 (친구가 나를 추가하거나 초대 수락 시 즉시 반영)
+      listenToUserDocument() {
+        if (!this.uid || !db) return;
+        if (unsubscribeUserSnapshot) unsubscribeUserSnapshot();
+
+        const userRef = doc(db, 'users', this.uid);
+        unsubscribeUserSnapshot = onSnapshot(userRef, (docSnap) => {
+          if (!docSnap.exists()) return;
+          const data = docSnap.data();
+          if (Array.isArray(data.relations)) {
+            let localList = [];
+            try {
+              const saved = localStorage.getItem('quick_mbti_orbit_relations');
+              if (saved) localList = JSON.parse(saved);
+            } catch (e) {}
+
+            const localIds = new Set(localList.map(p => p.id));
+            const newFriends = data.relations.filter(p => !localIds.has(p.id));
+
+            if (newFriends.length > 0) {
+              console.log('☁️ [QuickMBTI Cloud] 실시간 새 친구 감지:', newFriends);
+              localList = [...localList, ...newFriends];
+              try {
+                localStorage.setItem('quick_mbti_orbit_relations', JSON.stringify(localList));
+              } catch (e) {}
+
+              if (typeof window.onCloudRelationsUpdated === 'function') {
+                window.onCloudRelationsUpdated(localList, newFriends[0].id);
+              }
+            }
+          }
+        }, (err) => {
+          console.warn('☁️ [QuickMBTI Cloud] 실시간 스냅샷 리스너 경고:', err);
+        });
+      },
+
+      // 6. 초대 링크 파라미터 감지 (?ref=UID)
+      checkPendingInvitation() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const ref = params.get('ref');
+          if (ref && ref !== this.uid) {
+            localStorage.setItem('quick_mbti_pending_inviter', ref);
+            const banner = document.getElementById('invitation-welcome-banner');
+            if (banner) banner.classList.remove('hidden');
+          }
+        } catch (e) {}
+      },
+
+      // 7. 초대자와 상호 관계망 맵핑
+      async processPendingInvitation(myMbti) {
+        const inviterUid = localStorage.getItem('quick_mbti_pending_inviter');
+        if (!inviterUid || inviterUid === this.uid || !db) return;
+
+        try {
+          console.log('☁️ [QuickMBTI Cloud] 초대자(' + inviterUid + ')와 상호 관계망 연결 시도...');
+          const inviterRef = doc(db, 'users', inviterUid);
+          const inviterSnap = await getDoc(inviterRef);
+
+          let inviterName = '초대한 친구';
+          let inviterMbti = 'ENFP';
+
+          if (inviterSnap.exists()) {
+            const inviterData = inviterSnap.data();
+            inviterName = inviterData.nickname || '초대한 친구';
+            inviterMbti = inviterData.mbti || 'ENFP';
+
+            // 1. 초대자의 relations에 나(참여자) 추가
+            const myRelationForInviter = {
+              id: 'rel_' + this.uid,
+              name: '친구 (' + myMbti + ')',
+              mbti: myMbti,
+              linkedUid: this.uid,
+              source: 'invite',
+              createdAt: Date.now()
+            };
+            await updateDoc(inviterRef, {
+              relations: arrayUnion(myRelationForInviter)
+            }).catch(async () => {
+              await setDoc(inviterRef, { relations: [myRelationForInviter] }, { merge: true });
+            });
+          }
+
+          // 2. 내 관계망에 초대자 추가
+          let localList = [];
+          try {
+            const saved = localStorage.getItem('quick_mbti_orbit_relations');
+            if (saved) localList = JSON.parse(saved);
+          } catch (e) {}
+
+          const alreadyAdded = localList.some(p => p.linkedUid === inviterUid || p.id === 'rel_' + inviterUid);
+          if (!alreadyAdded) {
+            const inviterRelationForMe = {
+              id: 'rel_' + inviterUid,
+              name: inviterName,
+              mbti: inviterMbti,
+              linkedUid: inviterUid,
+              source: 'invite',
+              createdAt: Date.now()
+            };
+            localList.push(inviterRelationForMe);
+            try {
+              localStorage.setItem('quick_mbti_orbit_relations', JSON.stringify(localList));
+            } catch (e) {}
+            await this.syncRelations(localList);
+
+            if (typeof window.showToast === 'function') {
+              window.showToast(`🎉 초대한 친구 [${inviterName}]님과 우주 관계망이 연결되었습니다!`);
+            }
+          }
+
+          // 초대 플래그 정리
+          localStorage.removeItem('quick_mbti_pending_inviter');
+        } catch (err) {
+          console.warn('☁️ [QuickMBTI Cloud] 초대 상호 연동 오류:', err);
+        }
+      },
+
+      // 8. 내 우주 관계망 초대 링크 생성
+      getShareLink() {
+        const baseUrl = window.location.origin + window.location.pathname;
+        if (!this.uid) return baseUrl;
+        return `${baseUrl}?ref=${this.uid}`;
+      }
+    };
+
+    window.QuickMbtiCloud = QuickMbtiCloud;
+
+    // DOM 로드 완료 시 인증 자동 초기화
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => QuickMbtiCloud.initAuth());
+    } else {
+      QuickMbtiCloud.initAuth();
+    }
+  </script>
+
   <!-- Pretendard & Plus Jakarta Sans Web Fonts -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -528,6 +818,15 @@
 
     <!-- SCREEN 1: INTRO (시작 화면) -->
     <section id="screen-intro" class="animate-jelly-card flex flex-col items-center text-center py-6">
+      <!-- 💌 친구 초대 환영 배너 (초대 링크로 진입 시 표시) -->
+      <div id="invitation-welcome-banner" class="hidden w-full mb-5 p-3.5 rounded-2xl bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-indigo-500/10 border border-pink-200/90 text-left flex items-center gap-3 shadow-xs">
+        <span class="text-2xl animate-bounce">💌</span>
+        <div class="flex-1">
+          <p class="text-xs font-black text-pink-700">친구의 우주 관계망 초대를 받았습니다!</p>
+          <p class="text-[11px] text-slate-600 font-medium leading-snug">테스트를 마치면 친구와의 케미 궁합이 관계망에 자동으로 연결돼요 ✨</p>
+        </div>
+      </div>
+
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50/80 border border-indigo-100 text-indigo-700 text-xs font-bold mb-6 shadow-xs">
         <span>✨ 총 8문항 · 1분 소요</span>
       </div>
@@ -1069,6 +1368,15 @@
             인물을 탭하면 상호 관계망 하이라이트!
           </span>
           <div class="flex items-center gap-1.5 flex-wrap justify-end">
+            <!-- ☁️ 클라우드 동기화 상태 배지 -->
+            <span id="orbit-sync-badge" class="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded-full border border-slate-200/60 flex items-center gap-1 shadow-2xs cursor-pointer" title="클라우드 동기화 대기 중">
+              <span>☁️ 연동 준비 중</span>
+            </span>
+            <!-- 🔗 친구 초대 버튼 -->
+            <button onclick="copyMyInviteLink()" class="text-[10px] font-black px-2.5 py-1 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-600 border border-pink-200 transition-all flex items-center gap-1 cursor-pointer shadow-2xs hover:scale-105 active:scale-95" title="내 우주 관계망 초대 링크 복사">
+              <span>💌</span>
+              <span>친구 초대</span>
+            </button>
             <!-- 전체 관계망 vs 내 중심 토글 스위치 -->
             <button id="btn-toggle-network-mode" onclick="toggleNetworkViewMode()" class="text-[10px] font-black px-2.5 py-1 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 transition-all flex items-center gap-1 cursor-pointer shadow-2xs" title="관계망 표시 모드 전환">
               <span id="network-mode-icon">🕸️</span>
@@ -2860,6 +3168,11 @@
         localStorage.setItem('quick_mbti_user_mbti', finalMbti);
       } catch (e) {}
 
+      // ☁️ Firebase Firestore에 내 MBTI 및 세부 스펙트럼 비동기 동기화
+      if (window.QuickMbtiCloud && window.QuickMbtiCloud.saveUserResult) {
+        window.QuickMbtiCloud.saveUserResult(finalMbti, scores);
+      }
+
       renderResultData(finalMbti, true);
 
       // Confetti Celebration
@@ -3121,19 +3434,45 @@
       }
     }
 
-    // 로컬 스토리지에 관계도 데이터 저장
+    // 로컬 스토리지에 관계도 데이터 저장 및 Firestore 클라우드 실시간 동기화
     function saveOrbitRelationsToStorage() {
       try {
         localStorage.setItem('quick_mbti_orbit_relations', JSON.stringify(orbitRelations));
       } catch (e) {
         console.warn('관계도 저장 실패:', e);
       }
+      // ☁️ Firestore에 내 관계망 전체 목록 비동기 동기화
+      if (window.QuickMbtiCloud && window.QuickMbtiCloud.syncRelations) {
+        window.QuickMbtiCloud.syncRelations(orbitRelations);
+      }
     }
+
+    // ☁️ 클라우드에서 새로운 친구가 실시간으로 감지되었을 때 호출되는 전역 콜백
+    window.onCloudRelationsUpdated = function(updatedRelations, newFriendId) {
+      orbitRelations = updatedRelations;
+      const orbitScreen = document.getElementById('screen-orbit');
+      if (orbitScreen && !orbitScreen.classList.contains('hidden')) {
+        renderOrbitStage(newFriendId);
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 30,
+            spread: 60,
+            origin: { y: 0.6 },
+            colors: ['#ec4899', '#8b5cf6', '#6366f1']
+          });
+        }
+        showToast('🎉 새로운 친구가 우주 관계망에 실시간으로 합류했습니다!');
+      }
+    };
 
     // 우주 관계도 화면 열기 (fromScreen: 'screen-intro' | 'screen-result')
     function openOrbitScreen(fromScreen = 'screen-result') {
       orbitPreviousScreen = fromScreen;
       loadOrbitRelations();
+
+      if (window.QuickMbtiCloud && window.QuickMbtiCloud.updateSyncBadge) {
+        window.QuickMbtiCloud.updateSyncBadge(window.QuickMbtiCloud.isReady);
+      }
 
       // 모든 화면 숨김 처리 후 관계망 화면 표시
       document.getElementById('screen-intro').classList.add('hidden');
@@ -4377,16 +4716,37 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // 💬 결과 링크 복사 (내 UID 기반 초대 파라미터 포함)
     function shareResult() {
-      const url = window.location.href;
-      if (navigator.clipboard) {
+      const url = (window.QuickMbtiCloud && window.QuickMbtiCloud.getShareLink)
+        ? window.QuickMbtiCloud.getShareLink()
+        : window.location.href;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(() => {
-          showToast('✨ 링크가 클립보드에 복사되었습니다!');
+          showToast('✨ 내 우주 관계망 초대 링크가 복사되었습니다!');
         }).catch(() => {
-          showToast('✨ 링크가 클립보드에 복사되었습니다!');
+          showToast('✨ 내 우주 관계망 초대 링크가 복사되었습니다!');
         });
       } else {
-        showToast('✨ 링크가 클립보드에 복사되었습니다!');
+        showToast('✨ 내 우주 관계망 초대 링크가 복사되었습니다!');
+      }
+    }
+
+    // 🔗 우주 관계망 전용 친구 초대 링크 복사
+    function copyMyInviteLink() {
+      const url = (window.QuickMbtiCloud && window.QuickMbtiCloud.getShareLink)
+        ? window.QuickMbtiCloud.getShareLink()
+        : window.location.href;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('💌 내 관계망 초대 링크 복사 완료! 친구에게 전달해보세요 ✨');
+        }).catch(() => {
+          prompt('아래 링크를 복사하여 친구에게 전달하세요:', url);
+        });
+      } else {
+        prompt('아래 링크를 복사하여 친구에게 전달하세요:', url);
       }
     }
 
