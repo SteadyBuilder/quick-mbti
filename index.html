@@ -445,37 +445,14 @@
         나만의 솔직한 결을 마주해 보세요.
       </p>
 
-      <!-- 상황 / 라이프스테이지 모드 선택기 (일상 vs 가족) -->
-      <div class="w-full max-w-sm mb-6 p-3 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/90 shadow-md shadow-indigo-100/50">
-        <div class="flex items-center justify-between px-1 mb-2">
-          <span class="text-[11px] font-extrabold text-slate-500 flex items-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            현재 나의 라이프스타일 환경은?
-          </span>
-          <span id="mode-active-pill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
-            🌿 일상 모드
-          </span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100/80 border border-slate-200/50">
-          <button type="button" id="btn-mode-default" onclick="setTestMode('default')" class="mode-select-btn py-2.5 px-3 rounded-lg text-xs font-black transition-all duration-200 flex items-center justify-center gap-1.5 bg-white text-indigo-600 shadow-sm border border-indigo-100">
-            <span>🌿</span>
-            <span>일상 모드</span>
-          </button>
-          <button type="button" id="btn-mode-family" onclick="setTestMode('family')" class="mode-select-btn py-2.5 px-3 rounded-lg text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
-            <span>👨‍👩‍👧‍👦</span>
-            <span>가족 모드</span>
-          </button>
-        </div>
-
-        <div class="mt-2.5 px-1 flex items-start gap-1.5 text-left">
-          <span class="text-xs mt-0.5" id="mode-desc-icon">💡</span>
-          <p id="mode-desc-text" class="text-[11px] text-slate-500 leading-snug">
-            <strong>일상 모드:</strong> 나만의 자유로운 일상과 친구/사회 관계 중심의 질문이 제공됩니다.
-          </p>
-        </div>
+      <!-- 라이프스타일 선택 버튼 (싱글 라이프 / 패밀리 라이프 - 옅은 민트 테마) -->
+      <div class="w-full max-w-xs mb-6 p-1 rounded-2xl bg-emerald-50/70 backdrop-blur-md border border-emerald-200/80 shadow-xs grid grid-cols-2 gap-1.5">
+        <button type="button" id="btn-mode-default" onclick="setTestMode('default')" class="mode-select-btn py-2.5 px-3 rounded-xl text-xs font-black transition-all duration-200 flex items-center justify-center bg-white text-emerald-700 shadow-xs border border-emerald-300/80">
+          <span>싱글 라이프</span>
+        </button>
+        <button type="button" id="btn-mode-family" onclick="setTestMode('family')" class="mode-select-btn py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center text-slate-400 hover:text-emerald-700 border border-transparent">
+          <span>패밀리 라이프</span>
+        </button>
       </div>
 
       <!-- Start Button -->
@@ -503,7 +480,7 @@
             <span>이전</span>
           </button>
           <div class="flex items-center gap-2">
-            <span id="question-mode-tag" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-600 border border-indigo-100">🌿 일상 모드</span>
+            <span id="question-mode-tag" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/80">싱글 라이프</span>
             <span class="tabular-nums font-extrabold text-indigo-600 text-sm" id="question-counter">1 / 8</span>
           </div>
         </div>
@@ -1722,31 +1699,16 @@
       currentTestMode = mode;
       const btnDefault = document.getElementById('btn-mode-default');
       const btnFamily = document.getElementById('btn-mode-family');
-      const descText = document.getElementById('mode-desc-text');
-      const descIcon = document.getElementById('mode-desc-icon');
-      const activePill = document.getElementById('mode-active-pill');
-      const startBtnLabel = document.getElementById('start-btn-label');
+
+      const activeClass = 'mode-select-btn py-2.5 px-3 rounded-xl text-xs font-black transition-all duration-200 flex items-center justify-center bg-white text-emerald-700 shadow-xs border border-emerald-300/80';
+      const inactiveClass = 'mode-select-btn py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center text-slate-400 hover:text-emerald-700 border border-transparent';
 
       if (mode === 'family') {
-        if (btnFamily) btnFamily.className = 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-black transition-all duration-200 flex items-center justify-center gap-1.5 bg-white text-indigo-600 shadow-sm border border-indigo-100';
-        if (btnDefault) btnDefault.className = 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800';
-        if (activePill) {
-          activePill.innerText = '👨‍👩‍👧‍👦 가족 모드';
-          activePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60';
-        }
-        if (descIcon) descIcon.innerText = '👨‍👩‍👧‍👦';
-        if (descText) descText.innerHTML = '<strong>가족 모드:</strong> 퇴근 후 가족 케어, 아이 훈육·교육, 가계 살림 등 가장/부모의 현실 환경에 맞춘 질문이 제공됩니다.';
-        if (startBtnLabel) startBtnLabel.innerText = '가족 맞춤 마음 여행 시작하기';
+        if (btnFamily) btnFamily.className = activeClass;
+        if (btnDefault) btnDefault.className = inactiveClass;
       } else {
-        if (btnDefault) btnDefault.className = 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-black transition-all duration-200 flex items-center justify-center gap-1.5 bg-white text-indigo-600 shadow-sm border border-indigo-100';
-        if (btnFamily) btnFamily.className = 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800';
-        if (activePill) {
-          activePill.innerText = '🌿 일상 모드';
-          activePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100';
-        }
-        if (descIcon) descIcon.innerText = '💡';
-        if (descText) descText.innerHTML = '<strong>일상 모드:</strong> 나만의 자유로운 일상과 친구/사회 관계 중심의 질문이 제공됩니다.';
-        if (startBtnLabel) startBtnLabel.innerText = '따뜻한 마음 여행 시작하기';
+        if (btnDefault) btnDefault.className = activeClass;
+        if (btnFamily) btnFamily.className = inactiveClass;
       }
     }
 
@@ -2426,11 +2388,11 @@
       const modeTag = document.getElementById('question-mode-tag');
       if (modeTag) {
         if (currentTestMode === 'family') {
-          modeTag.innerText = '👨‍👩‍👧‍👦 가족 모드';
-          modeTag.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/60';
+          modeTag.innerText = '패밀리 라이프';
+          modeTag.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/80';
         } else {
-          modeTag.innerText = '🌿 일상 모드';
-          modeTag.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-600 border border-indigo-100';
+          modeTag.innerText = '싱글 라이프';
+          modeTag.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/80';
         }
       }
 
@@ -2556,9 +2518,9 @@
       const resModeBadge = document.getElementById('res-mode-badge');
       if (resModeBadge) {
         if (currentTestMode === 'family') {
-          resModeBadge.innerHTML = '👨‍👩‍👧‍👦 가족 모드 분석 리포트';
+          resModeBadge.innerHTML = '✨ 패밀리 라이프 리포트';
         } else {
-          resModeBadge.innerHTML = '🌿 일상 모드 분석 리포트';
+          resModeBadge.innerHTML = '✨ 싱글 라이프 리포트';
         }
       }
 
