@@ -1014,14 +1014,14 @@
           </div>
         </div>
 
-        <!-- 네트워크 관계망 전체 스테이지 (정사각형 레이아웃) -->
-        <div id="orbit-main-stage" class="relative w-[310px] h-[310px] sm:w-[350px] sm:h-[350px] flex items-center justify-center my-auto select-none">
+        <!-- 네트워크 관계망 전체 스테이지 (정사각형 레이아웃 확장 360x360) -->
+        <div id="orbit-main-stage" class="relative w-[330px] h-[330px] sm:w-[380px] sm:h-[380px] flex items-center justify-center my-auto select-none">
           <!-- 은은한 동심원 가이드 레이더 링 (시각적 깊이감 & 네트워크 궤도선) -->
-          <div class="absolute w-[244px] h-[244px] rounded-full border border-indigo-200/50 border-dashed pointer-events-none"></div>
-          <div class="absolute w-[160px] h-[160px] rounded-full border border-purple-200/30 pointer-events-none"></div>
+          <div class="absolute w-[290px] h-[290px] rounded-full border border-indigo-200/50 border-dashed pointer-events-none"></div>
+          <div class="absolute w-[190px] h-[190px] rounded-full border border-purple-200/30 pointer-events-none"></div>
 
           <!-- 1. SVG 네트워크 연결선 레이어 (나-지인선 & 지인-지인 크로스선) -->
-          <svg id="network-svg-layer" viewBox="0 0 340 340" class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
+          <svg id="network-svg-layer" viewBox="0 0 360 360" class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
             <defs>
               <!-- 핑크 글로우 필터 -->
               <filter id="glow-pink" x="-20%" y="-20%" width="140%" height="140%">
@@ -1047,13 +1047,13 @@
           <div id="orbit-dynamic-characters" class="absolute inset-0 w-full h-full pointer-events-auto z-20"></div>
 
           <!-- 4. 점선 추가(+) 버튼 (수직 정립 보장) -->
-          <div id="orbit-add-btn-wrapper" class="absolute pointer-events-auto z-30 transition-all">
-            <button onclick="openAddRelationModal()" id="orbit-dashed-add-btn" class="dashed-add-button w-12 h-12 rounded-full flex flex-col items-center justify-center shadow-md group cursor-pointer bg-white/90 hover:bg-indigo-50/90 transition-all hover:scale-105" style="width: 48px; height: 48px;" title="새로운 친구 MBTI 추가하기">
-              <svg class="w-5 h-5 text-indigo-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <div id="orbit-add-btn-wrapper" class="absolute pointer-events-auto z-30 transition-shadow">
+            <button onclick="openAddRelationModal()" id="orbit-dashed-add-btn" class="dashed-add-button w-12 h-12 rounded-full flex flex-col items-center justify-center shadow-md group cursor-grab active:cursor-grabbing bg-white/90 hover:bg-indigo-50/90 transition-all hover:scale-105" style="width: 48px; height: 48px; touch-action: none;" title="새로운 친구 MBTI 추가하기">
+              <svg class="w-5 h-5 text-indigo-500 group-hover:text-indigo-600 transition-colors pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
                 <line x1="12" y1="5" x2="12" y2="19" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
               </svg>
-              <span class="text-[8px] font-black text-indigo-500 tracking-tighter">추가</span>
+              <span class="text-[8px] font-black text-indigo-500 tracking-tighter pointer-events-none">추가</span>
             </button>
           </div>
 
@@ -1061,10 +1061,10 @@
           <div class="relative z-30 flex flex-col items-center network-center-glow cursor-pointer group" onclick="openChangeMyMbtiModal()" title="내 MBTI 변경하기">
             <div class="relative rounded-full bg-white/95 p-1.5 border-2 border-indigo-400 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform" style="width: 76px; height: 76px; max-width: 76px; max-height: 76px;">
               <div class="w-full h-full rounded-full overflow-hidden bg-indigo-50/50 flex items-center justify-center">
-                <img id="orbit-my-img" src="" alt="내 캐릭터" class="w-full h-full object-cover" />
+                <img id="orbit-my-img" src="" alt="내 캐릭터" class="w-full h-full object-cover pointer-events-none" />
               </div>
               <!-- 내 MBTI 텍스트 뱃지 -->
-              <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap border border-white/80 flex items-center gap-1 group-hover:shadow-lg transition-all">
+              <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap border border-white/80 flex items-center gap-1 group-hover:shadow-lg transition-all pointer-events-none">
                 <span>⭐</span>
                 <span id="orbit-my-mbti-tag">ENFP</span>
                 <span class="text-indigo-200 text-[9px]">(나 · ✏️)</span>
@@ -1076,7 +1076,7 @@
         <!-- 하단 조작 안내 -->
         <div class="w-full text-center mt-2 z-10">
           <p class="text-[11px] text-slate-500 font-medium">
-            💡 캐릭터를 탭하면 지인과의 궁합과 함께 <span class="text-indigo-600 font-bold">다른 지인들과의 관계망</span>도 볼 수 있어요.
+            💡 캐릭터를 <span class="text-indigo-600 font-bold">드래그</span>하여 원하는 위치로 옮겨보세요! (탭하면 상세 궁합 모달)
           </p>
         </div>
       </div>
@@ -3252,13 +3252,15 @@
 
 
 
+
+
     // ==========================================
     // 🕸️ 옵시디언(Obsidian) 스타일 유기적 포스 네트워크 그래프 엔진
     // ==========================================
     let networkViewMode = 'all'; // 'all' (전체 관계망) | 'me' (내 중심 뷰)
     let hoveredPersonId = null;
-    let nodeCoordinatesMap = {}; // id -> { id, x, y, vx, vy, targetDist, person, comp, domNode }
-    let addBtnPhysics = { x: 170, y: 48, vx: 0, vy: 0, targetDist: 122 };
+    let nodeCoordinatesMap = {}; // id -> { id, x, y, vx, vy, targetDist, isPinned, person, comp, domNode }
+    let addBtnPhysics = { x: 180, y: 44, vx: 0, vy: 0, targetDist: 136, isPinned: false };
 
     // 물리 시뮬레이션 상태 변수
     let forceAnimId = null;
@@ -3285,7 +3287,7 @@
       renderNetworkEdges();
     }
 
-    // 🪐 MBTI 소셜 네트워크 전체 스테이지 렌더링 (옵시디언 스타일 포스 그래프)
+    // 🪐 MBTI 소셜 네트워크 전체 스테이지 렌더링 (360도 균등 광폭 분산)
     function renderOrbitStage(newlyAddedId) {
       const myMbti = currentResultMbti || originalUserMbti || 'ENFP';
       const charactersLayer = document.getElementById('orbit-dynamic-characters');
@@ -3296,40 +3298,46 @@
       const count = orbitRelations.length;
       countBadge.innerText = '연결 ' + count + '명';
 
-      const cx = 170;
-      const cy = 170;
-      const defaultRadius = 120;
+      const cx = 180;
+      const cy = 180;
 
-      // 이전 노드 위치 좌표 유지 (새로 추가되더라도 기존 노드들의 위치를 유기적으로 보존)
+      // 이전 노드 위치 좌표 유지 (사용자가 드래그해서 옮겨놓은 위치 보존)
       const prevCoords = { ...nodeCoordinatesMap };
       nodeCoordinatesMap = {};
 
-      // 각 인물 노드 생성 및 물리 객체 바인딩
+      // 각 인물 노드 생성 및 360도 방사형 분산 배치
       orbitRelations.forEach((person, idx) => {
         const comp = calcMbtiSynergy(myMbti, person.mbti);
-        // 궁합 점수에 따른 중심과의 자연스러운 거리 (궁합이 좋을수록 더 가깝게!)
-        const targetDist = comp.score >= 90 ? 108 : (comp.score >= 70 ? 120 : 132);
+        // 시원한 시야를 위해 134~144px의 넓은 반경으로 분산
+        const targetDist = comp.score >= 90 ? 132 : (comp.score >= 70 ? 138 : 144);
 
         let initialX, initialY;
+        let isPinned = false;
 
-        if (prevCoords[person.id]) {
-          // 기존 위치 유지
+        if (prevCoords[person.id] && prevCoords[person.id].isPinned) {
+          // 사용자가 직접 드래그해서 고정한 위치 100% 보존
           initialX = prevCoords[person.id].x;
           initialY = prevCoords[person.id].y;
+          isPinned = true;
         } else {
-          // 신규 노드 스폰 각도 계산: 기존 노드들과 겹치지 않는 각도 탐색
+          // 360도 전 영역에 걸쳐 시원하게 사방으로 균등 분할 스폰 (+버튼 위치 -90도 고려)
           let angleDeg = -90;
           if (count === 1) {
-            angleDeg = 90; // 첫 번째는 하단에 스폰 (+버튼이 상단이므로 대칭)
+            angleDeg = 90; // 1명: 하단 정중앙
           } else if (count === 2) {
-            angleDeg = idx === 0 ? 140 : 40;
+            angleDeg = idx === 0 ? 140 : 40; // 2명: 좌하단, 우하단
+          } else if (count === 3) {
+            const angles = [210, 90, -30];
+            angleDeg = angles[idx];
           } else {
+            // 4명 이상: 360도를 (count+1)등분하여 사방에 균일 분산 (옹기종기 뭉침 방지!)
             const step = 360 / (count + 1);
-            angleDeg = -90 + step * (idx + 1) + (Math.random() * 10 - 5);
+            angleDeg = -90 + step * (idx + 1);
           }
+
           const angleRad = (angleDeg * Math.PI) / 180;
-          initialX = cx + targetDist * Math.cos(angleRad);
-          initialY = cy + targetDist * Math.sin(angleRad);
+          initialX = Math.round(cx + targetDist * Math.cos(angleRad));
+          initialY = Math.round(cy + targetDist * Math.sin(angleRad));
         }
 
         const isNew = person.id === newlyAddedId;
@@ -3373,9 +3381,10 @@
           id: person.id,
           x: initialX,
           y: initialY,
-          vx: isNew ? (Math.random() * 4 - 2) : (prevCoords[person.id]?.vx || 0),
-          vy: isNew ? (Math.random() * 4 - 2) : (prevCoords[person.id]?.vy || 0),
+          vx: 0,
+          vy: 0,
           targetDist: targetDist,
+          isPinned: isPinned,
           person: person,
           comp: comp,
           domNode: node
@@ -3438,9 +3447,12 @@
       wakeForceSimulation();
     }
 
-    // 🎯 마우스 & 터치 드래그 이벤트 바인딩 (옵시디언 그래프 뷰 인터랙션)
+    // 🎯 마우스 & 터치 드래그 앤 드롭 이벤트 바인딩 (자유로운 위치 이동 및 안착)
     function bindNodeDragEvents(element, nodeId, onClickCallback) {
       element.onpointerdown = (e) => {
+        // 좌클릭/단일 터치만 처리
+        if (e.button !== undefined && e.button !== 0) return;
+
         e.preventDefault();
         e.stopPropagation();
         dragTargetId = nodeId;
@@ -3448,9 +3460,14 @@
         dragPointerStartY = e.clientY;
         dragHasMoved = false;
 
-        element.setPointerCapture(e.pointerId);
-        element.classList.add('scale-105', 'z-40');
+        try {
+          element.setPointerCapture(e.pointerId);
+        } catch (err) {}
+
+        element.classList.add('scale-110', 'z-50', 'shadow-2xl');
         wakeForceSimulation();
+
+        const stage = document.getElementById('orbit-main-stage');
 
         const onPointerMove = (moveEvt) => {
           if (dragTargetId !== nodeId) return;
@@ -3460,17 +3477,25 @@
             dragHasMoved = true;
           }
 
-          const stage = document.getElementById('orbit-main-stage');
           const rect = stage.getBoundingClientRect();
-          // 스테이지 내부 좌표계 (0~340)로 변환
-          const stageX = Math.round(((moveEvt.clientX - rect.left) / rect.width) * 340);
-          const stageY = Math.round(((moveEvt.clientY - rect.top) / rect.height) * 340);
+          // 스테이지 내부 360x360 좌표계로 변환
+          let stageX = Math.round(((moveEvt.clientX - rect.left) / rect.width) * 360);
+          let stageY = Math.round(((moveEvt.clientY - rect.top) / rect.height) * 360);
+
+          // 스테이지 중심 180, 180 기준 최대 반경 158px 제한
+          const dist = Math.hypot(stageX - 180, stageY - 180);
+          if (dist > 158) {
+            const angle = Math.atan2(stageY - 180, stageX - 180);
+            stageX = Math.round(180 + 158 * Math.cos(angle));
+            stageY = Math.round(180 + 158 * Math.sin(angle));
+          }
 
           if (nodeId === 'add_btn') {
             addBtnPhysics.x = stageX;
             addBtnPhysics.y = stageY;
             addBtnPhysics.vx = 0;
             addBtnPhysics.vy = 0;
+            addBtnPhysics.isPinned = true;
             element.style.left = `${stageX}px`;
             element.style.top = `${stageY}px`;
           } else if (nodeCoordinatesMap[nodeId]) {
@@ -3478,6 +3503,7 @@
             nodeCoordinatesMap[nodeId].y = stageY;
             nodeCoordinatesMap[nodeId].vx = 0;
             nodeCoordinatesMap[nodeId].vy = 0;
+            nodeCoordinatesMap[nodeId].isPinned = true;
             element.style.left = `${stageX}px`;
             element.style.top = `${stageY}px`;
           }
@@ -3486,8 +3512,11 @@
         };
 
         const onPointerUp = (upEvt) => {
-          element.releasePointerCapture(upEvt.pointerId);
-          element.classList.remove('scale-105', 'z-40');
+          try {
+            element.releasePointerCapture(upEvt.pointerId);
+          } catch (err) {}
+
+          element.classList.remove('scale-110', 'z-50', 'shadow-2xl');
           window.removeEventListener('pointermove', onPointerMove);
           window.removeEventListener('pointerup', onPointerUp);
 
@@ -3495,8 +3524,14 @@
           dragTargetId = null;
 
           if (!hadMoved && typeof onClickCallback === 'function') {
+            // 이동하지 않고 가볍게 탭했을 때 모달 오픈
             onClickCallback();
           } else {
+            // 드래그하여 옮겨놓은 위치에 영구 안착 (다른 노드들이 그 노드를 피해 자연스럽게 흩어짐)
+            if (nodeCoordinatesMap[nodeId]) {
+              nodeCoordinatesMap[nodeId].isPinned = true;
+              nodeCoordinatesMap[nodeId].targetDist = Math.hypot(nodeCoordinatesMap[nodeId].x - 180, nodeCoordinatesMap[nodeId].y - 180);
+            }
             wakeForceSimulation();
           }
         };
@@ -3515,10 +3550,10 @@
       }
     }
 
-    // 🌀 포스 시뮬레이션 루프 (스프링 인력 + 쿨롱 반발력 + 감쇠)
+    // 🌀 포스 시뮬레이션 루프 (강력한 쿨롱 반발력으로 넓게 흩어지기)
     function stepForcePhysics() {
-      const cx = 170;
-      const cy = 170;
+      const cx = 180;
+      const cy = 180;
       const nodeIds = Object.keys(nodeCoordinatesMap);
       const allNodes = nodeIds.map(id => nodeCoordinatesMap[id]);
       
@@ -3529,13 +3564,14 @@
         y: addBtnPhysics.y,
         vx: addBtnPhysics.vx,
         vy: addBtnPhysics.vy,
-        targetDist: 122,
+        targetDist: 136,
+        isPinned: addBtnPhysics.isPinned,
         isAddBtn: true
       }];
 
       let totalKineticEnergy = 0;
 
-      // 1. 노드 간 반발력 (Coulomb Repulsion: 서로 겹치지 않고 유기적으로 퍼짐)
+      // 1. 노드 간 강력한 반발력 (Coulomb Repulsion: 200px 범위에서 서로를 넉넉하게 밀어냄)
       for (let i = 0; i < physicsEntities.length; i++) {
         for (let j = i + 1; j < physicsEntities.length; j++) {
           const a = physicsEntities[i];
@@ -3545,17 +3581,17 @@
           const dy = a.y - b.y;
           const dist = Math.hypot(dx, dy) || 1;
 
-          if (dist < 160) {
-            // 거리가 가까울수록 강하게 밀어냄
-            const repel = Math.min(6, 1400 / (dist * dist + 100));
+          if (dist < 180) {
+            // 거리가 가까울수록 강력하게 밀어냄 (충돌 및 겹침 완벽 해소)
+            const repel = Math.min(8, 2200 / (dist * dist + 100));
             const nx = dx / dist;
             const ny = dy / dist;
 
-            if (dragTargetId !== a.id) {
+            if (dragTargetId !== a.id && !a.isPinned) {
               a.vx += nx * repel;
               a.vy += ny * repel;
             }
-            if (dragTargetId !== b.id) {
+            if (dragTargetId !== b.id && !b.isPinned) {
               b.vx -= nx * repel;
               b.vy -= ny * repel;
             }
@@ -3563,72 +3599,54 @@
         }
       }
 
-      // 2. 중심 인력 & 지인 간 시너지 스프링 (Hooke's Law)
+      // 2. 중심 인력 및 중심 최소 안전 거리 (Hooke's Law)
       allNodes.forEach(node => {
-        if (dragTargetId === node.id) return;
+        if (dragTargetId === node.id || node.isPinned) return;
 
-        // 중심 '나'와의 스프링 거리 유지
         const dx = node.x - cx;
         const dy = node.y - cy;
         const dist = Math.hypot(dx, dy) || 1;
-        const targetDist = node.targetDist || 124;
-        const springForce = (dist - targetDist) * 0.055;
+        const targetDist = node.targetDist || 138;
+        const springForce = (dist - targetDist) * 0.045;
 
         node.vx -= (dx / dist) * springForce;
         node.vy -= (dy / dist) * springForce;
 
-        // 중심 캐릭터(반경 38px + MBTI 뱃지) 영역 침범 방지 최소 안전 거리 (104px)
-        const minCenterSafeDist = 104;
+        // 중심 캐릭터(반경 38px + MBTI 뱃지) 영역 침범 방지 최소 안전 거리 (108px)
+        const minCenterSafeDist = 108;
         if (dist < minCenterSafeDist) {
-          const pushForce = (minCenterSafeDist - dist) * 0.14;
+          const pushForce = (minCenterSafeDist - dist) * 0.16;
           node.vx += (dx / dist) * pushForce;
           node.vy += (dy / dist) * pushForce;
         }
-
-        // 지인 간 궁합이 85점 이상일 때 서로 자연스럽게 살짝 끌어당겨 클러스터링(유기적 군집) 형성
-        allNodes.forEach(other => {
-          if (node.id !== other.id && dragTargetId !== node.id) {
-            const crossComp = calcMbtiSynergy(node.person.mbti, other.person.mbti);
-            if (crossComp.score >= 88) {
-              const cdx = node.x - other.x;
-              const cdy = node.y - other.y;
-              const cdist = Math.hypot(cdx, cdy) || 1;
-              if (cdist > 80) {
-                const clusterForce = (cdist - 95) * 0.012;
-                node.vx -= (cdx / cdist) * clusterForce;
-                node.vy -= (cdy / cdist) * clusterForce;
-              }
-            }
-          }
-        });
       });
 
       // +버튼의 중심 스프링 (-90도 상단 기본 방향으로 가벼운 복원력)
-      if (dragTargetId !== 'add_btn') {
+      if (dragTargetId !== 'add_btn' && !addBtnPhysics.isPinned) {
         const dx = addBtnPhysics.x - cx;
-        const dy = addBtnPhysics.y - (cy - 120);
+        const dy = addBtnPhysics.y - (cy - 136);
         const dist = Math.hypot(dx, dy) || 1;
         addBtnPhysics.vx -= (dx / dist) * Math.min(3, dist * 0.04);
         addBtnPhysics.vy -= (dy / dist) * Math.min(3, dist * 0.04);
       }
 
-      // 3. 위치 업데이트 및 감쇠(Damping) & 경계 제한
+      // 3. 위치 업데이트 및 감쇠(Damping) & 외곽 경계 제한
       allNodes.forEach(node => {
-        if (dragTargetId === node.id) return;
+        if (dragTargetId === node.id || node.isPinned) return;
 
-        node.vx *= 0.82;
-        node.vy *= 0.82;
+        node.vx *= 0.84;
+        node.vy *= 0.84;
         node.x += node.vx;
         node.y += node.vy;
 
-        // 경계 제한 (스테이지 반지름 138px 내 유지)
+        // 경계 제한 (스테이지 반지름 154px 내 유지)
         const distFromCenter = Math.hypot(node.x - cx, node.y - cy);
-        if (distFromCenter > 138) {
+        if (distFromCenter > 154) {
           const angle = Math.atan2(node.y - cy, node.x - cx);
-          node.x = cx + 138 * Math.cos(angle);
-          node.y = cy + 138 * Math.sin(angle);
-          node.vx *= 0.5;
-          node.vy *= 0.5;
+          node.x = cx + 154 * Math.cos(angle);
+          node.y = cy + 154 * Math.sin(angle);
+          node.vx *= 0.4;
+          node.vy *= 0.4;
         }
 
         // DOM 노드 위치 반영
@@ -3639,17 +3657,17 @@
       });
 
       // +버튼 위치 업데이트
-      if (dragTargetId !== 'add_btn') {
-        addBtnPhysics.vx *= 0.82;
-        addBtnPhysics.vy *= 0.82;
+      if (dragTargetId !== 'add_btn' && !addBtnPhysics.isPinned) {
+        addBtnPhysics.vx *= 0.84;
+        addBtnPhysics.vy *= 0.84;
         addBtnPhysics.x += addBtnPhysics.vx;
         addBtnPhysics.y += addBtnPhysics.vy;
 
         const addBtnDist = Math.hypot(addBtnPhysics.x - cx, addBtnPhysics.y - cy);
-        if (addBtnDist > 138) {
+        if (addBtnDist > 154) {
           const angle = Math.atan2(addBtnPhysics.y - cy, addBtnPhysics.x - cx);
-          addBtnPhysics.x = cx + 138 * Math.cos(angle);
-          addBtnPhysics.y = cy + 138 * Math.sin(angle);
+          addBtnPhysics.x = cx + 154 * Math.cos(angle);
+          addBtnPhysics.y = cy + 154 * Math.sin(angle);
         }
 
         const addBtnEl = document.getElementById('orbit-add-btn-wrapper');
@@ -3664,7 +3682,7 @@
       renderNetworkEdges();
 
       // 에너지가 충분히 낮아지면 시뮬레이션 일시정지 (CPU 부하 0% 달성)
-      if (totalKineticEnergy < 0.08 && !dragTargetId) {
+      if (totalKineticEnergy < 0.05 && !dragTargetId) {
         isForceSimActive = false;
         cancelAnimationFrame(forceAnimId);
       } else {
@@ -3672,7 +3690,7 @@
       }
     }
 
-    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링 (동그라미 정중앙 100% 직결)
+    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링 (중심 180, 180 기준)
     function renderNetworkEdges() {
       const primaryEdgesGroup = document.getElementById('network-primary-edges-group');
       const crossEdgesGroup = document.getElementById('network-cross-edges-group');
@@ -3684,8 +3702,8 @@
       crossEdgesGroup.innerHTML = '';
       badgesLayer.innerHTML = '';
 
-      const cx = 170;
-      const cy = 170;
+      const cx = 180;
+      const cy = 180;
       const nodeIds = Object.keys(nodeCoordinatesMap);
 
       // 1. 지인 ↔ 지인 상호 연결선 (Cross-Relations: 각 동그라미 중심 A와 B를 정확히 직결)
@@ -3740,7 +3758,7 @@
         }
       }
 
-      // 2. 나 ↔ 지인 간의 주 궁합선 (Primary Edges: 내 동그라미 중심(170, 170)에서 상대 동그라미 중심(x, y)으로 완벽 직결)
+      // 2. 나 ↔ 지인 간의 주 궁합선 (Primary Edges: 내 동그라미 중심(180, 180)에서 상대 동그라미 중심(x, y)으로 완벽 직결)
       nodeIds.forEach(id => {
         const node = nodeCoordinatesMap[id];
         const comp = node.comp;
@@ -3765,9 +3783,9 @@
         }
         primaryEdgesGroup.appendChild(line);
 
-        // 선 상에 나와의 시너지 뱃지 표시 (내 캐릭터 동그라미/MBTI 뱃지에 가려지지 않도록 안전 거리 64px 이상 확보)
+        // 선 상에 나와의 시너지 뱃지 표시 (내 캐릭터 동그라미/MBTI 뱃지에 가려지지 않도록 안전 거리 68px 이상 확보)
         const dist = Math.hypot(node.x - cx, node.y - cy) || 1;
-        const badgeDist = Math.max(64, Math.min(dist - 26, dist * 0.58));
+        const badgeDist = Math.max(68, Math.min(dist - 28, dist * 0.58));
         const midX = cx + (node.x - cx) * (badgeDist / dist);
         const midY = cy + (node.y - cy) * (badgeDist / dist);
         const badge = document.createElement('div');
