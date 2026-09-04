@@ -1016,9 +1016,9 @@
 
         <!-- 네트워크 관계망 전체 스테이지 (정사각형 레이아웃) -->
         <div id="orbit-main-stage" class="relative w-[310px] h-[310px] sm:w-[350px] sm:h-[350px] flex items-center justify-center my-auto select-none">
-          <!-- 은은한 동심원 가이드 레이더 링 (시각적 깊이감) -->
-          <div class="absolute w-[270px] h-[270px] sm:w-[290px] sm:h-[290px] rounded-full border border-indigo-200/40 pointer-events-none"></div>
-          <div class="absolute w-[180px] h-[180px] sm:w-[190px] sm:h-[190px] rounded-full border border-purple-200/30 pointer-events-none"></div>
+          <!-- 은은한 동심원 가이드 레이더 링 (시각적 깊이감 & 네트워크 궤도선) -->
+          <div class="absolute w-[244px] h-[244px] rounded-full border border-indigo-200/50 border-dashed pointer-events-none"></div>
+          <div class="absolute w-[160px] h-[160px] rounded-full border border-purple-200/30 pointer-events-none"></div>
 
           <!-- 1. SVG 네트워크 연결선 레이어 (나-지인선 & 지인-지인 크로스선) -->
           <svg id="network-svg-layer" viewBox="0 0 340 340" class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
@@ -1048,8 +1048,8 @@
 
           <!-- 4. 점선 추가(+) 버튼 (수직 정립 보장) -->
           <div id="orbit-add-btn-wrapper" class="absolute pointer-events-auto z-30 transition-all">
-            <button onclick="openAddRelationModal()" id="orbit-dashed-add-btn" class="dashed-add-button w-13 h-13 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center shadow-md group cursor-pointer bg-white/90 hover:bg-indigo-50/90 transition-all hover:scale-105" title="새로운 친구 MBTI 추가하기">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <button onclick="openAddRelationModal()" id="orbit-dashed-add-btn" class="dashed-add-button w-12 h-12 rounded-full flex flex-col items-center justify-center shadow-md group cursor-pointer bg-white/90 hover:bg-indigo-50/90 transition-all hover:scale-105" style="width: 48px; height: 48px;" title="새로운 친구 MBTI 추가하기">
+              <svg class="w-5 h-5 text-indigo-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
                 <line x1="12" y1="5" x2="12" y2="19" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
               </svg>
@@ -1057,9 +1057,9 @@
             </button>
           </div>
 
-          <!-- 5. 중심 내 MBTI 캐릭터 (Center Hub Node) -->
+          <!-- 5. 중심 내 MBTI 캐릭터 (Center Hub Node: 콤팩트한 76px 크기로 주변 관계망 시야 확보) -->
           <div class="relative z-30 flex flex-col items-center network-center-glow cursor-pointer group" onclick="openChangeMyMbtiModal()" title="내 MBTI 변경하기">
-            <div class="relative w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-white/95 p-1.5 border-2 border-indigo-400 shadow-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div class="relative rounded-full bg-white/95 p-1.5 border-2 border-indigo-400 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform" style="width: 76px; height: 76px; max-width: 76px; max-height: 76px;">
               <div class="w-full h-full rounded-full overflow-hidden bg-indigo-50/50 flex items-center justify-center">
                 <img id="orbit-my-img" src="" alt="내 캐릭터" class="w-full h-full object-cover" />
               </div>
@@ -3361,7 +3361,7 @@
               <span class="text-[9px] font-black ${comp.theme === 'pink' ? 'text-pink-500' : 'text-indigo-600'}">${person.mbti}</span>
             </div>
             <!-- 캐릭터 원형 아바타 (절대 눕지 않고 직립) -->
-            <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-white/95 p-1 border-2 ${comp.theme === 'pink' ? 'border-pink-400' : 'border-indigo-400'} shadow-lg flex items-center justify-center relative bg-indigo-50/40">
+            <div class="w-12 h-12 rounded-full bg-white/95 p-1 border-2 ${comp.theme === 'pink' ? 'border-pink-400' : 'border-indigo-400'} shadow-lg flex items-center justify-center relative bg-indigo-50/40" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px;">
               <img src="assets/characters/${person.mbti}.png"
                    onerror="this.onerror=null; this.src='assets/characters/${person.mbti}.svg';"
                    alt="${person.name}" class="w-full h-full object-cover rounded-full" />
