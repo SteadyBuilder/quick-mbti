@@ -55,12 +55,13 @@ const checks = [
   { name: 'Situation / Mode Switcher Function', str: 'function setTestMode' },
   { name: '4-Point Matrix Scale', str: 'optAStrong' },
   { name: 'Main Intro Network Entry Banner', str: 'MBTI 소셜 네트워크 관계망' },
-  { name: 'Header Network Entry Button', str: "openOrbitScreen('screen-intro')" },
+  { name: 'Network Entry Button', str: "openOrbitScreen('screen-intro')" },
   { name: 'Change My MBTI Modal', str: 'id="modal-change-my-mbti"' },
   { name: 'Change My MBTI Function', str: 'function selectNewMyMbti' },
   { name: 'Orbit Dynamic Back Function', str: 'function backFromOrbit()' },
   { name: 'Reset Orbit Layout Button', str: 'id="btn-reset-orbit-layout"' },
-  { name: 'Reset Orbit Positions Function', str: 'function resetOrbitPositions()' }
+  { name: 'Reset Orbit Positions Function', str: 'function resetOrbitPositions()' },
+  { name: 'Friends In Network Section Title', str: '관계망에 함께 머무는 친구들' }
 ];
 
 checks.forEach(c => {
