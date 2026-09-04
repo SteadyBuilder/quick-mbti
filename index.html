@@ -23,6 +23,9 @@
 
   <script>
     tailwind.config = {
+      future: {
+        hoverOnlyWhenSupported: true,
+      },
       theme: {
         extend: {
           fontFamily: {
@@ -191,6 +194,68 @@
 
     .jelly-btn:active {
       animation: jellyTap 0.32s ease-out;
+    }
+
+    /* 🫧 Question Option Buttons (호버 고착 방지 & 다정한 선택 인터랙션) */
+    .question-opt-btn {
+      width: 100%;
+      min-height: 64px;
+      padding: 1rem 1.5rem;
+      border-radius: 1rem;
+      background-color: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .question-opt-btn .opt-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: #334155; /* slate-700 */
+      line-height: 1.375;
+      word-break: keep-all;
+      transition: color 0.15s ease;
+      pointer-events: none;
+    }
+
+    @media (min-width: 768px) {
+      .question-opt-btn .opt-text {
+        font-size: 16px;
+      }
+    }
+
+    /* 마우스 호버가 지원되는 기기(PC/랩탑)에서만 hover 스타일 적용 (모바일 터치 시 고착 방지) */
+    @media (hover: hover) and (pointer: fine) {
+      .question-opt-btn:hover {
+        background-color: #ffffff;
+        border-color: #a5b4fc; /* indigo-300 */
+        box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.12);
+        transform: translateY(-2px);
+      }
+      .question-opt-btn:hover .opt-text {
+        color: #4f46e5; /* indigo-600 */
+      }
+    }
+
+    /* 선택되었을 때의 스타일 (일시적 탭 피드백 및 '이전' 이동 시 복원 표시) */
+    .question-opt-btn.is-selected {
+      background-color: #ffffff !important;
+      border-color: #6366f1 !important; /* brand indigo */
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25), 0 8px 20px -4px rgba(99, 102, 241, 0.18) !important;
+      transform: scale(0.985) !important;
+    }
+    .question-opt-btn.is-selected .opt-text {
+      color: #4f46e5 !important;
+      font-weight: 800 !important;
     }
 
     /* Shimmer Text Effect */
@@ -555,29 +620,29 @@
       <!-- Clean & Direct Answer Options (순수 질문-답변 보기 - 가운데 정렬 & 감성 프리미엄 카드) -->
       <div class="space-y-3.5" id="options-container">
         <!-- Option A+ (Strong) -->
-        <button onclick="selectOption(2)" class="jelly-btn w-full min-h-[64px] py-4 px-6 rounded-2xl bg-white/80 hover:bg-white backdrop-blur-xl border border-white/90 hover:border-indigo-300 shadow-sm hover:shadow-md hover:shadow-indigo-500/10 transition-all duration-200 flex items-center justify-center text-center group cursor-pointer hover:-translate-y-0.5">
-          <p class="text-[15px] md:text-base font-bold text-slate-700 group-hover:text-indigo-600 transition-colors duration-200 leading-snug break-keep balanced-text" id="opt-a-strong">
+        <button type="button" data-score="2" onclick="selectOption(2, this)" class="question-opt-btn jelly-btn">
+          <p class="opt-text balanced-text" id="opt-a-strong">
             밖에서 사람들과 에너지 뿜뿜
           </p>
         </button>
 
         <!-- Option A (Slight) -->
-        <button onclick="selectOption(1)" class="jelly-btn w-full min-h-[64px] py-4 px-6 rounded-2xl bg-white/80 hover:bg-white backdrop-blur-xl border border-white/90 hover:border-indigo-300 shadow-sm hover:shadow-md hover:shadow-indigo-500/10 transition-all duration-200 flex items-center justify-center text-center group cursor-pointer hover:-translate-y-0.5">
-          <p class="text-[15px] md:text-base font-bold text-slate-700 group-hover:text-indigo-600 transition-colors duration-200 leading-snug break-keep balanced-text" id="opt-a-slight">
+        <button type="button" data-score="1" onclick="selectOption(1, this)" class="question-opt-btn jelly-btn">
+          <p class="opt-text balanced-text" id="opt-a-slight">
             약속 잡고 카페 수다
           </p>
         </button>
 
         <!-- Option B (Slight) -->
-        <button onclick="selectOption(-1)" class="jelly-btn w-full min-h-[64px] py-4 px-6 rounded-2xl bg-white/80 hover:bg-white backdrop-blur-xl border border-white/90 hover:border-indigo-300 shadow-sm hover:shadow-md hover:shadow-indigo-500/10 transition-all duration-200 flex items-center justify-center text-center group cursor-pointer hover:-translate-y-0.5">
-          <p class="text-[15px] md:text-base font-bold text-slate-700 group-hover:text-indigo-600 transition-colors duration-200 leading-snug break-keep balanced-text" id="opt-b-slight">
+        <button type="button" data-score="-1" onclick="selectOption(-1, this)" class="question-opt-btn jelly-btn">
+          <p class="opt-text balanced-text" id="opt-b-slight">
             집에서 편하게 쉬기
           </p>
         </button>
 
         <!-- Option B+ (Strong) -->
-        <button onclick="selectOption(-2)" class="jelly-btn w-full min-h-[64px] py-4 px-6 rounded-2xl bg-white/80 hover:bg-white backdrop-blur-xl border border-white/90 hover:border-indigo-300 shadow-sm hover:shadow-md hover:shadow-indigo-500/10 transition-all duration-200 flex items-center justify-center text-center group cursor-pointer hover:-translate-y-0.5">
-          <p class="text-[15px] md:text-base font-bold text-slate-700 group-hover:text-indigo-600 transition-colors duration-200 leading-snug break-keep balanced-text" id="opt-b-strong">
+        <button type="button" data-score="-2" onclick="selectOption(-2, this)" class="question-opt-btn jelly-btn">
+          <p class="opt-text balanced-text" id="opt-b-strong">
             침대 밖은 위험해 (고립)
           </p>
         </button>
@@ -2619,6 +2684,8 @@
       console.warn('사용자 MBTI 복원 실패:', e);
     }
 
+    let isSelectingOption = false; // 연속 터치 방지 및 전환 락 플래그
+
     function startTest() {
       document.getElementById('screen-intro').classList.add('hidden');
       document.getElementById('screen-question').classList.remove('hidden');
@@ -2628,6 +2695,7 @@
       currentIdx = 0;
       scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
       answersHistory = [];
+      isSelectingOption = false;
       questions = generateDynamicQuestions(currentTestMode); // 🎲 선택된 모드(일상/가족) 질문 조합 생성
 
       // 질문 화면 상단 모드 태그 업데이트
@@ -2664,6 +2732,27 @@
     }
 
     function renderQuestion() {
+      // 1. 모든 옵션 버튼의 포커스 및 잔여 선택 상태 완전 초기화 (다음 질문에 스타일 잔존 원천 방지)
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+
+      const optBtns = document.querySelectorAll('.question-opt-btn');
+      optBtns.forEach(btn => {
+        btn.classList.remove('is-selected');
+        if (typeof btn.blur === 'function') btn.blur();
+      });
+
+      // 2. 만약 '이전' 버튼 등으로 되돌아와 이미 응답한 기록이 있다면 복원 표시
+      if (answersHistory[currentIdx] && typeof answersHistory[currentIdx].score === 'number') {
+        const recordedScore = answersHistory[currentIdx].score;
+        optBtns.forEach(btn => {
+          if (parseInt(btn.getAttribute('data-score'), 10) === recordedScore) {
+            btn.classList.add('is-selected');
+          }
+        });
+      }
+
       const q = questions[currentIdx];
       document.getElementById('question-counter').innerText = (currentIdx + 1) + ' / ' + questions.length;
       document.getElementById('question-text').innerHTML = formatBalancedKoreanText(q.text);
@@ -2687,21 +2776,49 @@
       cardBox.classList.remove('animate-jelly-card');
       void cardBox.offsetWidth;
       cardBox.classList.add('animate-jelly-card');
+
+      isSelectingOption = false; // 전환 완료 후 새로운 선택 허용
     }
 
-    function selectOption(scoreVal) {
+    function selectOption(scoreVal, clickedElement) {
+      if (isSelectingOption) return; // 다중 터치 방지
+      isSelectingOption = true;
+
+      // 1. 선택된 버튼에 시각적 피드백 즉각 부여
+      const optBtns = document.querySelectorAll('.question-opt-btn');
+      optBtns.forEach(btn => btn.classList.remove('is-selected'));
+
+      let targetBtn = clickedElement;
+      if (!targetBtn || !targetBtn.classList || !targetBtn.classList.contains('question-opt-btn')) {
+        targetBtn = document.querySelector(`.question-opt-btn[data-score="${scoreVal}"]`);
+      }
+      if (targetBtn && targetBtn.classList) {
+        targetBtn.classList.add('is-selected');
+      }
+
+      // 2. 모바일 브라우저 포커스 및 잔여 호버 고착 해제
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+
+      // 3. 응답 결과 저장
       const q = questions[currentIdx];
       answersHistory[currentIdx] = { axis: q.axis, score: scoreVal };
 
-      if (currentIdx < questions.length - 1) {
-        currentIdx++;
-        renderQuestion();
-      } else {
-        finishTest();
-      }
+      // 4. 경쾌한 150ms 탭 피드백 후 부드럽게 다음 질문으로 이동
+      setTimeout(() => {
+        if (currentIdx < questions.length - 1) {
+          currentIdx++;
+          renderQuestion();
+        } else {
+          isSelectingOption = false;
+          finishTest();
+        }
+      }, 150);
     }
 
     function prevQuestion() {
+      if (isSelectingOption) return;
       if (currentIdx > 0) {
         currentIdx--;
         renderQuestion();
