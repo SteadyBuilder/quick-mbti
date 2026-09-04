@@ -50,7 +50,8 @@ const checks = [
   { name: 'View Target Full Profile Function', str: 'function viewTargetFullProfile' },
   { name: 'Back to Original Result Function', str: 'function backToMyOriginalResult' },
   { name: 'Interactive Chemistry Cards', str: 'onclick="openChemistry(\'best\')"' },
-  { name: 'Questions Diet Copy (주말 충전, 어디서?)', str: '주말 충전, 어디서?' },
+  { name: '2026 Dynamic Question Pool', str: 'const questionPool =' },
+  { name: 'Dynamic Question Generator', str: 'function generateDynamicQuestions()' },
   { name: '4-Point Matrix Scale', str: 'optAStrong' }
 ];
 

@@ -254,7 +254,7 @@
     <!-- SCREEN 1: INTRO (시작 화면) -->
     <section id="screen-intro" class="animate-jelly-card flex flex-col items-center text-center">
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50/80 border border-indigo-100 text-indigo-700 text-xs font-bold mb-5 shadow-xs">
-        <span>✨ 1분 안에 가볍게 만나는 나</span>
+        <span>✨ 2026 트렌드 다이내믹 질문지 탑재</span>
       </div>
 
       <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-800 mb-3 leading-tight">
@@ -263,9 +263,9 @@
       </h1>
 
       <p class="text-slate-500 text-sm md:text-base mb-6 max-w-xs leading-relaxed font-normal">
-        복잡하고 어려운 질문은 잠시 내려놓고,<br>
-        편안한 마음으로 솔직한 내 모습을 마주해 보세요.<br>
-        상담전문가의 따스한 시선으로 당신을 보듬어 드려요.
+        뻔하고 낡은 질문은 그만!<br>
+        매번 새로워지는 2026 최신 일상 문항으로<br>
+        내 안의 솔직하고 따스한 결을 마주해 보세요.
       </p>
 
       <!-- Glass Graphic Hero Preview -->
@@ -276,20 +276,24 @@
             <span class="text-xl">🍵</span>
             <span class="text-xs font-bold text-slate-700 tracking-wider uppercase">마음 쉼터 안내</span>
           </div>
-          <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-100/90 text-indigo-700 font-bold">감성 힐링 진단</span>
+          <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-100/90 text-indigo-700 font-bold">다이내믹 힐링 진단</span>
         </div>
         <div class="space-y-2 text-xs text-slate-600">
           <div class="flex items-center gap-2">
             <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
-            <span><strong>쉽고 직관적인 1줄 문항</strong>: 고민 없이 편안하게 선택</span>
+            <span><strong>매번 새로운 최신 트렌드 문항</strong>: 20개 질문 풀에서 무작위 추출</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
-            <span><strong>손끝에 닿는 젤리 탄성</strong>: 만지는 재미가 있는 부드러운 탭</span>
+            <span><strong>쉽고 직관적인 1줄 선택지</strong>: 고민 없이 솔직하고 편안하게 탭</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
-            <span><strong>다정한 상담 리포트</strong>: 16종 몽글이 캐릭터 & 심층 위로 처방</span>
+            <span><strong>쫀득한 젤리 탄성 인터랙션</strong>: 부드럽고 경쾌한 햅틱 반응</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+            <span><strong>다정한 심층 리포트</strong>: 16종 몽글이 캐릭터 & 따스한 위로 처방</span>
           </div>
         </div>
       </div>
@@ -447,10 +451,10 @@
           <!-- Axis 1: E vs I -->
           <div>
             <div class="flex justify-between text-xs font-semibold mb-1">
-              <span id="label-e" class="text-indigo-700 font-bold">외향 (E) 75%</span>
-              <span id="label-i" class="text-slate-400">내향 (I) 25%</span>
+              <span id="label-e" class="text-indigo-600 font-extrabold transition-all duration-300">외향 (E) 75%</span>
+              <span id="label-i" class="text-slate-400 font-medium transition-all duration-300">내향 (I) 25%</span>
             </div>
-            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+            <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden flex justify-start">
               <div id="bar-e" class="bg-indigo-500 h-full rounded-full transition-all duration-1000" style="width: 75%;"></div>
             </div>
           </div>
@@ -458,10 +462,10 @@
           <!-- Axis 2: S vs N -->
           <div>
             <div class="flex justify-between text-xs font-semibold mb-1">
-              <span id="label-s" class="text-slate-400">감각 (S) 20%</span>
-              <span id="label-n" class="text-purple-700 font-bold">직관 (N) 80%</span>
+              <span id="label-s" class="text-slate-400 font-medium transition-all duration-300">감각 (S) 20%</span>
+              <span id="label-n" class="text-purple-600 font-extrabold transition-all duration-300">직관 (N) 80%</span>
             </div>
-            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+            <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden flex justify-end">
               <div id="bar-s" class="bg-purple-500 h-full rounded-full transition-all duration-1000" style="width: 80%;"></div>
             </div>
           </div>
@@ -469,10 +473,10 @@
           <!-- Axis 3: T vs F -->
           <div>
             <div class="flex justify-between text-xs font-semibold mb-1">
-              <span id="label-t" class="text-slate-400">사고 (T) 30%</span>
-              <span id="label-f" class="text-pink-600 font-bold">감정 (F) 70%</span>
+              <span id="label-t" class="text-slate-400 font-medium transition-all duration-300">사고 (T) 30%</span>
+              <span id="label-f" class="text-pink-600 font-extrabold transition-all duration-300">감정 (F) 70%</span>
             </div>
-            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+            <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden flex justify-end">
               <div id="bar-t" class="bg-pink-500 h-full rounded-full transition-all duration-1000" style="width: 70%;"></div>
             </div>
           </div>
@@ -480,10 +484,10 @@
           <!-- Axis 4: J vs P -->
           <div>
             <div class="flex justify-between text-xs font-semibold mb-1">
-              <span id="label-j" class="text-slate-400">판단 (J) 15%</span>
-              <span id="label-p" class="text-emerald-600 font-bold">인식 (P) 85%</span>
+              <span id="label-j" class="text-slate-400 font-medium transition-all duration-300">판단 (J) 15%</span>
+              <span id="label-p" class="text-emerald-600 font-extrabold transition-all duration-300">인식 (P) 85%</span>
             </div>
-            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+            <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden flex justify-end">
               <div id="bar-j" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 85%;"></div>
             </div>
           </div>
@@ -733,105 +737,275 @@
 
   <!-- Script: 문항 데이터, 16개 MBTI DB, 케미 매칭 & 캔버스 엔진 -->
   <script>
-    // ⚡ 직관형 8문항 데이터
-    const questions = [
-      {
-        axis: 'EI',
-        category: '에너지의 방향',
-        badge: 'Q. 01',
-        text: '주말 충전, 어디서?',
-        optAStrong: '밖에서 사람들과 에너지 뿜뿜',
-        optASlight: '약속 잡고 카페 수다',
-        optBSlight: '집에서 편하게 쉬기',
-        optBStrong: '침대 밖은 위험해 (고립)',
-        letterA: 'E',
-        letterB: 'I'
-      },
-      {
-        axis: 'SN',
-        category: '인식과 생각의 결',
-        badge: 'Q. 02',
-        text: '멍때릴 때 머릿속은?',
-        optAStrong: '보이는 그대로 멍~ 아무 생각 없음',
-        optASlight: '오늘 할 일이나 현실적인 일정',
-        optBSlight: '꼬리에 꼬리를 무는 상상',
-        optBStrong: '끝없는 상상의 나래와 평행우주',
-        letterA: 'S',
-        letterB: 'N'
-      },
-      {
-        axis: 'TF',
-        category: '공감과 반응',
-        badge: 'Q. 03',
-        text: '"우울해서 빵 샀어"',
-        optAStrong: '무슨 빵 샀어? 빵이랑 우울한 게 무슨 상관?',
-        optASlight: '무슨 빵인지 궁금해. 괜찮아?',
-        optBSlight: '속상하겠다, 맛있는 거 먹고 풀자',
-        optBStrong: '무슨 일 있어? 기분 왜 그래 ㅠㅠ 마음 아파',
-        letterA: 'T',
-        letterB: 'F'
-      },
-      {
-        axis: 'JP',
-        category: '계획과 생활 양식',
-        badge: 'Q. 04',
-        text: '여행 전날 밤 나의 상태',
-        optAStrong: '시간표·분 단위 동선·체크리스트 완료',
-        optASlight: '핵심 목적지와 숙소 동선은 짜둠',
-        optBSlight: '필수 짐만 챙기고 현지에서 유동적으로',
-        optBStrong: '내일 아침에 대충 챙김! 무계획 즉흥 여행',
-        letterA: 'J',
-        letterB: 'P'
-      },
-      {
-        axis: 'EI',
-        category: '사회적 상호작용',
-        badge: 'Q. 05',
-        text: '낯선 모임에 갔을 때',
-        optAStrong: '먼저 말 걸며 분위기 주도하고 번호 교환',
-        optASlight: '눈 마주치면 자연스럽게 대화 참여',
-        optBSlight: '다가와 주는 사람과 조용히 1:1 대화',
-        optBStrong: '조용히 구석에서 관찰하며 조기 귀가 각 재기',
-        letterA: 'E',
-        letterB: 'I'
-      },
-      {
-        axis: 'SN',
-        category: '대화와 관심사',
-        badge: 'Q. 06',
-        text: '더 끌리는 대화 주제',
-        optAStrong: '오늘의 핫이슈, 맛집, 생생한 현실 일상 썰',
-        optASlight: '최근 경험이나 실질적인 재테크/정보',
-        optBSlight: '인생관, 가치관, 사람의 심리 이야기',
-        optBStrong: '우주, 미래, 철학적 상상과 \'만약에\' 토론',
-        letterA: 'S',
-        letterB: 'N'
-      },
-      {
-        axis: 'TF',
-        category: '위로와 문제 해결',
-        badge: 'Q. 07',
-        text: '시험 떨어진 친구에게',
-        optAStrong: '원인 분석 & 다음 시험 현실적 해결책 제시',
-        optASlight: '위로 후 "다음엔 어떻게 할지" 조심스레 의논',
-        optBSlight: '"고생 많았어" 토닥이며 속상한 마음 달래기',
-        optBStrong: '따뜻한 위로와 맛있는 밥 사주며 온전히 편 들어주기',
-        letterA: 'T',
-        letterB: 'F'
-      },
-      {
-        axis: 'JP',
-        category: '일과 마감 스타일',
-        badge: 'Q. 08',
-        text: '마감 일주일 전 과제',
-        optAStrong: '이미 절반 이상 끝내두고 여유롭게 검토 중',
-        optASlight: '매일 할당량을 정해서 미리미리 끝내는 편',
-        optBSlight: '마감이 다가올 때쯤 집중해서 시작',
-        optBStrong: '마감 전날 밤 초인적 아드레날린 폭발 벼락치기',
-        letterA: 'J',
-        letterB: 'P'
+    // 🧭 2026 트렌드 다이내믹 질문 풀 (성향 축별 5문항 x 4개 축 = 총 20개 고품질 문항 풀)
+    // 매 테스트마다 각 축에서 2문항씩 무작위 추출하여 10,000가지 이상의 신선한 조합을 제공합니다.
+    const questionPool = {
+      EI: [
+        {
+          axis: 'EI',
+          category: '에너지 충전의 결',
+          text: '금요일 저녁, 고된 일과를 마친 퇴근(하교)길 나의 선택은?',
+          optAStrong: '친한 사람들과 맛있는 거 먹고 시끌벅적 수다로 스트레스 날리기',
+          optASlight: '편한 친구 1~2명과 가볍게 커피나 한잔하며 소소한 대화',
+          optBSlight: '좋아하는 음식 포장해서 조용하고 아늑한 집으로 직행',
+          optBStrong: '모든 알림 끄고 암막 커튼 치기, 완전한 고독 속에서 침대 다이빙',
+          letterA: 'E',
+          letterB: 'I'
+        },
+        {
+          axis: 'EI',
+          category: '사회적 활력과 자극',
+          text: '주말에 핫한 팝업스토어나 플리마켓에 갔을 때',
+          optAStrong: '사람 많은 활기찬 열기에 도파민 뿜뿜! 스태프나 옆사람과 스몰토크도 신남',
+          optASlight: '사람 구경도 재미있고 다양한 분위기를 신나게 둘러봄',
+          optBSlight: '사람이 너무 많아지면 슬슬 기가 빨려서 조용한 카페를 찾음',
+          optBStrong: '인파를 보자마자 급격히 피로해져 노이즈캔슬링 켜고 칼귀가 각 재기',
+          letterA: 'E',
+          letterB: 'I'
+        },
+        {
+          axis: 'EI',
+          category: '소통과 교류의 농도',
+          text: '단체 카톡방이나 소셜 미디어에서의 내 모습은?',
+          optAStrong: '재미있는 밈이나 일상 소식을 가장 먼저 공유하며 대화 주도',
+          optASlight: '알림 뜨면 빠르게 답장하고 자연스럽게 티키타카 참여',
+          optBSlight: '대화는 다 지켜보지만 가끔 이모티콘이나 하트로만 리액션',
+          optBStrong: '대부분 무음 처리, 꼭 나를 부르는 급한 일 아니면 읽고 넘김',
+          letterA: 'E',
+          letterB: 'I'
+        },
+        {
+          axis: 'EI',
+          category: '휴식과 충전의 방식',
+          text: '긴 연휴의 마지막 날, 내가 에너지를 회복하는 법',
+          optAStrong: '친구들과 드라이브나 신나는 파티로 연휴 피날레 장식',
+          optASlight: '가까운 지인과 브런치나 가벼운 산책 즐기며 기분 전환',
+          optBSlight: '집에서 밀린 OTT 시리즈 몰아보며 조용히 일상 정돈',
+          optBStrong: '종일 방 안에서 도파민 디톡스하며 아무도 안 만나고 혼자 충전',
+          letterA: 'E',
+          letterB: 'I'
+        },
+        {
+          axis: 'EI',
+          category: '새로운 관계와 분위기',
+          text: '새로운 취미 원데이 클래스나 모임 첫날, 쉬는 시간의 나',
+          optAStrong: '먼저 다가가 인사 건네며 분위기 풀고 인스타/연락처 교환',
+          optASlight: '누군가 말을 걸어오면 반갑고 자연스럽게 대화 이어가기',
+          optBSlight: '조용히 내 자리를 지키며 스마트폰 보다가 필요한 내용에만 집중',
+          optBStrong: '최대한 눈에 띄지 않고 조용히 수업만 듣고 조기 퇴근',
+          letterA: 'E',
+          letterB: 'I'
+        }
+      ],
+      SN: [
+        {
+          axis: 'SN',
+          category: '생각과 정보의 접근',
+          text: '생성형 AI(챗봇)를 쓸 때 나의 주된 질문 스타일은?',
+          optAStrong: '정확한 팩트 체크, 요약, 일정 정리 등 실질적인 작업 위주',
+          optASlight: '현실적인 문제 해결 방법이나 데이터/자료 검색용으로 활용',
+          optBSlight: '새로운 아이디어 발상이나 사람 심리, 색다른 시각 탐색',
+          optBStrong: '\'만약 AI가 감정을 갖는다면?\' 같은 무한한 상상과 철학적 대화',
+          letterA: 'S',
+          letterB: 'N'
+        },
+        {
+          axis: 'SN',
+          category: '공간을 인지하는 방식',
+          text: '트렌디한 신상 카페나 복합문화공간에 들어섰을 때',
+          optAStrong: '메뉴 가격, 좌석 편안함, 콘센트 위치, 조명 등 실용적 디테일 확인',
+          optASlight: '인테리어 마감재, 동선의 편리함 등 눈앞의 실제 구조 관찰',
+          optBSlight: '공간 전체의 무드와 배경음악이 주는 감성적인 여운 느끼기',
+          optBStrong: '이 공간을 기획한 브랜드의 숨은 철학과 컨셉 스토리텔링 상상',
+          letterA: 'S',
+          letterB: 'N'
+        },
+        {
+          axis: 'SN',
+          category: '내면의 의식 흐름',
+          text: '밤에 잠들기 전 스마트폰을 내려놓았을 때 머릿속은?',
+          optAStrong: '내일 일어날 알람 시간과 챙겨야 할 현실 스케줄 정리',
+          optASlight: '오늘 썼던 카드 내역이나 있었던 일들을 차분히 복기',
+          optBSlight: '과거의 내 선택이 달랐다면 지금 어땠을까 하는 가정과 가지치기',
+          optBStrong: '평행우주, 10년 뒤의 미래, 좀비 아포칼립스 등 끝없는 몽상',
+          letterA: 'S',
+          letterB: 'N'
+        },
+        {
+          axis: 'SN',
+          category: '관심사와 수용 방식',
+          text: '숏폼/SNS를 넘기다가 유독 오래 머무는 콘텐츠는?',
+          optAStrong: '생활 꿀팁, 테크 제품 실사용 리뷰, 맛집 지도 등 현실 정보',
+          optASlight: '실제 일어난 흥미진진한 실화 사건이나 현실 브이로그 썰',
+          optBSlight: '인간관계의 복잡한 심리 분석이나 공감되는 감성 글귀',
+          optBStrong: '우주의 신비, 미래 인류의 운명, 심오하고 몽환적인 예술 영상',
+          letterA: 'S',
+          letterB: 'N'
+        },
+        {
+          axis: 'SN',
+          category: '감상과 해석의 결',
+          text: '영화나 드라마를 다 보고 난 뒤 가장 먼저 드는 생각',
+          optAStrong: '줄거리의 개연성, 배우들의 연기력, 화려한 연출과 영상미',
+          optASlight: '실제 현실에서도 일어날 법한 이야기인지에 대한 체감',
+          optBSlight: '등장인물들이 품었던 내면의 갈등과 감정선의 흐름',
+          optBStrong: '작품 속에 숨겨진 메타포와 상징, 열린 결말 뒤의 무한한 여운',
+          letterA: 'S',
+          letterB: 'N'
+        }
+      ],
+      TF: [
+        {
+          axis: 'TF',
+          category: '위로와 대화의 방향',
+          text: '친구가 "나 오늘 회사(학교)에서 억울하게 지적받았어"라고 할 때',
+          optAStrong: '"정확히 무슨 일인데? 규정에 있는 거야?" 상황 팩트부터 파악',
+          optASlight: '"진짜 난감했겠다. 다음엔 어떻게 대처할 거야?" 해결책을 같이 고민',
+          optBSlight: '"헐... 너 진짜 억울했겠다. 어떻게 그런 말을 해?" 속상한 마음에 맞장구',
+          optBStrong: '"너 오늘 하루 얼마나 힘들었어 ㅠㅠ 맛있는 거 먹자" 온전히 편 들어주기',
+          letterA: 'T',
+          letterB: 'F'
+        },
+        {
+          axis: 'TF',
+          category: '문제 발생 시 대처',
+          text: '열심히 준비하던 팀 프로젝트에 예상치 못한 오류가 터졌을 때',
+          optAStrong: '"누가 잘못했든 원인 로그부터 까보고 즉시 롤백/수정합시다"',
+          optASlight: '"일단 문제부터 수습하고, 이후에 프로세스를 점검하죠"',
+          optBSlight: '"실수한 분 너무 자책하지 마세요, 다 같이 힘내서 메워봐요"',
+          optBStrong: '"실수한 팀원 마음이 제일 덜컥했을 텐데... 다독이며 멘탈부터 케어"',
+          letterA: 'T',
+          letterB: 'F'
+        },
+        {
+          axis: 'TF',
+          category: '상황 대처와 감정 반응',
+          text: '새로 산 고가의 전자기기나 아이템이 갑자기 먹통일 때',
+          optAStrong: '감정 동요 없이 AS 보증 기간과 교환/환불 정책부터 검색해 접수',
+          optASlight: '매뉴얼과 FAQ를 찾아보고 자가 진단 조치부터 차근차근 시도',
+          optBSlight: '산 지 얼마 안 됐는데 왜 나한테 이런 일이... 당황스럽고 속상함',
+          optBStrong: '기분이 확 다운되어 하루 종일 일손이 안 잡히고 마음이 답답함',
+          letterA: 'T',
+          letterB: 'F'
+        },
+        {
+          axis: 'TF',
+          category: '솔직함과 배려의 균형',
+          text: '친구가 과감한 스타일링(새 옷/헤어)을 하고 와서 "나 어때?" 물을 때',
+          optAStrong: '"솔직히 네 퍼스널 컬러나 체형엔 이전 스타일이 훨씬 나아"',
+          optASlight: '"신선하긴 한데 다른 옷이랑 매치하는 게 더 예쁠 것 같아"',
+          optBSlight: '"오 과감한 변신인데? 분위기 확 달라 보인다! 멋져"',
+          optBStrong: '"새로운 시도한 용기 완전 칭찬해! 색다른 매력 대박이다 ㅎㅎ"',
+          letterA: 'T',
+          letterB: 'F'
+        },
+        {
+          axis: 'TF',
+          category: '조언과 지지의 방식',
+          text: '가까운 지인이 비합리적인 소비나 무리한 결정을 내리려 할 때',
+          optAStrong: '그 선택이 왜 손해인지 냉정한 수치와 근거를 조목조목 짚어줌',
+          optASlight: '현실적인 리스크를 설명하며 현실적인 대안을 제안함',
+          optBSlight: '그 사람의 간절한 마음을 먼저 인정해 준 뒤, 조심스레 우려 전달',
+          optBStrong: '마음이 끌리는 데는 이유가 있을 테니, 후회 없도록 응원하고 지지',
+          letterA: 'T',
+          letterB: 'F'
+        }
+      ],
+      JP: [
+        {
+          axis: 'JP',
+          category: '일상을 꾸려가는 방식',
+          text: '주말이나 꿀 같은 휴일을 맞이하는 나의 태도는?',
+          optAStrong: '기상 시간부터 식사, 운동, 할 일까지 시간대별 계획표가 있어야 안심',
+          optASlight: '주요 우선순위 2~3가지와 대략적인 동선은 정해두고 움직임',
+          optBSlight: '대략적인 기상 시간만 두고, 그날그날 컨디션에 맞춰 유동적으로 보냄',
+          optBStrong: '계획은 사치! 눈떠지는 시간에 일어나 발길 닿는 대로 즉흥 만끽',
+          letterA: 'J',
+          letterB: 'P'
+        },
+        {
+          axis: 'JP',
+          category: '소비와 선택의 패턴',
+          text: '사고 싶었던 위시리스트 아이템을 마주했을 때',
+          optAStrong: '최저가 비교, 후기 정독, 쿠폰 적용까지 철저히 계산 후 정해진 날 결제',
+          optASlight: '필요성을 며칠간 신중히 검토한 뒤 확신이 서면 주문',
+          optBSlight: '장바구니에 담아뒀다가 기분 좋은 날이나 월급날 슬쩍 결제',
+          optBStrong: '알고리즘 추천이나 쇼룸에서 꽂히면 \'이건 운명이다\' 즉각 쿨결제',
+          letterA: 'J',
+          letterB: 'P'
+        },
+        {
+          axis: 'JP',
+          category: '변수와 예외에 대한 반응',
+          text: '오랜만에 잡힌 약속이 당일 오전에 갑자기 취소되었을 때',
+          optAStrong: '\'내 오늘 동선이랑 계획이 다 어그러졌잖아...\' 급격한 당혹과 스트레스',
+          optASlight: '취소된 시간에 무엇을 할지 바로 새로운 대체 스케줄을 세움',
+          optBSlight: '아쉽긴 하지만 편한 옷으로 갈아입고 여유로운 자유를 누림',
+          optBStrong: '\'오히려 좋아! 집에서 뒹굴거리며 쉴 명분이 생겼다\'며 급행복',
+          letterA: 'J',
+          letterB: 'P'
+        },
+        {
+          axis: 'JP',
+          category: '준비와 패킹의 스타일',
+          text: '여행 떠나기 전 짐을 챙길 때 나의 모습은?',
+          optAStrong: '출발 3일 전부터 노션/메모장에 체크리스트 짜고 파우치별 칼패킹',
+          optASlight: '전날 밤 필요한 물품들을 꼼꼼하게 점검하며 차분히 캐리어 정리',
+          optBSlight: '당일 아침이나 전날 늦은 밤에 생각나는 필수품 위주로 챙김',
+          optBStrong: '출발 1시간 전 캐리어 펼쳐놓고 손에 잡히는 대로 던져넣기 (부족하면 현지 조달)',
+          letterA: 'J',
+          letterB: 'P'
+        },
+        {
+          axis: 'JP',
+          category: '실행과 마감의 호흡',
+          text: '진행 중인 업무나 프로젝트 마감일을 대하는 자세는?',
+          optAStrong: '마감 3일 전에 1차 완성을 끝내두고 여유롭게 검토/보완 시간 확보',
+          optASlight: '매일 일정한 분량을 나누어 정해진 페이스대로 착실하게 진행',
+          optBSlight: '마감일이 다가와 텐션이 올라갈 때 몰입해서 집중 처리',
+          optBStrong: '마감 직전 마지막 3시간, 초인적인 도파민과 아드레날린으로 벼락치기 완성',
+          letterA: 'J',
+          letterB: 'P'
+        }
+      ]
+    };
+
+    // 🎲 다이내믹 질문 생성 함수 (각 성향 축에서 2문항씩 랜덤 비복원 추출 후 교차 배치)
+    function generateDynamicQuestions() {
+      function sampleTwo(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return [copy[0], copy[1]];
       }
-    ];
+
+      const eiPair = sampleTwo(questionPool.EI);
+      const snPair = sampleTwo(questionPool.SN);
+      const tfPair = sampleTwo(questionPool.TF);
+      const jpPair = sampleTwo(questionPool.JP);
+
+      // 리듬감 넘치는 교차 배치: EI -> SN -> TF -> JP -> EI -> SN -> TF -> JP
+      const selected = [
+        eiPair[0],
+        snPair[0],
+        tfPair[0],
+        jpPair[0],
+        eiPair[1],
+        snPair[1],
+        tfPair[1],
+        jpPair[1]
+      ];
+
+      return selected.map((q, idx) => ({
+        ...q,
+        badge: `Q. 0${idx + 1}`
+      }));
+    }
+
+    // 현재 활성화된 질문 목록 (초기화)
+    let questions = generateDynamicQuestions();
 
     // 16개 MBTI 심층 롱폼 분석 데이터베이스
     const mbtiData = {
@@ -1463,6 +1637,7 @@
       currentIdx = 0;
       scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
       answersHistory = [];
+      questions = generateDynamicQuestions(); // 🎲 매번 새로운 2026 트렌드 질문 조합 생성
       renderQuestion();
     }
 
@@ -1610,21 +1785,39 @@
         pctJ = mbti.includes('J') ? 80 : 20;
       }
 
-      document.getElementById('label-e').innerText = '외향 (E) ' + pctE + '%';
-      document.getElementById('label-i').innerText = '내향 (I) ' + (100 - pctE) + '%';
-      document.getElementById('bar-e').style.width = pctE + '%';
+      // Dynamic Spectrum Axis Renderer
+      function updateSpectrumAxis(labelLeftId, labelRightId, barId, nameLeft, nameRight, pctLeft, activeColorClass, barColorClass) {
+        const pctRight = 100 - pctLeft;
+        const leftEl = document.getElementById(labelLeftId);
+        const rightEl = document.getElementById(labelRightId);
+        const barEl = document.getElementById(barId);
+        const wrapEl = barEl.parentElement;
 
-      document.getElementById('label-s').innerText = '감각 (S) ' + pctS + '%';
-      document.getElementById('label-n').innerText = '직관 (N) ' + (100 - pctS) + '%';
-      document.getElementById('bar-s').style.width = pctS + '%';
+        leftEl.innerText = nameLeft + ' ' + pctLeft + '%';
+        rightEl.innerText = nameRight + ' ' + pctRight + '%';
 
-      document.getElementById('label-t').innerText = '사고 (T) ' + pctT + '%';
-      document.getElementById('label-f').innerText = '감정 (F) ' + (100 - pctT) + '%';
-      document.getElementById('bar-t').style.width = pctT + '%';
+        leftEl.className = 'transition-all duration-300';
+        rightEl.className = 'transition-all duration-300';
+        wrapEl.className = 'w-full h-2 bg-slate-200/80 rounded-full overflow-hidden flex';
+        barEl.className = barColorClass + ' h-full rounded-full transition-all duration-1000';
 
-      document.getElementById('label-j').innerText = '판단 (J) ' + pctJ + '%';
-      document.getElementById('label-p').innerText = '인식 (P) ' + (100 - pctJ) + '%';
-      document.getElementById('bar-j').style.width = pctJ + '%';
+        if (pctLeft >= pctRight) {
+          leftEl.classList.add(activeColorClass, 'font-extrabold');
+          rightEl.classList.add('text-slate-400', 'font-medium');
+          wrapEl.classList.add('justify-start');
+          barEl.style.width = pctLeft + '%';
+        } else {
+          leftEl.classList.add('text-slate-400', 'font-medium');
+          rightEl.classList.add(activeColorClass, 'font-extrabold');
+          wrapEl.classList.add('justify-end');
+          barEl.style.width = pctRight + '%';
+        }
+      }
+
+      updateSpectrumAxis('label-e', 'label-i', 'bar-e', '외향 (E)', '내향 (I)', pctE, 'text-indigo-600', 'bg-indigo-500');
+      updateSpectrumAxis('label-s', 'label-n', 'bar-s', '감각 (S)', '직관 (N)', pctS, 'text-purple-600', 'bg-purple-500');
+      updateSpectrumAxis('label-t', 'label-f', 'bar-t', '사고 (T)', '감정 (F)', pctT, 'text-pink-600', 'bg-pink-500');
+      updateSpectrumAxis('label-j', 'label-p', 'bar-j', '판단 (J)', '인식 (P)', pctJ, 'text-emerald-600', 'bg-emerald-500');
 
       // Bind Tags
       const tagsContainer = document.getElementById('res-tags');
@@ -1937,29 +2130,49 @@
         const barX = 140;
 
         const axes = [
-          { labelA: '외향 (E) ' + pctE + '%', labelB: '내향 (I) ' + (100 - pctE) + '%', val: pctE, col: '#6366f1' },
-          { labelA: '감각 (S) ' + pctS + '%', labelB: '직관 (N) ' + (100 - pctS) + '%', val: pctS, col: '#a855f7' },
-          { labelA: '사고 (T) ' + pctT + '%', labelB: '감정 (F) ' + (100 - pctT) + '%', val: pctT, col: '#ec4899' },
-          { labelA: '판단 (J) ' + pctJ + '%', labelB: '인식 (P) ' + (100 - pctJ) + '%', val: pctJ, col: '#10b981' },
+          { nameA: '외향 (E)', nameB: '내향 (I)', valA: pctE, col: '#6366f1' },
+          { nameA: '감각 (S)', nameB: '직관 (N)', valA: pctS, col: '#a855f7' },
+          { nameA: '사고 (T)', nameB: '감정 (F)', valA: pctT, col: '#ec4899' },
+          { nameA: '판단 (J)', nameB: '인식 (P)', valA: pctJ, col: '#10b981' },
         ];
 
         axes.forEach((axis, idx) => {
           const cy = startY + idx * 80;
-          ctx.font = 'bold 24px Pretendard, sans-serif';
-          ctx.fillStyle = '#334155';
+          const valB = 100 - axis.valA;
+          const isLeftDominant = axis.valA >= valB;
+          const dominantVal = isLeftDominant ? axis.valA : valB;
+
+          // Left Label
           ctx.textAlign = 'left';
-          ctx.fillText(axis.labelA, barX, cy);
+          if (isLeftDominant) {
+            ctx.font = 'bold 24px Pretendard, sans-serif';
+            ctx.fillStyle = axis.col;
+          } else {
+            ctx.font = 'normal 24px Pretendard, sans-serif';
+            ctx.fillStyle = '#94a3b8';
+          }
+          ctx.fillText(axis.nameA + ' ' + axis.valA + '%', barX, cy);
 
+          // Right Label
           ctx.textAlign = 'right';
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillText(axis.labelB, barX + barWidth, cy);
+          if (!isLeftDominant) {
+            ctx.font = 'bold 24px Pretendard, sans-serif';
+            ctx.fillStyle = axis.col;
+          } else {
+            ctx.font = 'normal 24px Pretendard, sans-serif';
+            ctx.fillStyle = '#94a3b8';
+          }
+          ctx.fillText(axis.nameB + ' ' + valB + '%', barX + barWidth, cy);
 
+          // Track
           roundRect(ctx, barX, cy + 12, barWidth, barHeight, 11);
           ctx.fillStyle = '#e2e8f0';
           ctx.fill();
 
-          const fillW = Math.max(22, (barWidth * axis.val) / 100);
-          roundRect(ctx, barX, cy + 12, fillW, barHeight, 11);
+          // Bar Fill (aligned to dominant trait)
+          const fillW = Math.max(22, (barWidth * dominantVal) / 100);
+          const barStart = isLeftDominant ? barX : (barX + barWidth - fillW);
+          roundRect(ctx, barStart, cy + 12, fillW, barHeight, 11);
           ctx.fillStyle = axis.col;
           ctx.fill();
         });
