@@ -495,39 +495,23 @@
         </svg>
       </button>
 
-      <p class="mt-3.5 text-[11px] text-slate-400">
-        로그인 없이 편안하게 바로 시작할 수 있어요.
-      </p>
-
-      <!-- 중간 구분선 -->
-      <div class="w-full flex items-center my-6">
-        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-        <span class="px-3 text-[11px] font-bold text-slate-400">또는 바로 탐색하기</span>
-        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-      </div>
-
-      <!-- 🪐 신규: 메인 진입용 MBTI 소셜 네트워크 관계망 배너 카드 -->
-      <div onclick="openOrbitScreen('screen-intro')" class="jelly-btn w-full p-4 rounded-3xl bg-white/85 hover:bg-white border border-indigo-100 hover:border-indigo-300 shadow-md hover:shadow-xl shadow-indigo-500/10 transition-all duration-300 flex items-center justify-between cursor-pointer group text-left">
-        <div class="flex items-center gap-3.5">
-          <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-md text-white group-hover:scale-105 transition-transform shrink-0">
-            <span>🕸️</span>
-            <span class="absolute -top-1 -right-1 w-3 h-3 bg-pink-500 rounded-full border-2 border-white animate-ping opacity-75"></span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5 mb-0.5">
-              <span class="text-[9px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200/60 px-2 py-0.5 rounded-full">New Feature</span>
-              <span class="text-[11px] font-bold text-pink-500">인터랙티브 궤도</span>
-            </div>
-            <h4 class="text-sm font-black text-slate-800 group-hover:text-indigo-600 transition-colors">MBTI 소셜 네트워크 관계망 🪐</h4>
-            <p class="text-[11px] text-slate-500 line-clamp-1">내 MBTI 중심으로 친구들을 추가하고 상호 케미망 탐색</p>
-          </div>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-indigo-50 group-hover:bg-indigo-600 text-indigo-500 group-hover:text-white flex items-center justify-center shrink-0 transition-all ml-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <!-- 🪐 단순하고 예쁜 MBTI 관계망 바로가기 버튼 -->
+      <div class="w-full mt-3 flex flex-col items-center">
+        <button onclick="openOrbitScreen('screen-intro')" class="jelly-btn w-full py-3.5 px-4 rounded-2xl bg-white/80 hover:bg-white text-indigo-600 font-extrabold text-sm border border-indigo-200/80 hover:border-indigo-400 shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer group">
+          <span class="text-base group-hover:scale-110 transition-transform">🪐</span>
+          <span>MBTI 소셜 네트워크 관계망</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
           </svg>
-        </div>
+        </button>
+        <span class="mt-2 text-[11px] text-slate-400">
+          검사 없이 친구들과의 MBTI 궁합 관계망을 바로 확인해요
+        </span>
       </div>
+
+      <p class="mt-4 text-[11px] text-slate-400">
+        로그인 없이 편안하게 바로 시작할 수 있어요.
+      </p>
     </section>
 
     <!-- SCREEN 2: QUESTION (질문 화면) -->
