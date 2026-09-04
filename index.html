@@ -1057,9 +1057,9 @@
             </button>
           </div>
 
-          <!-- 5. 중심 내 MBTI 캐릭터 (Center Hub Node: 콤팩트한 76px 크기로 주변 관계망 시야 확보) -->
-          <div class="relative z-30 flex flex-col items-center network-center-glow cursor-pointer group" onclick="openChangeMyMbtiModal()" title="내 MBTI 변경하기">
-            <div class="relative rounded-full bg-white/95 p-1.5 border-2 border-indigo-400 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform" style="width: 76px; height: 76px; max-width: 76px; max-height: 76px;">
+          <!-- 5. 중심 내 MBTI 캐릭터 (Center Hub Node: 자유 드래그 이동 지원, 절대 위치 좌표계) -->
+          <div id="orbit-my-node-wrapper" class="absolute z-30 flex flex-col items-center network-center-glow select-none cursor-grab active:cursor-grabbing group transition-shadow" style="width: 76px; height: 76px; left: 180px; top: 180px; transform: translate(-50%, -50%); touch-action: none;" title="드래그하여 이동 / 탭하여 MBTI 변경">
+            <div class="relative rounded-full bg-white/95 p-1.5 border-2 border-indigo-400 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform w-full h-full">
               <div class="w-full h-full rounded-full overflow-hidden bg-indigo-50/50 flex items-center justify-center">
                 <img id="orbit-my-img" src="" alt="내 캐릭터" class="w-full h-full object-cover pointer-events-none" />
               </div>
@@ -1076,7 +1076,7 @@
         <!-- 하단 조작 안내 -->
         <div class="w-full text-center mt-2 z-10">
           <p class="text-[11px] text-slate-500 font-medium">
-            💡 캐릭터를 <span class="text-indigo-600 font-bold">드래그</span>하여 원하는 위치로 옮겨보세요! (탭하면 상세 궁합 모달)
+            💡 나와 친구 캐릭터를 <span class="text-indigo-600 font-bold">드래그</span>하여 자유롭게 이동해보세요! (탭하면 상세 정보/MBTI 변경)
           </p>
         </div>
       </div>
@@ -3261,11 +3261,12 @@
     let hoveredPersonId = null;
     let nodeCoordinatesMap = {}; // id -> { id, x, y, vx, vy, targetDist, isPinned, person, comp, domNode }
     let addBtnPhysics = { x: 180, y: 44, vx: 0, vy: 0, targetDist: 136, isPinned: false };
+    let myNodePhysics = { x: 180, y: 180, vx: 0, vy: 0, isPinned: false };
 
     // 물리 시뮬레이션 상태 변수
     let forceAnimId = null;
     let isForceSimActive = false;
-    let dragTargetId = null; // 'add_btn' 또는 person.id
+    let dragTargetId = null; // 'add_btn', 'my_node', 또는 person.id
     let dragPointerStartX = 0;
     let dragPointerStartY = 0;
     let dragHasMoved = false;
@@ -3298,8 +3299,21 @@
       const count = orbitRelations.length;
       countBadge.innerText = '연결 ' + count + '명';
 
-      const cx = 180;
-      const cy = 180;
+      // 중심 내 캐릭터 위치 (사용자가 드래그해서 옮긴 위치 유지)
+      const cx = myNodePhysics.x;
+      const cy = myNodePhysics.y;
+
+      const myNodeWrapper = document.getElementById('orbit-my-node-wrapper');
+      if (myNodeWrapper) {
+        myNodeWrapper.style.left = `${myNodePhysics.x}px`;
+        myNodeWrapper.style.top = `${myNodePhysics.y}px`;
+        myNodeWrapper.style.transform = 'translate(-50%, -50%)';
+        myNodeWrapper.style.touchAction = 'none';
+
+        bindNodeDragEvents(myNodeWrapper, 'my_node', () => {
+          openChangeMyMbtiModal();
+        });
+      }
 
       // 이전 노드 위치 좌표 유지 (사용자가 드래그해서 옮겨놓은 위치 보존)
       const prevCoords = { ...nodeCoordinatesMap };
@@ -3482,32 +3496,42 @@
           let stageX = Math.round(((moveEvt.clientX - rect.left) / rect.width) * 360);
           let stageY = Math.round(((moveEvt.clientY - rect.top) / rect.height) * 360);
 
-          // 스테이지 중심 180, 180 기준 최대 반경 158px 제한
-          const dist = Math.hypot(stageX - 180, stageY - 180);
-          if (dist > 158) {
-            const angle = Math.atan2(stageY - 180, stageX - 180);
-            stageX = Math.round(180 + 158 * Math.cos(angle));
-            stageY = Math.round(180 + 158 * Math.sin(angle));
+          if (nodeId === 'my_node') {
+            // 내 MBTI 캐릭터: 스테이지 내부 40~320px 내에서 자유롭게 이동
+            const myX = Math.max(40, Math.min(320, stageX));
+            const myY = Math.max(40, Math.min(320, stageY));
+            myNodePhysics.x = myX;
+            myNodePhysics.y = myY;
+            myNodePhysics.vx = 0;
+            myNodePhysics.vy = 0;
+            myNodePhysics.isPinned = true;
+            element.style.left = `${myX}px`;
+            element.style.top = `${myY}px`;
+          } else {
+            // 지인 노드 및 +버튼: 스테이지 내부 25~335px 범위 내 이동
+            stageX = Math.max(25, Math.min(335, stageX));
+            stageY = Math.max(25, Math.min(335, stageY));
+
+            if (nodeId === 'add_btn') {
+              addBtnPhysics.x = stageX;
+              addBtnPhysics.y = stageY;
+              addBtnPhysics.vx = 0;
+              addBtnPhysics.vy = 0;
+              addBtnPhysics.isPinned = true;
+              element.style.left = `${stageX}px`;
+              element.style.top = `${stageY}px`;
+            } else if (nodeCoordinatesMap[nodeId]) {
+              nodeCoordinatesMap[nodeId].x = stageX;
+              nodeCoordinatesMap[nodeId].y = stageY;
+              nodeCoordinatesMap[nodeId].vx = 0;
+              nodeCoordinatesMap[nodeId].vy = 0;
+              nodeCoordinatesMap[nodeId].isPinned = true;
+              element.style.left = `${stageX}px`;
+              element.style.top = `${stageY}px`;
+            }
           }
 
-          if (nodeId === 'add_btn') {
-            addBtnPhysics.x = stageX;
-            addBtnPhysics.y = stageY;
-            addBtnPhysics.vx = 0;
-            addBtnPhysics.vy = 0;
-            addBtnPhysics.isPinned = true;
-            element.style.left = `${stageX}px`;
-            element.style.top = `${stageY}px`;
-          } else if (nodeCoordinatesMap[nodeId]) {
-            nodeCoordinatesMap[nodeId].x = stageX;
-            nodeCoordinatesMap[nodeId].y = stageY;
-            nodeCoordinatesMap[nodeId].vx = 0;
-            nodeCoordinatesMap[nodeId].vy = 0;
-            nodeCoordinatesMap[nodeId].isPinned = true;
-            element.style.left = `${stageX}px`;
-            element.style.top = `${stageY}px`;
-          }
-
+          // 드래그 중인 동안 연결선과 뱃지 실시간 동기화
           renderNetworkEdges();
         };
 
@@ -3527,10 +3551,12 @@
             // 이동하지 않고 가볍게 탭했을 때 모달 오픈
             onClickCallback();
           } else {
-            // 드래그하여 옮겨놓은 위치에 영구 안착 (다른 노드들이 그 노드를 피해 자연스럽게 흩어짐)
-            if (nodeCoordinatesMap[nodeId]) {
+            // 드래그하여 옮겨놓은 위치에 영구 안착
+            if (nodeId === 'my_node') {
+              myNodePhysics.isPinned = true;
+            } else if (nodeCoordinatesMap[nodeId]) {
               nodeCoordinatesMap[nodeId].isPinned = true;
-              nodeCoordinatesMap[nodeId].targetDist = Math.hypot(nodeCoordinatesMap[nodeId].x - 180, nodeCoordinatesMap[nodeId].y - 180);
+              nodeCoordinatesMap[nodeId].targetDist = Math.hypot(nodeCoordinatesMap[nodeId].x - myNodePhysics.x, nodeCoordinatesMap[nodeId].y - myNodePhysics.y);
             }
             wakeForceSimulation();
           }
@@ -3552,8 +3578,8 @@
 
     // 🌀 포스 시뮬레이션 루프 (강력한 쿨롱 반발력으로 넓게 흩어지기)
     function stepForcePhysics() {
-      const cx = 180;
-      const cy = 180;
+      const cx = myNodePhysics.x;
+      const cy = myNodePhysics.y;
       const nodeIds = Object.keys(nodeCoordinatesMap);
       const allNodes = nodeIds.map(id => nodeCoordinatesMap[id]);
       
@@ -3571,7 +3597,7 @@
 
       let totalKineticEnergy = 0;
 
-      // 1. 노드 간 강력한 반발력 (Coulomb Repulsion: 200px 범위에서 서로를 넉넉하게 밀어냄)
+      // 1. 노드 간 강력한 반발력 (Coulomb Repulsion: 서로를 넉넉하게 밀어냄)
       for (let i = 0; i < physicsEntities.length; i++) {
         for (let j = i + 1; j < physicsEntities.length; j++) {
           const a = physicsEntities[i];
@@ -3599,7 +3625,7 @@
         }
       }
 
-      // 2. 중심 인력 및 중심 최소 안전 거리 (Hooke's Law)
+      // 2. 중심 인력 및 내 캐릭터 영역 침범 방지 안전 거리 (Hooke's Law)
       allNodes.forEach(node => {
         if (dragTargetId === node.id || node.isPinned) return;
 
@@ -3612,10 +3638,10 @@
         node.vx -= (dx / dist) * springForce;
         node.vy -= (dy / dist) * springForce;
 
-        // 중심 캐릭터(반경 38px + MBTI 뱃지) 영역 침범 방지 최소 안전 거리 (108px)
-        const minCenterSafeDist = 108;
+        // 중심 내 캐릭터(반경 38px + MBTI 뱃지) 침범 방지 최소 안전 거리 (92px)
+        const minCenterSafeDist = 92;
         if (dist < minCenterSafeDist) {
-          const pushForce = (minCenterSafeDist - dist) * 0.16;
+          const pushForce = (minCenterSafeDist - dist) * 0.18;
           node.vx += (dx / dist) * pushForce;
           node.vy += (dy / dist) * pushForce;
         }
@@ -3630,7 +3656,7 @@
         addBtnPhysics.vy -= (dy / dist) * Math.min(3, dist * 0.04);
       }
 
-      // 3. 위치 업데이트 및 감쇠(Damping) & 외곽 경계 제한
+      // 3. 위치 업데이트 및 감쇠(Damping) & 스테이지 경계 제한
       allNodes.forEach(node => {
         if (dragTargetId === node.id || node.isPinned) return;
 
@@ -3639,15 +3665,9 @@
         node.x += node.vx;
         node.y += node.vy;
 
-        // 경계 제한 (스테이지 반지름 154px 내 유지)
-        const distFromCenter = Math.hypot(node.x - cx, node.y - cy);
-        if (distFromCenter > 154) {
-          const angle = Math.atan2(node.y - cy, node.x - cx);
-          node.x = cx + 154 * Math.cos(angle);
-          node.y = cy + 154 * Math.sin(angle);
-          node.vx *= 0.4;
-          node.vy *= 0.4;
-        }
+        // 스테이지 박스 경계 제한 (25px ~ 335px)
+        node.x = Math.max(25, Math.min(335, node.x));
+        node.y = Math.max(25, Math.min(335, node.y));
 
         // DOM 노드 위치 반영
         node.domNode.style.left = `${node.x.toFixed(1)}px`;
@@ -3663,12 +3683,8 @@
         addBtnPhysics.x += addBtnPhysics.vx;
         addBtnPhysics.y += addBtnPhysics.vy;
 
-        const addBtnDist = Math.hypot(addBtnPhysics.x - cx, addBtnPhysics.y - cy);
-        if (addBtnDist > 154) {
-          const angle = Math.atan2(addBtnPhysics.y - cy, addBtnPhysics.x - cx);
-          addBtnPhysics.x = cx + 154 * Math.cos(angle);
-          addBtnPhysics.y = cy + 154 * Math.sin(angle);
-        }
+        addBtnPhysics.x = Math.max(25, Math.min(335, addBtnPhysics.x));
+        addBtnPhysics.y = Math.max(25, Math.min(335, addBtnPhysics.y));
 
         const addBtnEl = document.getElementById('orbit-add-btn-wrapper');
         if (addBtnEl) {
@@ -3690,7 +3706,7 @@
       }
     }
 
-    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링 (중심 180, 180 기준)
+    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링
     function renderNetworkEdges() {
       const primaryEdgesGroup = document.getElementById('network-primary-edges-group');
       const crossEdgesGroup = document.getElementById('network-cross-edges-group');
@@ -3702,8 +3718,8 @@
       crossEdgesGroup.innerHTML = '';
       badgesLayer.innerHTML = '';
 
-      const cx = 180;
-      const cy = 180;
+      const cx = myNodePhysics.x;
+      const cy = myNodePhysics.y;
       const nodeIds = Object.keys(nodeCoordinatesMap);
 
       // 1. 지인 ↔ 지인 상호 연결선 (Cross-Relations: 각 동그라미 중심 A와 B를 정확히 직결)
@@ -3783,9 +3799,9 @@
         }
         primaryEdgesGroup.appendChild(line);
 
-        // 선 상에 나와의 시너지 뱃지 표시 (내 캐릭터 동그라미/MBTI 뱃지에 가려지지 않도록 안전 거리 68px 이상 확보)
+        // 선 상에 나와의 시너지 뱃지 표시 (선의 55% 지점에 배치)
         const dist = Math.hypot(node.x - cx, node.y - cy) || 1;
-        const badgeDist = Math.max(68, Math.min(dist - 28, dist * 0.58));
+        const badgeDist = dist * 0.54;
         const midX = cx + (node.x - cx) * (badgeDist / dist);
         const midY = cy + (node.y - cy) * (badgeDist / dist);
         const badge = document.createElement('div');
