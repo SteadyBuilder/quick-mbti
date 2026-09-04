@@ -53,7 +53,12 @@ const checks = [
   { name: 'Family Mode Dynamic Question Pool', str: 'const familyQuestionPool =' },
   { name: 'Dynamic Question Generator', str: 'function generateDynamicQuestions' },
   { name: 'Situation / Mode Switcher Function', str: 'function setTestMode' },
-  { name: '4-Point Matrix Scale', str: 'optAStrong' }
+  { name: '4-Point Matrix Scale', str: 'optAStrong' },
+  { name: 'Main Intro Network Entry Banner', str: 'MBTI 소셜 네트워크 관계망 🪐' },
+  { name: 'Header Network Entry Button', str: "openOrbitScreen('screen-intro')" },
+  { name: 'Change My MBTI Modal', str: 'id="modal-change-my-mbti"' },
+  { name: 'Change My MBTI Function', str: 'function selectNewMyMbti' },
+  { name: 'Orbit Dynamic Back Function', str: 'function backFromOrbit()' }
 ];
 
 checks.forEach(c => {
