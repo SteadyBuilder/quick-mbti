@@ -49,9 +49,10 @@ const checks = [
   { name: 'Chemistry Open Function', str: 'function openChemistry' },
   { name: 'View Target Full Profile Function', str: 'function viewTargetFullProfile' },
   { name: 'Back to Original Result Function', str: 'function backToMyOriginalResult' },
-  { name: 'Interactive Chemistry Cards', str: 'onclick="openChemistry(\'best\')"' },
   { name: '2026 Dynamic Question Pool', str: 'const questionPool =' },
-  { name: 'Dynamic Question Generator', str: 'function generateDynamicQuestions()' },
+  { name: 'Family Mode Dynamic Question Pool', str: 'const familyQuestionPool =' },
+  { name: 'Dynamic Question Generator', str: 'function generateDynamicQuestions' },
+  { name: 'Situation / Mode Switcher Function', str: 'function setTestMode' },
   { name: '4-Point Matrix Scale', str: 'optAStrong' }
 ];
 
