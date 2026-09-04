@@ -3250,12 +3250,23 @@
       }
     }
 
+
+
     // ==========================================
-    // 🕸️ 소셜 네트워크 관계망 (Network Graph) 엔진
+    // 🕸️ 옵시디언(Obsidian) 스타일 유기적 포스 네트워크 그래프 엔진
     // ==========================================
     let networkViewMode = 'all'; // 'all' (전체 관계망) | 'me' (내 중심 뷰)
     let hoveredPersonId = null;
-    let nodeCoordinatesMap = {}; // id -> { x, y, person, comp }
+    let nodeCoordinatesMap = {}; // id -> { id, x, y, vx, vy, targetDist, person, comp, domNode }
+    let addBtnPhysics = { x: 170, y: 48, vx: 0, vy: 0, targetDist: 122 };
+
+    // 물리 시뮬레이션 상태 변수
+    let forceAnimId = null;
+    let isForceSimActive = false;
+    let dragTargetId = null; // 'add_btn' 또는 person.id
+    let dragPointerStartX = 0;
+    let dragPointerStartY = 0;
+    let dragHasMoved = false;
 
     // 전체 관계망 ↔ 내 중심 뷰 토글
     function toggleNetworkViewMode() {
@@ -3271,10 +3282,10 @@
         iconEl.innerText = '🎯';
         showToast('🎯 나와의 관계 중심으로 표시됩니다.');
       }
-      renderOrbitStage();
+      renderNetworkEdges();
     }
 
-    // 🪐 MBTI 소셜 네트워크 전체 스테이지 렌더링
+    // 🪐 MBTI 소셜 네트워크 전체 스테이지 렌더링 (옵시디언 스타일 포스 그래프)
     function renderOrbitStage(newlyAddedId) {
       const myMbti = currentResultMbti || originalUserMbti || 'ENFP';
       const charactersLayer = document.getElementById('orbit-dynamic-characters');
@@ -3282,116 +3293,130 @@
       const addBtnWrapper = document.getElementById('orbit-add-btn-wrapper');
       
       charactersLayer.innerHTML = '';
-      nodeCoordinatesMap = {};
-
       const count = orbitRelations.length;
       countBadge.innerText = '연결 ' + count + '명';
 
-      // 스테이지 중심 및 반지름 (340x340 기준)
       const cx = 170;
       const cy = 170;
-      const radius = 122; // 노드 뱃지가 스테이지 경계를 벗어나지 않도록 최적화
+      const defaultRadius = 120;
 
-      // 점선 추가(+) 버튼의 이상적 위치 좌표 계산
-      let addBtnX = cx;
-      let addBtnY = cy - radius; // 기본 12시 방향 (상단)
+      // 이전 노드 위치 좌표 유지 (새로 추가되더라도 기존 노드들의 위치를 유기적으로 보존)
+      const prevCoords = { ...nodeCoordinatesMap };
+      nodeCoordinatesMap = {};
 
-      if (count === 0) {
-        // 지인 0명: 상단에 큼직하게 정중앙 배치
-        addBtnX = cx;
-        addBtnY = cy - radius + 10;
-      } else if (count === 1) {
-        // 지인 1명: 지인은 상단(12시), +버튼은 하단(6시)에 완벽한 수직 대칭
-        addBtnX = cx;
-        addBtnY = cy + radius;
-      } else {
-        // 지인 2명 이상: +버튼을 -90도(12시)에 두고, 지인들은 남은 원주에 균등 분할
-        addBtnX = cx;
-        addBtnY = cy - radius;
-      }
-
-      // 점선 추가(+) 버튼 위치 설정 (직립 정자세 유지)
-      if (addBtnWrapper) {
-        addBtnWrapper.style.left = `${addBtnX}px`;
-        addBtnWrapper.style.top = `${addBtnY}px`;
-        addBtnWrapper.style.transform = 'translate(-50%, -50%)';
-      }
-
-      // 각 인물의 좌표 및 노드 렌더링
+      // 각 인물 노드 생성 및 물리 객체 바인딩
       orbitRelations.forEach((person, idx) => {
-        let angleDeg = -90;
-        if (count === 1) {
-          // 1명일 때는 상단 정중앙에 위치 (12시 방향)
-          angleDeg = -90;
-        } else if (count === 2) {
-          // 2명일 때는 하단 좌우로 벌려 삼각 안정 구도 형성 (좌측 150도, 우측 30도)
-          angleDeg = idx === 0 ? 150 : 30;
+        const comp = calcMbtiSynergy(myMbti, person.mbti);
+        // 궁합 점수에 따른 중심과의 자연스러운 거리 (궁합이 좋을수록 더 가깝게!)
+        const targetDist = comp.score >= 90 ? 108 : (comp.score >= 70 ? 120 : 132);
+
+        let initialX, initialY;
+
+        if (prevCoords[person.id]) {
+          // 기존 위치 유지
+          initialX = prevCoords[person.id].x;
+          initialY = prevCoords[person.id].y;
         } else {
-          // 3명 이상: +버튼(-90도)을 제외한 영역에 균등 분할
-          const step = 360 / (count + 1);
-          angleDeg = -90 + step * (idx + 1);
+          // 신규 노드 스폰 각도 계산: 기존 노드들과 겹치지 않는 각도 탐색
+          let angleDeg = -90;
+          if (count === 1) {
+            angleDeg = 90; // 첫 번째는 하단에 스폰 (+버튼이 상단이므로 대칭)
+          } else if (count === 2) {
+            angleDeg = idx === 0 ? 140 : 40;
+          } else {
+            const step = 360 / (count + 1);
+            angleDeg = -90 + step * (idx + 1) + (Math.random() * 10 - 5);
+          }
+          const angleRad = (angleDeg * Math.PI) / 180;
+          initialX = cx + targetDist * Math.cos(angleRad);
+          initialY = cy + targetDist * Math.sin(angleRad);
         }
 
-        const angleRad = (angleDeg * Math.PI) / 180;
-        const x = Math.round(cx + radius * Math.cos(angleRad));
-        const y = Math.round(cy + radius * Math.sin(angleRad));
-
         const isNew = person.id === newlyAddedId;
-        const comp = calcMbtiSynergy(myMbti, person.mbti);
 
-        // 좌표 맵에 저장
-        nodeCoordinatesMap[person.id] = { x, y, person, comp };
-
-        // 캐릭터 노드 컨테이너 (똑바로 선 직립 상태 보장)
+        // 🎯 동그라미 정중앙이 (x, y)에 100% 일치하도록 컨테이너를 50x50 아바타와 동일 크기로 구성
         const node = document.createElement('div');
         node.id = `network-node-${person.id}`;
-        node.className = `absolute pointer-events-auto cursor-pointer group select-none z-20 network-node-float-${(idx % 3) + 1} transition-transform duration-200`;
-        node.style.left = `${x}px`;
-        node.style.top = `${y}px`;
+        node.className = 'absolute pointer-events-auto select-none z-20 cursor-grab active:cursor-grabbing transition-shadow';
+        node.style.left = `${initialX}px`;
+        node.style.top = `${initialY}px`;
+        node.style.width = '50px';
+        node.style.height = '50px';
         node.style.transform = 'translate(-50%, -50%)';
-        node.style.animationDelay = `${(idx * 0.35).toFixed(2)}s`;
+        node.style.touchAction = 'none'; // 모바일 터치 드래그 지원
 
         const animationClass = isNew ? 'animate-squash-stretch' : '';
 
+        // 아바타 원형의 정중앙이 정확히 컨테이너의 중심(x, y)이고,
+        // 이름표 뱃지는 아바타 머리 위(-top-6)에 absolute 플로팅되어 아바타 중심 좌표에 영향 0%
         node.innerHTML = `
-          <div class="flex flex-col items-center group-hover:scale-110 transition-transform duration-200 ${animationClass}">
-            <!-- 상단 닉네임 & MBTI 뱃지 -->
-            <div class="bg-white/95 text-slate-800 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md border border-indigo-200/90 mb-1 whitespace-nowrap flex items-center gap-1">
-              <span>${escapeHtml(person.name)}</span>
-              <span class="text-[9px] font-black ${comp.theme === 'pink' ? 'text-pink-500' : 'text-indigo-600'}">${person.mbti}</span>
-            </div>
-            <!-- 캐릭터 원형 아바타 (절대 눕지 않고 직립) -->
-            <div class="w-12 h-12 rounded-full bg-white/95 p-1 border-2 ${comp.theme === 'pink' ? 'border-pink-400' : 'border-indigo-400'} shadow-lg flex items-center justify-center relative bg-indigo-50/40" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px;">
+          <div class="relative w-full h-full flex items-center justify-center ${animationClass}">
+            <!-- 1. 캐릭터 원형 아바타 (정확한 50x50 원형, 중심 좌표의 기준) -->
+            <div class="w-full h-full rounded-full bg-white/95 p-1 border-2 ${comp.theme === 'pink' ? 'border-pink-400' : 'border-indigo-400'} shadow-lg flex items-center justify-center relative bg-indigo-50/40 hover:scale-105 transition-transform">
               <img src="assets/characters/${person.mbti}.png"
                    onerror="this.onerror=null; this.src='assets/characters/${person.mbti}.svg';"
-                   alt="${person.name}" class="w-full h-full object-cover rounded-full" />
+                   alt="${person.name}" class="w-full h-full object-cover rounded-full pointer-events-none" />
               <!-- 하트/별빛 미니 뱃지 -->
-              <span class="absolute -bottom-1 -right-1 text-xs drop-shadow-xs">${comp.theme === 'pink' ? '💖' : '💜'}</span>
+              <span class="absolute -bottom-1 -right-1 text-xs drop-shadow-xs pointer-events-none">${comp.theme === 'pink' ? '💖' : '💜'}</span>
+            </div>
+
+            <!-- 2. 상단 닉네임 & MBTI 뱃지 (아바타 중심에 오프셋을 주지 않는 상단 플로팅) -->
+            <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white/95 text-slate-800 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md border border-indigo-200/90 whitespace-nowrap flex items-center gap-1 pointer-events-none z-10">
+              <span>${escapeHtml(person.name)}</span>
+              <span class="text-[9px] font-black ${comp.theme === 'pink' ? 'text-pink-500' : 'text-indigo-600'}">${person.mbti}</span>
             </div>
           </div>
         `;
 
-        // 마우스 호버 / 터치 인터랙션: 관계망 하이라이트
-        node.onmouseenter = () => {
-          hoveredPersonId = person.id;
-          renderNetworkEdges();
-        };
-        node.onmouseleave = () => {
-          hoveredPersonId = null;
-          renderNetworkEdges();
+        // 물리 노드 데이터 등록
+        nodeCoordinatesMap[person.id] = {
+          id: person.id,
+          x: initialX,
+          y: initialY,
+          vx: isNew ? (Math.random() * 4 - 2) : (prevCoords[person.id]?.vx || 0),
+          vy: isNew ? (Math.random() * 4 - 2) : (prevCoords[person.id]?.vy || 0),
+          targetDist: targetDist,
+          person: person,
+          comp: comp,
+          domNode: node
         };
 
-        // 탭/클릭 시 하트 포션 동기화 및 상세 모달 열기
-        node.onclick = (e) => {
-          e.stopPropagation();
+        // 드래그 & 터치 인터랙션 바인딩
+        bindNodeDragEvents(node, person.id, () => {
           updateHeartPotion(comp);
           openOrbitDetail(person.id);
+        });
+
+        // 호버 시 하이라이트
+        node.onmouseenter = () => {
+          if (!dragTargetId) {
+            hoveredPersonId = person.id;
+            renderNetworkEdges();
+          }
+        };
+        node.onmouseleave = () => {
+          if (!dragTargetId) {
+            hoveredPersonId = null;
+            renderNetworkEdges();
+          }
         };
 
         charactersLayer.appendChild(node);
       });
 
-      // SVG 연결선 및 케미 뱃지 렌더링
+      // 점선 추가(+) 버튼도 물리 노드로 등록하여 지인 노드들과 겹치지 않고 유기적으로 자리잡도록 처리
+      if (addBtnWrapper) {
+        addBtnWrapper.style.left = `${addBtnPhysics.x}px`;
+        addBtnWrapper.style.top = `${addBtnPhysics.y}px`;
+        addBtnWrapper.style.transform = 'translate(-50%, -50%)';
+        addBtnWrapper.style.touchAction = 'none';
+
+        bindNodeDragEvents(addBtnWrapper, 'add_btn', () => {
+          openAddRelationModal();
+        });
+      }
+
+      // 최초 SVG 연결선 렌더링
       renderNetworkEdges();
 
       // 하단 칩 목록 렌더링
@@ -3408,9 +3433,238 @@
       } else {
         updateHeartPotion(null);
       }
+
+      // 옵시디언 포스 물리 시뮬레이션 시작!
+      wakeForceSimulation();
     }
 
-    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링
+    // 🎯 마우스 & 터치 드래그 이벤트 바인딩 (옵시디언 그래프 뷰 인터랙션)
+    function bindNodeDragEvents(element, nodeId, onClickCallback) {
+      element.onpointerdown = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragTargetId = nodeId;
+        dragPointerStartX = e.clientX;
+        dragPointerStartY = e.clientY;
+        dragHasMoved = false;
+
+        element.setPointerCapture(e.pointerId);
+        element.classList.add('scale-105', 'z-40');
+        wakeForceSimulation();
+
+        const onPointerMove = (moveEvt) => {
+          if (dragTargetId !== nodeId) return;
+          const deltaX = moveEvt.clientX - dragPointerStartX;
+          const deltaY = moveEvt.clientY - dragPointerStartY;
+          if (Math.hypot(deltaX, deltaY) > 5) {
+            dragHasMoved = true;
+          }
+
+          const stage = document.getElementById('orbit-main-stage');
+          const rect = stage.getBoundingClientRect();
+          // 스테이지 내부 좌표계 (0~340)로 변환
+          const stageX = Math.round(((moveEvt.clientX - rect.left) / rect.width) * 340);
+          const stageY = Math.round(((moveEvt.clientY - rect.top) / rect.height) * 340);
+
+          if (nodeId === 'add_btn') {
+            addBtnPhysics.x = stageX;
+            addBtnPhysics.y = stageY;
+            addBtnPhysics.vx = 0;
+            addBtnPhysics.vy = 0;
+            element.style.left = `${stageX}px`;
+            element.style.top = `${stageY}px`;
+          } else if (nodeCoordinatesMap[nodeId]) {
+            nodeCoordinatesMap[nodeId].x = stageX;
+            nodeCoordinatesMap[nodeId].y = stageY;
+            nodeCoordinatesMap[nodeId].vx = 0;
+            nodeCoordinatesMap[nodeId].vy = 0;
+            element.style.left = `${stageX}px`;
+            element.style.top = `${stageY}px`;
+          }
+
+          renderNetworkEdges();
+        };
+
+        const onPointerUp = (upEvt) => {
+          element.releasePointerCapture(upEvt.pointerId);
+          element.classList.remove('scale-105', 'z-40');
+          window.removeEventListener('pointermove', onPointerMove);
+          window.removeEventListener('pointerup', onPointerUp);
+
+          const hadMoved = dragHasMoved;
+          dragTargetId = null;
+
+          if (!hadMoved && typeof onClickCallback === 'function') {
+            onClickCallback();
+          } else {
+            wakeForceSimulation();
+          }
+        };
+
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+      };
+    }
+
+    // 🌊 옵시디언 포스 물리 시뮬레이션 깨우기
+    function wakeForceSimulation() {
+      if (!isForceSimActive) {
+        isForceSimActive = true;
+        cancelAnimationFrame(forceAnimId);
+        forceAnimId = requestAnimationFrame(stepForcePhysics);
+      }
+    }
+
+    // 🌀 포스 시뮬레이션 루프 (스프링 인력 + 쿨롱 반발력 + 감쇠)
+    function stepForcePhysics() {
+      const cx = 170;
+      const cy = 170;
+      const nodeIds = Object.keys(nodeCoordinatesMap);
+      const allNodes = nodeIds.map(id => nodeCoordinatesMap[id]);
+      
+      // +버튼도 물리 반발력 참여 대상에 포함
+      const physicsEntities = [...allNodes, {
+        id: 'add_btn',
+        x: addBtnPhysics.x,
+        y: addBtnPhysics.y,
+        vx: addBtnPhysics.vx,
+        vy: addBtnPhysics.vy,
+        targetDist: 122,
+        isAddBtn: true
+      }];
+
+      let totalKineticEnergy = 0;
+
+      // 1. 노드 간 반발력 (Coulomb Repulsion: 서로 겹치지 않고 유기적으로 퍼짐)
+      for (let i = 0; i < physicsEntities.length; i++) {
+        for (let j = i + 1; j < physicsEntities.length; j++) {
+          const a = physicsEntities[i];
+          const b = physicsEntities[j];
+
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy) || 1;
+
+          if (dist < 160) {
+            // 거리가 가까울수록 강하게 밀어냄
+            const repel = Math.min(6, 1400 / (dist * dist + 100));
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            if (dragTargetId !== a.id) {
+              a.vx += nx * repel;
+              a.vy += ny * repel;
+            }
+            if (dragTargetId !== b.id) {
+              b.vx -= nx * repel;
+              b.vy -= ny * repel;
+            }
+          }
+        }
+      }
+
+      // 2. 중심 인력 & 지인 간 시너지 스프링 (Hooke's Law)
+      allNodes.forEach(node => {
+        if (dragTargetId === node.id) return;
+
+        // 중심 '나'와의 스프링 거리 유지
+        const dx = node.x - cx;
+        const dy = node.y - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const targetDist = node.targetDist || 120;
+        const springForce = (dist - targetDist) * 0.055;
+
+        node.vx -= (dx / dist) * springForce;
+        node.vy -= (dy / dist) * springForce;
+
+        // 지인 간 궁합이 85점 이상일 때 서로 자연스럽게 살짝 끌어당겨 클러스터링(유기적 군집) 형성
+        allNodes.forEach(other => {
+          if (node.id !== other.id && dragTargetId !== node.id) {
+            const crossComp = calcMbtiSynergy(node.person.mbti, other.person.mbti);
+            if (crossComp.score >= 88) {
+              const cdx = node.x - other.x;
+              const cdy = node.y - other.y;
+              const cdist = Math.hypot(cdx, cdy) || 1;
+              if (cdist > 80) {
+                const clusterForce = (cdist - 95) * 0.012;
+                node.vx -= (cdx / cdist) * clusterForce;
+                node.vy -= (cdy / cdist) * clusterForce;
+              }
+            }
+          }
+        });
+      });
+
+      // +버튼의 중심 스프링 (-90도 상단 기본 방향으로 가벼운 복원력)
+      if (dragTargetId !== 'add_btn') {
+        const dx = addBtnPhysics.x - cx;
+        const dy = addBtnPhysics.y - (cy - 120);
+        const dist = Math.hypot(dx, dy) || 1;
+        addBtnPhysics.vx -= (dx / dist) * Math.min(3, dist * 0.04);
+        addBtnPhysics.vy -= (dy / dist) * Math.min(3, dist * 0.04);
+      }
+
+      // 3. 위치 업데이트 및 감쇠(Damping) & 경계 제한
+      allNodes.forEach(node => {
+        if (dragTargetId === node.id) return;
+
+        node.vx *= 0.82;
+        node.vy *= 0.82;
+        node.x += node.vx;
+        node.y += node.vy;
+
+        // 경계 제한 (스테이지 반지름 138px 내 유지)
+        const distFromCenter = Math.hypot(node.x - cx, node.y - cy);
+        if (distFromCenter > 138) {
+          const angle = Math.atan2(node.y - cy, node.x - cx);
+          node.x = cx + 138 * Math.cos(angle);
+          node.y = cy + 138 * Math.sin(angle);
+          node.vx *= 0.5;
+          node.vy *= 0.5;
+        }
+
+        // DOM 노드 위치 반영
+        node.domNode.style.left = `${node.x.toFixed(1)}px`;
+        node.domNode.style.top = `${node.y.toFixed(1)}px`;
+
+        totalKineticEnergy += Math.hypot(node.vx, node.vy);
+      });
+
+      // +버튼 위치 업데이트
+      if (dragTargetId !== 'add_btn') {
+        addBtnPhysics.vx *= 0.82;
+        addBtnPhysics.vy *= 0.82;
+        addBtnPhysics.x += addBtnPhysics.vx;
+        addBtnPhysics.y += addBtnPhysics.vy;
+
+        const addBtnDist = Math.hypot(addBtnPhysics.x - cx, addBtnPhysics.y - cy);
+        if (addBtnDist > 138) {
+          const angle = Math.atan2(addBtnPhysics.y - cy, addBtnPhysics.x - cx);
+          addBtnPhysics.x = cx + 138 * Math.cos(angle);
+          addBtnPhysics.y = cy + 138 * Math.sin(angle);
+        }
+
+        const addBtnEl = document.getElementById('orbit-add-btn-wrapper');
+        if (addBtnEl) {
+          addBtnEl.style.left = `${addBtnPhysics.x.toFixed(1)}px`;
+          addBtnEl.style.top = `${addBtnPhysics.y.toFixed(1)}px`;
+        }
+        totalKineticEnergy += Math.hypot(addBtnPhysics.vx, addBtnPhysics.vy);
+      }
+
+      // 4. SVG 선 및 뱃지 실시간 일치 갱신
+      renderNetworkEdges();
+
+      // 에너지가 충분히 낮아지면 시뮬레이션 일시정지 (CPU 부하 0% 달성)
+      if (totalKineticEnergy < 0.08 && !dragTargetId) {
+        isForceSimActive = false;
+        cancelAnimationFrame(forceAnimId);
+      } else {
+        forceAnimId = requestAnimationFrame(stepForcePhysics);
+      }
+    }
+
+    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링 (동그라미 정중앙 100% 직결)
     function renderNetworkEdges() {
       const primaryEdgesGroup = document.getElementById('network-primary-edges-group');
       const crossEdgesGroup = document.getElementById('network-cross-edges-group');
@@ -3424,10 +3678,9 @@
 
       const cx = 170;
       const cy = 170;
-      const myMbti = currentResultMbti || originalUserMbti || 'ENFP';
       const nodeIds = Object.keys(nodeCoordinatesMap);
 
-      // 1. 지인 ↔ 지인 상호 연결선 (Cross-Relations)
+      // 1. 지인 ↔ 지인 상호 연결선 (Cross-Relations: 각 동그라미 중심 A와 B를 정확히 직결)
       if (nodeIds.length >= 2) {
         for (let i = 0; i < nodeIds.length; i++) {
           for (let j = i + 1; j < nodeIds.length; j++) {
@@ -3438,7 +3691,6 @@
             const isConnectedToHovered = hoveredPersonId && (hoveredPersonId === nodeA.person.id || hoveredPersonId === nodeB.person.id);
             const isHoverActive = hoveredPersonId !== null;
 
-            // 표시 조건: 전체 관계망 모드이거나, 둘 중 하나가 호버 상태일 때
             const shouldShow = networkViewMode === 'all' || isConnectedToHovered;
             if (!shouldShow) continue;
 
@@ -3446,12 +3698,12 @@
             const strokeWidth = isConnectedToHovered ? 2.8 : 1.5;
             const opacity = isConnectedToHovered ? 1.0 : (isHoverActive ? 0.15 : 0.45);
 
-            // SVG Line 생성
+            // 정확히 동그라미 A의 중심 (nodeA.x, nodeA.y)에서 동그라미 B의 중심 (nodeB.x, nodeB.y)으로 연결
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', nodeA.x);
-            line.setAttribute('y1', nodeA.y);
-            line.setAttribute('x2', nodeB.x);
-            line.setAttribute('y2', nodeB.y);
+            line.setAttribute('x1', nodeA.x.toFixed(1));
+            line.setAttribute('y1', nodeA.y.toFixed(1));
+            line.setAttribute('x2', nodeB.x.toFixed(1));
+            line.setAttribute('y2', nodeB.y.toFixed(1));
             line.setAttribute('stroke', strokeColor);
             line.setAttribute('stroke-width', strokeWidth);
             line.setAttribute('stroke-opacity', opacity);
@@ -3461,17 +3713,17 @@
             }
             crossEdgesGroup.appendChild(line);
 
-            // 두 지인 중간 지점에 케미 뱃지 표시
+            // 두 동그라미 중심의 정가운데 지점에 케미 뱃지 표시
             if (networkViewMode === 'all' || isConnectedToHovered) {
               const midX = (nodeA.x + nodeB.x) / 2;
               const midY = (nodeA.y + nodeB.y) / 2;
               const badge = document.createElement('div');
-              badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-full text-[8px] font-black pointer-events-none transition-all duration-200 border ' +
+              badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-full text-[8px] font-black pointer-events-none transition-all duration-150 border ' +
                 (isConnectedToHovered
                   ? 'bg-pink-500 text-white border-white shadow-md scale-110 z-20'
-                  : 'bg-white/85 text-slate-600 border-indigo-100/90 shadow-2xs z-10');
-              badge.style.left = `${midX}px`;
-              badge.style.top = `${midY}px`;
+                  : 'bg-white/90 text-slate-600 border-indigo-100/90 shadow-2xs z-10');
+              badge.style.left = `${midX.toFixed(1)}px`;
+              badge.style.top = `${midY.toFixed(1)}px`;
               badge.style.opacity = opacity >= 0.4 ? '1' : '0.2';
               badge.innerHTML = `<span>${crossComp.score >= 88 ? '💖' : '⚡'} ${crossComp.score}%</span>`;
               badgesLayer.appendChild(badge);
@@ -3480,7 +3732,7 @@
         }
       }
 
-      // 2. 나 ↔ 지인 간의 주 궁합선 (Primary Edges)
+      // 2. 나 ↔ 지인 간의 주 궁합선 (Primary Edges: 내 동그라미 중심(170, 170)에서 상대 동그라미 중심(x, y)으로 완벽 직결)
       nodeIds.forEach(id => {
         const node = nodeCoordinatesMap[id];
         const comp = node.comp;
@@ -3494,8 +3746,8 @@
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', cx);
         line.setAttribute('y1', cy);
-        line.setAttribute('x2', node.x);
-        line.setAttribute('y2', node.y);
+        line.setAttribute('x2', node.x.toFixed(1));
+        line.setAttribute('y2', node.y.toFixed(1));
         line.setAttribute('stroke', strokeColor);
         line.setAttribute('stroke-width', strokeWidth);
         line.setAttribute('stroke-opacity', opacity);
@@ -3509,12 +3761,12 @@
         const midX = (cx + node.x) / 2;
         const midY = (cy + node.y) / 2;
         const badge = document.createElement('div');
-        badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded-full text-[9px] font-black pointer-events-none transition-all duration-200 border ' +
+        badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded-full text-[9px] font-black pointer-events-none transition-all duration-150 border ' +
           (isHovered
             ? 'bg-indigo-600 text-white border-white shadow-md scale-110 z-20'
             : 'bg-white/95 text-indigo-700 border-indigo-200/90 shadow-xs z-15');
-        badge.style.left = `${midX}px`;
-        badge.style.top = `${midY}px`;
+        badge.style.left = `${midX.toFixed(1)}px`;
+        badge.style.top = `${midY.toFixed(1)}px`;
         badge.style.opacity = opacity >= 0.4 ? '1' : '0.2';
         badge.innerHTML = `<span>${comp.theme === 'pink' ? '💖' : '✨'} ${comp.score}%</span>`;
         badgesLayer.appendChild(badge);
