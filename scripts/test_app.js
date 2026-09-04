@@ -42,13 +42,14 @@ const checks = [
   { name: 'Jelly Tap CSS keyframes', str: '@keyframes jellyTap' },
   { name: 'Sticky Action Bar', str: 'id="sticky-action-bar"' },
   { name: 'Story Card Generator', str: 'function downloadStoryCard' },
-  { name: '16 3D Mascots Image binding', str: 'assets/characters/${finalMbti}.svg' },
-  { name: 'Anti-AI Editorial Essence Mode', str: 'id="res-essence-mode"' },
-  { name: 'Anti-AI Editorial Essence Inner', str: 'id="res-essence-inner"' },
-  { name: 'Relationship Comfort', str: 'id="res-relation-comfort"' },
-  { name: 'Relationship Cutoff', str: 'id="res-relation-cutoff"' },
-  { name: 'Stress Signal', str: 'id="res-stress-signal"' },
-  { name: 'Stress Cure', str: 'id="res-stress-cure"' },
+  { name: 'Counseling Note 1 (마음의 결)', str: '상담 노트 1: 내가 지닌 고유한 마음의 결' },
+  { name: 'Counseling Note 2 (관계 속 숨 쉬는 법)', str: '상담 노트 2: 관계 속에서 편안하게 숨 쉬는 법' },
+  { name: 'Counseling Note 3 (마음 처방전)', str: '상담 노트 3: 지친 나를 토닥이는 마음 처방전' },
+  { name: 'Chemistry Match Screen', str: 'id="screen-chemistry"' },
+  { name: 'Chemistry Open Function', str: 'function openChemistry' },
+  { name: 'View Target Full Profile Function', str: 'function viewTargetFullProfile' },
+  { name: 'Back to Original Result Function', str: 'function backToMyOriginalResult' },
+  { name: 'Interactive Chemistry Cards', str: 'onclick="openChemistry(\'best\')"' },
   { name: 'Questions Diet Copy (주말 충전, 어디서?)', str: '주말 충전, 어디서?' },
   { name: '4-Point Matrix Scale', str: 'optAStrong' }
 ];
@@ -68,3 +69,4 @@ if (allValid) {
   console.error('❌ SOME CHECKS FAILED!');
   process.exit(1);
 }
+
