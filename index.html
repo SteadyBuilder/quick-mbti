@@ -271,29 +271,46 @@
       animation: squashStretchIn 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    /* 공전 (Orbit Spin) & 역회전 (Counter Spin) */
-    @keyframes orbitSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    /* 🕸️ 네트워크 연결망 노드 직립 부유 (Upright Floating) & 펄스 애니메이션 */
+    @keyframes networkFloat1 {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-7px) scale(1.02); }
     }
-    @keyframes counterSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(-360deg); }
+    @keyframes networkFloat2 {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(6px) scale(0.98); }
+    }
+    @keyframes networkFloat3 {
+      0%, 100% { transform: translateX(0px) translateY(0px); }
+      50% { transform: translateX(-4px) translateY(-5px); }
+    }
+    @keyframes networkPulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.35)); }
+      50% { filter: drop-shadow(0 0 16px rgba(236, 72, 153, 0.55)); }
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -24; }
     }
 
-    .orbit-spinner {
-      animation: orbitSpin 28s linear infinite;
-      transform-origin: center center;
+    .network-node-float-1 {
+      animation: networkFloat1 4.2s ease-in-out infinite;
     }
-    .orbit-spinner:hover, .orbit-paused {
-      animation-play-state: paused !important;
+    .network-node-float-2 {
+      animation: networkFloat2 4.8s ease-in-out infinite;
     }
-    .orbit-counter-spinner {
-      animation: counterSpin 28s linear infinite;
-      transform-origin: center center;
+    .network-node-float-3 {
+      animation: networkFloat3 3.8s ease-in-out infinite;
     }
-    .orbit-spinner:hover .orbit-counter-spinner, .orbit-paused .orbit-counter-spinner {
-      animation-play-state: paused !important;
+    .network-center-glow {
+      animation: networkPulseGlow 3s ease-in-out infinite;
+    }
+    .network-edge-flow {
+      stroke-dasharray: 6 4;
+      animation: dashFlow 2s linear infinite;
+    }
+    .network-edge-cross-flow {
+      stroke-dasharray: 3 3;
+      animation: dashFlow 3s linear infinite;
     }
 
     /* 🧪 하트 포션 (Heart Potion) 스타일 */
@@ -947,54 +964,81 @@
         </div>
       </div>
 
-      <!-- 🪐 중앙 우주 궤도 뷰포트 (Stage) -->
-      <div class="glass-card rounded-3xl p-4 shadow-xl mb-4 relative overflow-hidden flex flex-col items-center justify-center min-h-[400px]">
-        <!-- 은은한 우주 성운 배경 효과 -->
-        <div class="absolute inset-0 bg-radial from-indigo-100/30 via-purple-50/20 to-transparent pointer-events-none"></div>
+      <!-- 🕸️ MBTI 소셜 네트워크 관계망 뷰포트 (Network Stage) -->
+      <div class="glass-card rounded-3xl p-4 shadow-xl mb-4 relative overflow-hidden flex flex-col items-center justify-center min-h-[420px]">
+        <!-- 은은한 우주 성운 & 네트워크 그리드 배경 효과 -->
+        <div class="absolute inset-0 bg-radial from-indigo-100/40 via-purple-50/20 to-transparent pointer-events-none"></div>
+        <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(#6366f1 1px, transparent 1px); background-size: 20px 20px;"></div>
 
-        <!-- 안내 팁 -->
-        <div class="w-full flex items-center justify-between px-2 mb-1 z-10">
-          <span class="text-[11px] font-bold text-indigo-600 flex items-center gap-1">
+        <!-- 상단 헤더 툴바: 안내 팁 & 관계망 보기 모드 전환 -->
+        <div class="w-full flex items-center justify-between px-1 mb-2 z-20">
+          <span class="text-[11px] font-bold text-indigo-600 flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
-            공전하는 캐릭터를 탭하면 상세 궁합 분석!
+            인물을 탭하면 상호 관계망 하이라이트!
           </span>
-          <span id="orbit-count-badge" class="text-[10px] font-extrabold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-            연결된 친구: 0명
-          </span>
+          <div class="flex items-center gap-1.5">
+            <!-- 전체 관계망 vs 내 중심 토글 스위치 -->
+            <button id="btn-toggle-network-mode" onclick="toggleNetworkViewMode()" class="text-[10px] font-black px-2.5 py-1 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 transition-all flex items-center gap-1 cursor-pointer shadow-2xs" title="관계망 표시 모드 전환">
+              <span id="network-mode-icon">🕸️</span>
+              <span id="network-mode-label">전체 관계망</span>
+            </button>
+            <span id="orbit-count-badge" class="text-[10px] font-extrabold bg-slate-100 text-slate-600 px-2 py-1 rounded-full border border-slate-200/60">
+              연결 0명
+            </span>
+          </div>
         </div>
 
-        <!-- 궤도 전체 스테이지 (정사각형 레이아웃) -->
-        <div id="orbit-main-stage" class="relative w-[310px] h-[310px] sm:w-[340px] sm:h-[340px] flex items-center justify-center my-auto select-none">
-          <!-- 1. 점선 궤도선 (Dashed Orbit Ring) -->
-          <div class="dashed-orbit-ring absolute w-[260px] h-[260px] sm:w-[280px] sm:h-[280px] pointer-events-none"></div>
+        <!-- 네트워크 관계망 전체 스테이지 (정사각형 레이아웃) -->
+        <div id="orbit-main-stage" class="relative w-[310px] h-[310px] sm:w-[350px] sm:h-[350px] flex items-center justify-center my-auto select-none">
+          <!-- 은은한 동심원 가이드 레이더 링 (시각적 깊이감) -->
+          <div class="absolute w-[270px] h-[270px] sm:w-[290px] sm:h-[290px] rounded-full border border-indigo-200/40 pointer-events-none"></div>
+          <div class="absolute w-[180px] h-[180px] sm:w-[190px] sm:h-[190px] rounded-full border border-purple-200/30 pointer-events-none"></div>
 
-          <!-- 2. 공전하는 레이어 (Orbit Spinner) -->
-          <div id="orbit-spinner-layer" class="orbit-spinner absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none">
-            <!-- 등록된 상대방 캐릭터들이 궤도 각도에 맞춰 렌더링됨 -->
-            <div id="orbit-dynamic-characters" class="absolute inset-0 w-full h-full pointer-events-auto">
-            </div>
+          <!-- 1. SVG 네트워크 연결선 레이어 (나-지인선 & 지인-지인 크로스선) -->
+          <svg id="network-svg-layer" viewBox="0 0 340 340" class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
+            <defs>
+              <!-- 핑크 글로우 필터 -->
+              <filter id="glow-pink" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <!-- 인디고 글로우 필터 -->
+              <filter id="glow-indigo" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <!-- 지인들 간의 상호 크로스 관계선 그룹 -->
+            <g id="network-cross-edges-group"></g>
+            <!-- 나와 지인들 간의 기본 궁합선 그룹 -->
+            <g id="network-primary-edges-group"></g>
+          </svg>
 
-            <!-- 점선으로 된 동그란 추가(+) 버튼 (Dashed Add Button) -->
-            <div id="orbit-add-btn-wrapper" class="absolute top-[8px] sm:top-[12px] left-1/2 -translate-x-1/2 pointer-events-auto z-30">
-              <button onclick="openAddRelationModal()" id="orbit-dashed-add-btn" class="dashed-add-button w-14 h-14 rounded-full flex flex-col items-center justify-center shadow-md group cursor-pointer" title="새로운 친구 MBTI 추가하기">
-                <!-- 점선 더하기 (+) 기호 SVG -->
-                <svg class="w-6 h-6 text-indigo-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
-                  <line x1="12" y1="5" x2="12" y2="19" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
-                </svg>
-                <span class="text-[8px] font-black text-indigo-500 tracking-tighter">추가</span>
-              </button>
-            </div>
+          <!-- 2. 연결선 위의 케미 점수 뱃지 레이어 -->
+          <div id="network-badges-layer" class="absolute inset-0 w-full h-full pointer-events-none z-15"></div>
+
+          <!-- 3. 등록된 인물 캐릭터 노드 레이어 (모두 독립적으로 똑바로 정립) -->
+          <div id="orbit-dynamic-characters" class="absolute inset-0 w-full h-full pointer-events-auto z-20"></div>
+
+          <!-- 4. 점선 추가(+) 버튼 (수직 정립 보장) -->
+          <div id="orbit-add-btn-wrapper" class="absolute pointer-events-auto z-30 transition-all">
+            <button onclick="openAddRelationModal()" id="orbit-dashed-add-btn" class="dashed-add-button w-13 h-13 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center shadow-md group cursor-pointer bg-white/90 hover:bg-indigo-50/90 transition-all hover:scale-105" title="새로운 친구 MBTI 추가하기">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
+                <line x1="12" y1="5" x2="12" y2="19" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 3" />
+              </svg>
+              <span class="text-[8px] font-black text-indigo-500 tracking-tighter">추가</span>
+            </button>
           </div>
 
-          <!-- 3. 중심 내 MBTI 캐릭터 (Center Main Node) -->
-          <div class="relative z-20 flex flex-col items-center">
-            <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white/95 p-1.5 border-2 border-indigo-400/80 shadow-2xl character-float flex items-center justify-center">
+          <!-- 5. 중심 내 MBTI 캐릭터 (Center Hub Node) -->
+          <div class="relative z-30 flex flex-col items-center network-center-glow">
+            <div class="relative w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-white/95 p-1.5 border-2 border-indigo-400 shadow-2xl flex items-center justify-center">
               <div class="w-full h-full rounded-full overflow-hidden bg-indigo-50/50 flex items-center justify-center">
                 <img id="orbit-my-img" src="" alt="내 캐릭터" class="w-full h-full object-cover" />
               </div>
-              <!-- 내 MBTI 텍스트 뱃지 (작고 세련되게) -->
-              <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap border border-white/70 flex items-center gap-1">
+              <!-- 내 MBTI 텍스트 뱃지 -->
+              <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap border border-white/80 flex items-center gap-1">
                 <span>⭐</span>
                 <span id="orbit-my-mbti-tag">ENFP</span>
                 <span class="text-indigo-200 text-[9px]">(나)</span>
@@ -1003,10 +1047,10 @@
           </div>
         </div>
 
-        <!-- 궤도 조작 안내 -->
-        <div class="w-full text-center mt-1 z-10">
+        <!-- 하단 조작 안내 -->
+        <div class="w-full text-center mt-2 z-10">
           <p class="text-[11px] text-slate-500 font-medium">
-            ✨ 점선 버튼(<span class="font-bold text-indigo-600">+</span>)을 터치하여 친구나 연인의 MBTI를 궤도에 올려보세요.
+            💡 캐릭터를 탭하면 지인과의 궁합과 함께 <span class="text-indigo-600 font-bold">다른 지인들과의 관계망</span>도 볼 수 있어요.
           </p>
         </div>
       </div>
@@ -1024,6 +1068,23 @@
           <div id="orbit-empty-guide" class="text-xs text-slate-400 py-2 w-full text-center">
             아직 추가된 상대방이 없습니다. 상단의 점선 <strong>(+)</strong> 버튼을 눌러보세요!
           </div>
+        </div>
+      </div>
+
+      <!-- 💫 주변 사람들 간의 상호 케미(Cross Chemistry) 분석 섹션 (지인 2명 이상 시 표시) -->
+      <div id="network-cross-chemistry-card" class="glass-card rounded-3xl p-4 shadow-sm mb-4 text-left hidden">
+        <div class="flex items-center justify-between mb-2 px-1">
+          <h4 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+            <span>✨</span>
+            <span>주변 지인들 간의 상호 케미</span>
+          </h4>
+          <span class="text-[10px] text-indigo-500 font-bold">카드를 탭하면 둘의 궁합 분석!</span>
+        </div>
+        <p class="text-[11px] text-slate-500 mb-2.5 px-1 leading-snug">
+          내 주변 사람들은 서로 어떤 조화를 이룰까요? 둘 사이의 숨겨진 케미와 시너지를 확인해보세요.
+        </p>
+        <div id="network-cross-list" class="space-y-2">
+          <!-- 동적 렌더링 -->
         </div>
       </div>
 
@@ -1184,6 +1245,92 @@
             🗑️ 궤도에서 삭제
           </button>
           <button onclick="closeOrbitDetailModal()" class="flex-1 py-2.5 rounded-2xl bg-indigo-600 text-white font-extrabold text-xs hover:bg-indigo-700 transition-colors shadow-xs">
+            확인 완료
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 4: 지인 ↔ 지인 간 상호 크로스 케미 분석 모달 -->
+    <div id="modal-cross-detail" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+      <div class="glass-card bg-white/95 rounded-3xl p-5 sm:p-6 shadow-2xl w-full max-w-md max-h-[92vh] flex flex-col text-left">
+        <!-- 모달 헤더 -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">✨</span>
+            <h3 class="text-sm font-black text-slate-800">
+              <span id="cross-detail-names" class="text-indigo-600 font-black">민우 &amp; 지우</span> 의 상호 케미
+            </h3>
+          </div>
+          <button onclick="closeCrossDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition-colors">
+            ✕
+          </button>
+        </div>
+
+        <!-- 본문 영역 -->
+        <div class="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
+          <!-- 두 인물 대면 카드 및 스코어 -->
+          <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100/80 flex flex-col items-center">
+            <div class="flex items-center justify-around w-full mb-3">
+              <!-- 인물 A -->
+              <div class="flex flex-col items-center text-center">
+                <div class="w-14 h-14 rounded-2xl overflow-hidden bg-white p-1 border border-indigo-200 shadow-xs mb-1">
+                  <img id="cross-detail-img-a" src="" alt="인물 A" class="w-full h-full object-cover rounded-xl" />
+                </div>
+                <span id="cross-detail-name-a" class="text-xs font-black text-slate-800">인물 A</span>
+                <span id="cross-detail-mbti-a" class="text-[10px] font-bold text-indigo-600">ISTJ</span>
+              </div>
+
+              <!-- 중앙 하트 & 시너지 스코어 -->
+              <div class="flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-lg animate-bounce">
+                  💖
+                </div>
+                <span id="cross-detail-score" class="text-lg font-black text-pink-600 mt-1">92%</span>
+                <span id="cross-detail-badge" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 whitespace-nowrap">
+                  찰떡궁합
+                </span>
+              </div>
+
+              <!-- 인물 B -->
+              <div class="flex flex-col items-center text-center">
+                <div class="w-14 h-14 rounded-2xl overflow-hidden bg-white p-1 border border-pink-200 shadow-xs mb-1">
+                  <img id="cross-detail-img-b" src="" alt="인물 B" class="w-full h-full object-cover rounded-xl" />
+                </div>
+                <span id="cross-detail-name-b" class="text-xs font-black text-slate-800">인물 B</span>
+                <span id="cross-detail-mbti-b" class="text-[10px] font-bold text-pink-600">ESFP</span>
+              </div>
+            </div>
+
+            <h4 id="cross-detail-title" class="text-xs font-extrabold text-slate-800 text-center leading-snug">
+              서로의 일상에 기분 좋은 활력과 온기를 주는 관계
+            </h4>
+          </div>
+
+          <!-- 둘의 시너지 -->
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="flex items-center gap-1.5 mb-1.5">
+              <span class="text-sm">⚡</span>
+              <h5 class="text-xs font-extrabold text-slate-800">두 사람이 함께할 때 생기는 화학 반응</h5>
+            </div>
+            <p id="cross-detail-synergy" class="text-xs text-slate-600 leading-relaxed break-keep">
+            </p>
+          </div>
+
+          <!-- 관계 팁 -->
+          <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-100">
+            <div class="flex items-center gap-1.5 mb-1.5">
+              <span class="text-sm">💡</span>
+              <h5 class="text-xs font-extrabold text-emerald-900">두 사람을 위한 조화로운 팁</h5>
+            </div>
+            <p id="cross-detail-advice" class="text-xs text-emerald-800 leading-relaxed break-keep">
+            </p>
+          </div>
+        </div>
+
+        <!-- 하단 액션 버튼 -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
+          <button onclick="closeCrossDetailModal()" class="w-full py-2.5 rounded-2xl bg-indigo-600 text-white font-extrabold text-xs hover:bg-indigo-700 transition-colors shadow-xs">
             확인 완료
           </button>
         </div>
@@ -2926,80 +3073,157 @@
       }
     }
 
-    // 🪐 우주 궤도 전체 스테이지 렌더링
+    // ==========================================
+    // 🕸️ 소셜 네트워크 관계망 (Network Graph) 엔진
+    // ==========================================
+    let networkViewMode = 'all'; // 'all' (전체 관계망) | 'me' (내 중심 뷰)
+    let hoveredPersonId = null;
+    let nodeCoordinatesMap = {}; // id -> { x, y, person, comp }
+
+    // 전체 관계망 ↔ 내 중심 뷰 토글
+    function toggleNetworkViewMode() {
+      networkViewMode = networkViewMode === 'all' ? 'me' : 'all';
+      const labelEl = document.getElementById('network-mode-label');
+      const iconEl = document.getElementById('network-mode-icon');
+      if (networkViewMode === 'all') {
+        labelEl.innerText = '전체 관계망';
+        iconEl.innerText = '🕸️';
+        showToast('🕸️ 모든 지인 간의 상호 관계망이 켜졌습니다.');
+      } else {
+        labelEl.innerText = '내 중심 뷰';
+        iconEl.innerText = '🎯';
+        showToast('🎯 나와의 관계 중심으로 표시됩니다.');
+      }
+      renderOrbitStage();
+    }
+
+    // 🪐 MBTI 소셜 네트워크 전체 스테이지 렌더링
     function renderOrbitStage(newlyAddedId) {
       const myMbti = currentResultMbti || originalUserMbti || 'ENFP';
       const charactersLayer = document.getElementById('orbit-dynamic-characters');
       const countBadge = document.getElementById('orbit-count-badge');
+      const addBtnWrapper = document.getElementById('orbit-add-btn-wrapper');
+      
       charactersLayer.innerHTML = '';
+      nodeCoordinatesMap = {};
 
       const count = orbitRelations.length;
-      countBadge.innerText = '연결된 친구: ' + count + '명';
+      countBadge.innerText = '연결 ' + count + '명';
 
-      // 궤도 반경 (지름 약 260~280px이므로 반지름 약 130px)
-      const radius = 130;
+      // 스테이지 중심 및 반지름 (340x340 기준)
+      const cx = 170;
+      const cy = 170;
+      const radius = 122; // 노드 뱃지가 스테이지 경계를 벗어나지 않도록 최적화
 
-      // 각 인물 노드 렌더링
+      // 점선 추가(+) 버튼의 이상적 위치 좌표 계산
+      let addBtnX = cx;
+      let addBtnY = cy - radius; // 기본 12시 방향 (상단)
+
+      if (count === 0) {
+        // 지인 0명: 상단에 큼직하게 정중앙 배치
+        addBtnX = cx;
+        addBtnY = cy - radius + 10;
+      } else if (count === 1) {
+        // 지인 1명: 지인은 상단(12시), +버튼은 하단(6시)에 완벽한 수직 대칭
+        addBtnX = cx;
+        addBtnY = cy + radius;
+      } else {
+        // 지인 2명 이상: +버튼을 -90도(12시)에 두고, 지인들은 남은 원주에 균등 분할
+        addBtnX = cx;
+        addBtnY = cy - radius;
+      }
+
+      // 점선 추가(+) 버튼 위치 설정 (직립 정자세 유지)
+      if (addBtnWrapper) {
+        addBtnWrapper.style.left = `${addBtnX}px`;
+        addBtnWrapper.style.top = `${addBtnY}px`;
+        addBtnWrapper.style.transform = 'translate(-50%, -50%)';
+      }
+
+      // 각 인물의 좌표 및 노드 렌더링
       orbitRelations.forEach((person, idx) => {
-        // 점선 추가(+) 버튼은 상단(270도/ -90도, 즉 0도 기준 top)에 위치하므로,
-        // 첫 번째 인물은 하단(90도), 2번째부터는 대칭으로 균등 분할
-        let angleDeg = 90;
+        let angleDeg = -90;
         if (count === 1) {
-          angleDeg = 90; // 하단 정중앙에 위치하여 상단 +버튼과 완벽한 대칭
+          // 1명일 때는 상단 정중앙에 위치 (12시 방향)
+          angleDeg = -90;
+        } else if (count === 2) {
+          // 2명일 때는 하단 좌우로 벌려 삼각 안정 구도 형성 (좌측 150도, 우측 30도)
+          angleDeg = idx === 0 ? 150 : 30;
         } else {
-          // + 버튼(약 -90도)과 겹치지 않도록 분할
+          // 3명 이상: +버튼(-90도)을 제외한 영역에 균등 분할
           const step = 360 / (count + 1);
           angleDeg = -90 + step * (idx + 1);
         }
 
         const angleRad = (angleDeg * Math.PI) / 180;
-        // x, y 좌표 계산 (중심 50% 기준)
-        const x = Math.round(radius * Math.cos(angleRad));
-        const y = Math.round(radius * Math.sin(angleRad));
+        const x = Math.round(cx + radius * Math.cos(angleRad));
+        const y = Math.round(cy + radius * Math.sin(angleRad));
 
         const isNew = person.id === newlyAddedId;
         const comp = calcMbtiSynergy(myMbti, person.mbti);
 
-        const node = document.createElement('div');
-        node.className = 'absolute pointer-events-auto cursor-pointer group select-none z-20';
-        node.style.top = `calc(50% + ${y}px - 28px)`;
-        node.style.left = `calc(50% + ${x}px - 28px)`;
+        // 좌표 맵에 저장
+        nodeCoordinatesMap[person.id] = { x, y, person, comp };
 
-        // 새로 추가된 경우 쫀득한 스쿼시 & 스트레치(Squash & Stretch) 클래스 적용
+        // 캐릭터 노드 컨테이너 (똑바로 선 직립 상태 보장)
+        const node = document.createElement('div');
+        node.id = `network-node-${person.id}`;
+        node.className = `absolute pointer-events-auto cursor-pointer group select-none z-20 network-node-float-${(idx % 3) + 1} transition-transform duration-200`;
+        node.style.left = `${x}px`;
+        node.style.top = `${y}px`;
+        node.style.transform = 'translate(-50%, -50%)';
+        node.style.animationDelay = `${(idx * 0.35).toFixed(2)}s`;
+
         const animationClass = isNew ? 'animate-squash-stretch' : '';
 
         node.innerHTML = `
-          <div class="orbit-counter-spinner ${animationClass} flex flex-col items-center">
-            <!-- 닉네임 뱃지 -->
-            <div class="bg-white/95 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-md border border-indigo-200/80 mb-1 whitespace-nowrap flex items-center gap-1 group-hover:scale-105 transition-transform">
+          <div class="flex flex-col items-center group-hover:scale-110 transition-transform duration-200 ${animationClass}">
+            <!-- 상단 닉네임 & MBTI 뱃지 -->
+            <div class="bg-white/95 text-slate-800 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md border border-indigo-200/90 mb-1 whitespace-nowrap flex items-center gap-1">
               <span>${escapeHtml(person.name)}</span>
               <span class="text-[9px] font-black ${comp.theme === 'pink' ? 'text-pink-500' : 'text-indigo-600'}">${person.mbti}</span>
             </div>
-            <!-- 캐릭터 원형 아바타 -->
-            <div class="w-14 h-14 rounded-full bg-white/95 p-1 border-2 ${comp.theme === 'pink' ? 'border-pink-400' : 'border-indigo-400'} shadow-lg group-hover:scale-110 transition-all flex items-center justify-center relative">
+            <!-- 캐릭터 원형 아바타 (절대 눕지 않고 직립) -->
+            <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-white/95 p-1 border-2 ${comp.theme === 'pink' ? 'border-pink-400' : 'border-indigo-400'} shadow-lg flex items-center justify-center relative bg-indigo-50/40">
               <img src="assets/characters/${person.mbti}.png"
                    onerror="this.onerror=null; this.src='assets/characters/${person.mbti}.svg';"
                    alt="${person.name}" class="w-full h-full object-cover rounded-full" />
-              <!-- 하트/번개 미니 뱃지 -->
-              <span class="absolute -bottom-1 -right-1 text-xs">${comp.theme === 'pink' ? '💖' : '💜'}</span>
+              <!-- 하트/별빛 미니 뱃지 -->
+              <span class="absolute -bottom-1 -right-1 text-xs drop-shadow-xs">${comp.theme === 'pink' ? '💖' : '💜'}</span>
             </div>
           </div>
         `;
 
-        // 탭/클릭 시 상세 모달 열기
+        // 마우스 호버 / 터치 인터랙션: 관계망 하이라이트
+        node.onmouseenter = () => {
+          hoveredPersonId = person.id;
+          renderNetworkEdges();
+        };
+        node.onmouseleave = () => {
+          hoveredPersonId = null;
+          renderNetworkEdges();
+        };
+
+        // 탭/클릭 시 하트 포션 동기화 및 상세 모달 열기
         node.onclick = (e) => {
           e.stopPropagation();
+          updateHeartPotion(comp);
           openOrbitDetail(person.id);
         };
 
         charactersLayer.appendChild(node);
       });
 
+      // SVG 연결선 및 케미 뱃지 렌더링
+      renderNetworkEdges();
+
       // 하단 칩 목록 렌더링
       renderOrbitChips();
 
+      // 지인 ↔ 지인 크로스 케미 요약 섹션 렌더링
+      renderCrossChemistrySection();
+
       // 하트 포션 게이지 업데이트:
-      // 가장 마지막에 추가된 인물이나 첫 번째 인물과의 궁합으로 표시
       if (count > 0) {
         const targetPerson = newlyAddedId ? orbitRelations.find(p => p.id === newlyAddedId) || orbitRelations[count - 1] : orbitRelations[count - 1];
         const comp = calcMbtiSynergy(myMbti, targetPerson.mbti);
@@ -3007,6 +3231,211 @@
       } else {
         updateHeartPotion(null);
       }
+    }
+
+    // 🕸️ SVG 연결선 (나-지인 & 지인-지인 상호선) 및 뱃지 실시간 렌더링
+    function renderNetworkEdges() {
+      const primaryEdgesGroup = document.getElementById('network-primary-edges-group');
+      const crossEdgesGroup = document.getElementById('network-cross-edges-group');
+      const badgesLayer = document.getElementById('network-badges-layer');
+      
+      if (!primaryEdgesGroup || !crossEdgesGroup || !badgesLayer) return;
+
+      primaryEdgesGroup.innerHTML = '';
+      crossEdgesGroup.innerHTML = '';
+      badgesLayer.innerHTML = '';
+
+      const cx = 170;
+      const cy = 170;
+      const myMbti = currentResultMbti || originalUserMbti || 'ENFP';
+      const nodeIds = Object.keys(nodeCoordinatesMap);
+
+      // 1. 지인 ↔ 지인 상호 연결선 (Cross-Relations)
+      if (nodeIds.length >= 2) {
+        for (let i = 0; i < nodeIds.length; i++) {
+          for (let j = i + 1; j < nodeIds.length; j++) {
+            const nodeA = nodeCoordinatesMap[nodeIds[i]];
+            const nodeB = nodeCoordinatesMap[nodeIds[j]];
+            const crossComp = calcMbtiSynergy(nodeA.person.mbti, nodeB.person.mbti);
+
+            const isConnectedToHovered = hoveredPersonId && (hoveredPersonId === nodeA.person.id || hoveredPersonId === nodeB.person.id);
+            const isHoverActive = hoveredPersonId !== null;
+
+            // 표시 조건: 전체 관계망 모드이거나, 둘 중 하나가 호버 상태일 때
+            const shouldShow = networkViewMode === 'all' || isConnectedToHovered;
+            if (!shouldShow) continue;
+
+            const strokeColor = crossComp.score >= 88 ? '#ec4899' : (crossComp.score >= 70 ? '#8b5cf6' : '#94a3b8');
+            const strokeWidth = isConnectedToHovered ? 2.8 : 1.5;
+            const opacity = isConnectedToHovered ? 1.0 : (isHoverActive ? 0.15 : 0.45);
+
+            // SVG Line 생성
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', nodeA.x);
+            line.setAttribute('y1', nodeA.y);
+            line.setAttribute('x2', nodeB.x);
+            line.setAttribute('y2', nodeB.y);
+            line.setAttribute('stroke', strokeColor);
+            line.setAttribute('stroke-width', strokeWidth);
+            line.setAttribute('stroke-opacity', opacity);
+            line.setAttribute('class', 'network-edge-cross-flow');
+            if (isConnectedToHovered) {
+              line.setAttribute('filter', crossComp.score >= 88 ? 'url(#glow-pink)' : 'url(#glow-indigo)');
+            }
+            crossEdgesGroup.appendChild(line);
+
+            // 두 지인 중간 지점에 케미 뱃지 표시
+            if (networkViewMode === 'all' || isConnectedToHovered) {
+              const midX = (nodeA.x + nodeB.x) / 2;
+              const midY = (nodeA.y + nodeB.y) / 2;
+              const badge = document.createElement('div');
+              badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-full text-[8px] font-black pointer-events-none transition-all duration-200 border ' +
+                (isConnectedToHovered
+                  ? 'bg-pink-500 text-white border-white shadow-md scale-110 z-20'
+                  : 'bg-white/85 text-slate-600 border-indigo-100/90 shadow-2xs z-10');
+              badge.style.left = `${midX}px`;
+              badge.style.top = `${midY}px`;
+              badge.style.opacity = opacity >= 0.4 ? '1' : '0.2';
+              badge.innerHTML = `<span>${crossComp.score >= 88 ? '💖' : '⚡'} ${crossComp.score}%</span>`;
+              badgesLayer.appendChild(badge);
+            }
+          }
+        }
+      }
+
+      // 2. 나 ↔ 지인 간의 주 궁합선 (Primary Edges)
+      nodeIds.forEach(id => {
+        const node = nodeCoordinatesMap[id];
+        const comp = node.comp;
+        const isHovered = hoveredPersonId === id;
+        const isHoverActive = hoveredPersonId !== null;
+
+        const strokeColor = comp.theme === 'pink' ? '#ec4899' : '#6366f1';
+        const strokeWidth = isHovered ? 3.5 : 2.2;
+        const opacity = isHovered ? 1.0 : (isHoverActive ? 0.25 : 0.85);
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', node.x);
+        line.setAttribute('y2', node.y);
+        line.setAttribute('stroke', strokeColor);
+        line.setAttribute('stroke-width', strokeWidth);
+        line.setAttribute('stroke-opacity', opacity);
+        line.setAttribute('class', 'network-edge-flow');
+        if (isHovered) {
+          line.setAttribute('filter', comp.theme === 'pink' ? 'url(#glow-pink)' : 'url(#glow-indigo)');
+        }
+        primaryEdgesGroup.appendChild(line);
+
+        // 선 중앙 위치에 나와의 시너지 뱃지 표시
+        const midX = (cx + node.x) / 2;
+        const midY = (cy + node.y) / 2;
+        const badge = document.createElement('div');
+        badge.className = 'absolute -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded-full text-[9px] font-black pointer-events-none transition-all duration-200 border ' +
+          (isHovered
+            ? 'bg-indigo-600 text-white border-white shadow-md scale-110 z-20'
+            : 'bg-white/95 text-indigo-700 border-indigo-200/90 shadow-xs z-15');
+        badge.style.left = `${midX}px`;
+        badge.style.top = `${midY}px`;
+        badge.style.opacity = opacity >= 0.4 ? '1' : '0.2';
+        badge.innerHTML = `<span>${comp.theme === 'pink' ? '💖' : '✨'} ${comp.score}%</span>`;
+        badgesLayer.appendChild(badge);
+      });
+    }
+
+    // 💫 지인 간 크로스 케미 분석 섹션 렌더링
+    function renderCrossChemistrySection() {
+      const container = document.getElementById('network-cross-chemistry-card');
+      const listEl = document.getElementById('network-cross-list');
+      if (!container || !listEl) return;
+
+      const count = orbitRelations.length;
+      if (count < 2) {
+        container.classList.add('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      listEl.innerHTML = '';
+
+      // 모든 지인 쌍 계산
+      const pairs = [];
+      for (let i = 0; i < count; i++) {
+        for (let j = i + 1; j < count; j++) {
+          const personA = orbitRelations[i];
+          const personB = orbitRelations[j];
+          const comp = calcMbtiSynergy(personA.mbti, personB.mbti);
+          pairs.push({ personA, personB, comp });
+        }
+      }
+
+      // 점수 내림차순 정렬
+      pairs.sort((a, b) => b.comp.score - a.comp.score);
+
+      pairs.forEach(pair => {
+        const { personA, personB, comp } = pair;
+        const card = document.createElement('div');
+        card.className = 'jelly-btn flex items-center justify-between p-3 rounded-2xl bg-white/90 border border-slate-200/80 shadow-2xs hover:bg-indigo-50/80 hover:border-indigo-300 cursor-pointer transition-all';
+        card.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <!-- 두 인물 아바타 겹침 -->
+            <div class="flex items-center -space-x-2 shrink-0">
+              <img src="assets/characters/${personA.mbti}.png" onerror="this.onerror=null; this.src='assets/characters/${personA.mbti}.svg';" class="w-8 h-8 rounded-full border-2 border-white object-cover shadow-xs" />
+              <img src="assets/characters/${personB.mbti}.png" onerror="this.onerror=null; this.src='assets/characters/${personB.mbti}.svg';" class="w-8 h-8 rounded-full border-2 border-white object-cover shadow-xs" />
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-black text-slate-800 truncate">${escapeHtml(personA.name)}</span>
+                <span class="text-[10px] text-slate-400">×</span>
+                <span class="text-xs font-black text-slate-800 truncate">${escapeHtml(personB.name)}</span>
+              </div>
+              <p class="text-[10px] text-slate-500 truncate mt-0.5">${comp.title}</p>
+            </div>
+          </div>
+          <!-- 점수 뱃지 -->
+          <div class="flex items-center gap-1 shrink-0 ml-2">
+            <span class="text-[11px] font-black px-2 py-0.5 rounded-lg ${comp.score >= 85 ? 'bg-pink-100 text-pink-600' : 'bg-indigo-100 text-indigo-700'}">
+              ${comp.score >= 85 ? '💖' : '⚡'} ${comp.score}%
+            </span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          openCrossDetailModal(personA, personB, comp);
+        };
+
+        listEl.appendChild(card);
+      });
+    }
+
+    // 🌟 지인 ↔ 지인 크로스 케미 상세 모달 열기
+    function openCrossDetailModal(personA, personB, comp) {
+      document.getElementById('cross-detail-names').innerText = `${personA.name} & ${personB.name}`;
+      document.getElementById('cross-detail-name-a').innerText = personA.name;
+      document.getElementById('cross-detail-mbti-a').innerText = personA.mbti;
+      document.getElementById('cross-detail-name-b').innerText = personB.name;
+      document.getElementById('cross-detail-mbti-b').innerText = personB.mbti;
+
+      const imgA = document.getElementById('cross-detail-img-a');
+      imgA.onerror = function() { this.onerror = null; this.src = 'assets/characters/' + personA.mbti + '.svg'; };
+      imgA.src = 'assets/characters/' + personA.mbti + '.png';
+
+      const imgB = document.getElementById('cross-detail-img-b');
+      imgB.onerror = function() { this.onerror = null; this.src = 'assets/characters/' + personB.mbti + '.svg'; };
+      imgB.src = 'assets/characters/' + personB.mbti + '.png';
+
+      document.getElementById('cross-detail-score').innerText = comp.score + '%';
+      document.getElementById('cross-detail-badge').innerText = comp.badgeText;
+      document.getElementById('cross-detail-title').innerText = comp.title;
+      document.getElementById('cross-detail-synergy').innerText = comp.synergy;
+      document.getElementById('cross-detail-advice').innerText = comp.advice;
+
+      document.getElementById('modal-cross-detail').classList.remove('hidden');
+    }
+
+    function closeCrossDetailModal() {
+      document.getElementById('modal-cross-detail').classList.add('hidden');
     }
 
     // 하단 인물 칩 목록 렌더링
